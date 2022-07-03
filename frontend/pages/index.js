@@ -1,6 +1,10 @@
-import { Box } from "@chakra-ui/react";
+import { Container, Button } from "@chakra-ui/react";
 
 export default function Home() {
-	return <Box>Hello, world!</Box>;
+	return (
+		<Container paddingY="10">
+			<Button>Connect Wallet</Button>
+		</Container>
+	);
 }
 
