@@ -1,10 +1,10 @@
-import { Container, Button } from "@chakra-ui/react";
+import { Container } from "@chakra-ui/react";
+import { Modal } from "@components/Modal/Modal";
 
 export default function Home() {
-	return (
-		<Container paddingY="10">
-			<Button>Connect Wallet</Button>
-		</Container>
-	);
+   return (
+      <Container paddingY="6">
+         <Modal />
+      </Container>
+   );
 }
-

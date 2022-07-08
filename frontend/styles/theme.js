@@ -1,30 +1,31 @@
 import { extendTheme } from "@chakra-ui/react";
+import { mode } from "@chakra-ui/theme-tools";
+
+const styles = {
+   global: (props) => ({
+      body: {
+         bg: mode("gray.100", "#170505")(props),
+      },
+   }),
+};
 
 const config = {
-	initialColorMode: "dark",
-	useSystemColorMode: false,
+   initialColorMode: "dark",
+   useSystemColorMode: false,
 };
 
-const colors = {
-	// brand: {
-	// 	500: "#FFD600",
-	// },
-};
+const colors = {};
 
 const components = {
-	// Button: {
-	// 	baseStyle: {
-	// 		_focus: {
-	// 			boxShadow: "none",
-	// 		},
-	// 	},
-	// 	defaultProps: {
-	// 		// colorScheme: "gray",
-	// 		// variant: "ghost",
-	// 	},
-	// },
+   Button: {
+      baseStyle: {
+         _focus: {
+            boxShadow: "none",
+         },
+      },
+   },
 };
 
-const theme = extendTheme({ config, components, colors });
+const theme = extendTheme({ styles, config, components, colors });
 
 export default theme;
