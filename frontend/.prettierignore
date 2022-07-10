@@ -1,12 +1,16 @@
 .git
 node_modules
+
 package.json
 package-lock.json
+yarn.lock
+
 public
 .next
+
 .eslintrc.json
 jsconfig.json
 next.config.js
-yarn.lock
+
 .env.development.local
 .env
