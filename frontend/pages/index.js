@@ -1,5 +1,8 @@
 import { Container } from "@chakra-ui/react";
-import { Modal } from "@components/Modal/Modal";
+import dynamic from "next/dynamic";
+const Modal = dynamic(() => import("../components/Modal/Modal"), {
+  ssr: false,
+});
 
 export default function Home() {
   return (

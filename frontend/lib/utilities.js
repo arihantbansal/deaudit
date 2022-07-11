@@ -18,8 +18,6 @@ export function getChainData(chainId) {
   }
 
   if (chainData.rpc_url.includes("%API_KEY%") && API_KEY) {
-    console.log(API_KEY);
-
     const rpcUrl = chainData.rpc_url.replace("%API_KEY%", API_KEY);
 
     return {

@@ -1,19 +1,13 @@
 import Head from "next/head";
-import { useCallback, useEffect, useReducer } from "react";
 import { providers } from "ethers";
+import { sequence } from "0xsequence";
 import WalletLink from "walletlink";
+import { useCallback, useEffect, useReducer } from "react";
 import Web3Modal from "web3modal";
-import {
-  Button,
-  Flex,
-  Heading,
-  Text,
-  useToast,
-  HStack,
-} from "@chakra-ui/react";
-import { ellipseAddress, getChainData } from "@lib/utilities";
+import { ellipseAddress, getChainData } from "../../lib/utilities";
+import { Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
 
-const providerOptions = {
+let providerOptions = {
   "custom-walletlink": {
     display: {
       logo: "https://play-lh.googleusercontent.com/PjoJoG27miSglVBXoXrxBSLveV6e3EeBPpNY55aiUUBM9Q1RCETKCOqdOkX2ZydqVf0",
@@ -33,8 +27,21 @@ const providerOptions = {
   },
 };
 
+if (!window?.ethereum?.isSequence) {
+  providerOptions = {
+    ...providerOptions,
+    sequence: {
+      package: sequence,
+      options: {
+        appName: "Deaudit",
+        defaultNetwork: "mumbai",
+      },
+    },
+  };
+}
+
 let web3Modal;
-if (typeof window !== "undefined") {
+if (window) {
   web3Modal = new Web3Modal({
     network: "testnet",
     cacheProvider: true,
@@ -136,12 +143,12 @@ export const Modal = () => {
   );
 
   // Auto connect to the cached provider
-  useEffect(() => {
-    if (web3Modal) {
-      web3Modal.connect();
+  const connectWeb3Modal = async () => {
+    if (web3Modal.cachedProvider) {
+      web3Modal.clearCachedProvider();
     }
-  }, [web3Modal]);
-
+    connect();
+  };
   useEffect(() => {
     if (provider?.on) {
       const handleAccountsChanged = (accounts) => {
@@ -240,7 +247,7 @@ export const Modal = () => {
               borderWidth="1px"
               borderStyle="solid"
               borderColor="#fecaca"
-              onClick={connect}
+              onClick={connectWeb3Modal}
               color="white"
               size="lg"
               padding={["10px", "20px"]}
