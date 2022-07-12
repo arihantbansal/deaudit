@@ -57,11 +57,7 @@ contract Auditor {
 		owner = payable(msg.sender);
 	}
 
-	function transferOwnership(address payable _owner)
-		external
-		onlyOwner
-		returns (bool)
-	{
+	function transferOwnership(address payable _owner) external onlyOwner {
 		owner = _owner;
 	}
 }
