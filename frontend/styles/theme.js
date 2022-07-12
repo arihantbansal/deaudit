@@ -24,6 +24,15 @@ const components = {
       },
     },
   },
+  Link: {
+    baseStyle: {
+      _focus: { boxShadow: "none" },
+      _hover: {
+        textDecoration: "none",
+        color: "inherit",
+      },
+    },
+  },
 };
 
 const theme = extendTheme({ styles, config, components, colors });

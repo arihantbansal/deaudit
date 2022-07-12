@@ -2,10 +2,11 @@ import Head from "next/head";
 import { providers } from "ethers";
 import { sequence } from "0xsequence";
 import WalletLink from "walletlink";
-import { useCallback, useEffect, useReducer } from "react";
+import { useCallback, useContext, useEffect, useReducer } from "react";
 import Web3Modal from "web3modal";
 import { ellipseAddress, getChainData } from "../../lib/utilities";
 import { Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
+import { StateContext } from "../../contexts/StateContext";
 
 let providerOptions = {
   "custom-walletlink": {
@@ -55,42 +56,10 @@ if (window) {
   });
 }
 
-const initialState = {
-  provider: null,
-  web3Provider: null,
-  address: null,
-  chainId: null,
-};
-
-function reducer(state, action) {
-  switch (action.type) {
-    case "SET_WEB3_PROVIDER":
-      return {
-        ...state,
-        provider: action.provider,
-        web3Provider: action.web3Provider,
-        address: action.address,
-        chainId: action.chainId,
-      };
-    case "SET_ADDRESS":
-      return {
-        ...state,
-        address: action.address,
-      };
-    case "SET_CHAIN_ID":
-      return {
-        ...state,
-        chainId: action.chainId,
-      };
-    case "RESET_WEB3_PROVIDER":
-      return initialState;
-  }
-}
-
-export const Modal = () => {
+const Modal = () => {
   const toast = useToast();
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const { provider, web3Provider, address, chainId } = state;
+  const [{ provider, web3Provider, address, chainId }, dispatch] =
+    useContext(StateContext);
 
   const connect = async () => {
     const provider = await web3Modal.connect();
@@ -130,7 +99,7 @@ export const Modal = () => {
   };
 
   const disconnect = useCallback(
-    async function () {
+    async () => {
       await web3Modal.clearCachedProvider();
       if (provider?.disconnect && typeof provider.disconnect === "function") {
         await provider.disconnect();
@@ -139,7 +108,7 @@ export const Modal = () => {
         type: "RESET_WEB3_PROVIDER",
       });
     },
-    [provider]
+    [provider,dispatch]
   );
 
   // Auto connect to the cached provider
@@ -180,7 +149,7 @@ export const Modal = () => {
         }
       };
     }
-  }, [provider, disconnect]);
+  }, [provider, disconnect,dispatch]);
 
   const chainData = getChainData(chainId);
 
@@ -267,13 +236,13 @@ export const Modal = () => {
       {address && (
         <Flex
           flexDir="row"
-          mt="32"
+          mt="36"
           justifyContent="space-between"
           alignItems="center"
         >
           {chainData.name === "Error" ? null : (
             <>
-              <Flex flexDir="column" gap="1">
+              <Flex flexDir="column" gap="1" mx="20">
                 <Heading fontSize="2xl" fontFamily="Space Mono">
                   Network:
                 </Heading>
@@ -281,7 +250,7 @@ export const Modal = () => {
                   {chainData.name}
                 </Text>
               </Flex>
-              <Flex flexDir="column" gap="1">
+              <Flex flexDir="column" gap="1" mx="20">
                 <Heading fontSize="2xl" fontFamily="Space Mono">
                   Address:
                 </Heading>

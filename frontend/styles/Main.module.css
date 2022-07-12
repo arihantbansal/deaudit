@@ -1,0 +1,13 @@
+.container {
+  width: calc(100vw - (100vw - 100%));
+  scroll-snap-type: y mandatory;
+  scroll-padding: 10px;
+}
+
+.child {
+  height: 100vh;
+  scroll-snap-align: start;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
