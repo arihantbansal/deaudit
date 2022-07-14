@@ -19,7 +19,7 @@ export default class Document extends NextDocument {
             crossOrigin="true"
           />
           <link
-            href="https://fonts.googleapis.com/css2?family=Didact+Gothic&family=Geostar&family=Space+Grotesk:wght@300&family=Space+Mono&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Cutive+Mono&family=Didact+Gothic&family=Geostar&family=Geostar+Fill&family=Major+Mono+Display&family=Space+Grotesk:wght@300&family=Space+Mono&display=swap"
             rel="stylesheet"
           />
         </Head>

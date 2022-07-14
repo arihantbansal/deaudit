@@ -1,6 +1,6 @@
 import { Box, Heading, Flex, Button, Link, Text } from "@chakra-ui/react";
 import Lottie from "react-lottie";
-import styles from "../../styles/Landing.module.css";
+import styles from "../../styles/Landing.module.scss";
 import blockchain from "../../public/assets/blockchain.json";
 
 const Landing = () => {
@@ -34,7 +34,7 @@ const Landing = () => {
           letterSpacing="1.2"
           fontWeight="bold"
           display="flex"
-          className={styles.ultimateHeading}
+          className={styles.heading}
           my="6"
         >
           The Decentralized Audit Marketplace.

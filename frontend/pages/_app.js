@@ -1,12 +1,19 @@
 import { ChakraProvider } from "@chakra-ui/react";
-import "@styles/globals.css";
 import theme from "@styles/theme";
+import dynamic from "next/dynamic.js";
+import { StateProvider } from "contexts/StateContext";
+import "@styles/globals.scss";
+const Modal = dynamic(() => import("../components/Modal/Modal.jsx"), {
+  ssr: false,
+});
 
 function MyApp({ Component, pageProps }) {
   return (
-    <ChakraProvider theme={theme}>
-      <Component {...pageProps} />
-    </ChakraProvider>
+    <StateProvider>
+      <ChakraProvider theme={theme}>
+        <Component {...pageProps} />
+      </ChakraProvider>
+    </StateProvider>
   );
 }
 

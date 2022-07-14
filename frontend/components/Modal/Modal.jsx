@@ -84,7 +84,7 @@ const Modal = () => {
         status: "success",
         variant: "left-accent",
         duration: 1500,
-        position: "bottom-right",
+        position: "top",
       });
     } else {
       toast({
@@ -93,23 +93,20 @@ const Modal = () => {
         status: "error",
         variant: "left-accent",
         duration: 3000,
-        position: "bottom-right",
+        position: "top",
       });
     }
   };
 
-  const disconnect = useCallback(
-    async () => {
-      await web3Modal.clearCachedProvider();
-      if (provider?.disconnect && typeof provider.disconnect === "function") {
-        await provider.disconnect();
-      }
-      dispatch({
-        type: "RESET_WEB3_PROVIDER",
-      });
-    },
-    [provider,dispatch]
-  );
+  const disconnect = useCallback(async () => {
+    await web3Modal.clearCachedProvider();
+    if (provider?.disconnect && typeof provider.disconnect === "function") {
+      await provider.disconnect();
+    }
+    dispatch({
+      type: "RESET_WEB3_PROVIDER",
+    });
+  }, [provider, dispatch]);
 
   // Auto connect to the cached provider
   const connectWeb3Modal = async () => {
@@ -149,7 +146,7 @@ const Modal = () => {
         }
       };
     }
-  }, [provider, disconnect,dispatch]);
+  }, [provider, disconnect, dispatch]);
 
   const chainData = getChainData(chainId);
 
@@ -233,7 +230,7 @@ const Modal = () => {
           )}
         </Flex>
       </Flex>
-      {address && (
+      {/* {address && (
         <Flex
           flexDir="row"
           mt="36"
@@ -265,7 +262,7 @@ const Modal = () => {
             </>
           )}
         </Flex>
-      )}
+      )} */}
     </>
   );
 };
