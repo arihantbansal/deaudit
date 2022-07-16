@@ -11,6 +11,7 @@ function MyApp({ Component, pageProps }) {
   return (
     <StateProvider>
       <ChakraProvider theme={theme}>
+        <Modal />
         <Component {...pageProps} />
       </ChakraProvider>
     </StateProvider>

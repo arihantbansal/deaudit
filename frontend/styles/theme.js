@@ -14,8 +14,6 @@ const config = {
   useSystemColorMode: false,
 };
 
-const colors = {};
-
 const components = {
   Button: {
     baseStyle: {
@@ -35,6 +33,6 @@ const components = {
   },
 };
 
-const theme = extendTheme({ styles, config, components, colors });
+const theme = extendTheme({ styles, config, components });
 
 export default theme;

@@ -13,10 +13,44 @@ a {
   box-sizing: border-box;
 }
 
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition: all 0s 50000s;
+}
+
+input:focus {
+  outline: none;
+}
+
+.modal-head {
+  font-family: "Monosphere";
+}
+
 .address {
-  font-family: "Cutive Mono" !important;
+  font-family: "Eirian" !important;
+  letter-spacing: 2px;
 }
 
 .head {
   font-family: "Geostar Fill" !important;
+  letter-spacing: 2px;
+}
+
+.audit {
+  font-family: "Geostar" !important;
+  letter-spacing: 2px;
+}
+
+.connect-button {
+  font-family: "Eirian" !important;
+  border-radius: 30px !important;
+  background: transparent !important;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #fecaca;
+  color: white;
+  width: fit-content;
+  padding: 25px;
 }
