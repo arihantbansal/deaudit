@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Box,
   Flex,
@@ -8,14 +9,16 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { ellipseAddress } from "@lib/utilities";
 import Head from "next/head";
-import styles from "../../styles/UserLines.module.scss";
-import React from "react";
 import { FiTwitter, FiGithub } from "react-icons/fi";
 import { MdVerified } from "react-icons/md";
 import { GoUnverified } from "react-icons/go";
 import { TbExternalLink } from "react-icons/tb";
+import { BsBug } from "react-icons/bs";
+import { AiOutlineAudit } from "react-icons/ai";
+import { GiInjustice } from "react-icons/gi";
+import styles from "../../styles/UserLines.module.scss";
+import { ellipseAddress } from "@lib/utilities";
 
 const UserProfile = ({ userAddress }) => {
   let juryForAudit = [
@@ -53,6 +56,7 @@ const UserProfile = ({ userAddress }) => {
   ];
 
   const title = `User ${ellipseAddress(userAddress)}`;
+  const ENS = `${"felix"}.eth`;
 
   return (
     <Flex>
@@ -73,7 +77,7 @@ const UserProfile = ({ userAddress }) => {
         </Head>
         <Flex
           w="100%"
-          h="75vh"
+          h="85vh"
           bgImage="https://images.pexels.com/photos/1342460/pexels-photo-1342460.jpeg?cs=srgb&dl=pexels-vitaly-vlasov-1342460.jpg&fm=jpg"
           bgSize="cover"
           bgPos="center"
@@ -98,13 +102,36 @@ const UserProfile = ({ userAddress }) => {
         />
         <Heading
           color="teal.100"
-          my="6"
+          my="4"
           fontSize="1.8em"
-          fontFamily="Geostar"
+          className="audit"
+          _selection={{
+            color: "teal.800",
+            background: "white",
+          }}
         >
           {userAddress}
         </Heading>
-        <HStack gap="5" mt="2" mb="6">
+
+        <Heading
+          color="teal.100"
+          my="4"
+          fontSize="1.8em"
+          className="head"
+          _selection={{
+            color: "teal.800",
+            background: "white",
+          }}
+        >
+          <Link
+            href={`https://app.ens.domains/name/${ENS}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {ENS}
+          </Link>
+        </Heading>
+        <HStack gap="5" my="4">
           <Link href="https://www.google.com">
             <FiTwitter size="3em" />
           </Link>
@@ -122,7 +149,24 @@ const UserProfile = ({ userAddress }) => {
           alignItems="center"
           className="judged"
         >
-          <Heading color="white" my="4" fontSize="3xl" className="head">
+          <Heading
+            color="white"
+            my="4"
+            fontSize="4xl"
+            className="head"
+            display="inline-flex"
+            _selection={{
+              color: "teal.800",
+              background: "white",
+            }}
+          >
+            <GiInjustice
+              size="1.8em"
+              style={{
+                marginRight: "0.5em",
+                marginBottom: "-1em",
+              }}
+            />
             Judged Audits :
           </Heading>
           <Flex
@@ -136,13 +180,17 @@ const UserProfile = ({ userAddress }) => {
             <Heading my="4" fontSize="2xl">
               {juryForAudit.map((audit, index) => {
                 return (
-                  <Box key={index} mt="2" mx="4">
+                  <Box key={index} py="2" mx="4">
                     <Link
-                      fontSize="xl"
+                      fontSize="1.1em"
                       className="address"
-                      color="teal.50"
+                      color="teal.100"
                       display="inline-flex"
                       href={`/audit/${audit}`}
+                      _selection={{
+                        color: "teal.800",
+                        background: "white",
+                      }}
                       _hover={{
                         color: "teal.100",
                       }}
@@ -164,7 +212,24 @@ const UserProfile = ({ userAddress }) => {
           justifyContent="center"
           alignItems="center"
         >
-          <Heading color="white" my="4" fontSize="3xl" className="head">
+          <Heading
+            color="white"
+            my="4"
+            fontSize="4xl"
+            className="head"
+            display="inline-flex"
+            _selection={{
+              color: "teal.800",
+              background: "white",
+            }}
+          >
+            <AiOutlineAudit
+              size="1.7em"
+              style={{
+                marginRight: "0.5em",
+                marginBottom: "-1em",
+              }}
+            />
             Audits requested :
           </Heading>
           <Flex
@@ -184,13 +249,17 @@ const UserProfile = ({ userAddress }) => {
             >
               {requestedAudits.map((audit, index) => {
                 return (
-                  <VStack key={index} mt="4" mx="4">
+                  <VStack key={index} py="2" mx="4">
                     <Link
-                      fontSize="xl"
+                      fontSize="1.1em"
                       color="teal.100"
                       display="inline-flex"
                       className="address"
                       href={`/audit/${audit}`}
+                      _selection={{
+                        color: "teal.800",
+                        background: "white",
+                      }}
                       _hover={{
                         color: "teal.50",
                       }}
@@ -214,8 +283,20 @@ const UserProfile = ({ userAddress }) => {
           filter="brightness(900%)"
           blendMode="color-dodge"
         >
-          <Heading color="white" my="4" fontSize="4xl" className="head">
-            Bugs reported In :
+          <Heading
+            color="white"
+            my="4"
+            fontSize="3xl"
+            className="head"
+            display="inline-flex"
+          >
+            <BsBug
+              size="1.4em"
+              style={{
+                marginRight: "0.5em",
+              }}
+            />
+            Reported bugs in :
           </Heading>
           <Flex
             w="100%"
@@ -258,7 +339,7 @@ const UserProfile = ({ userAddress }) => {
                     {bug.contractAddress}
                   </Text>
                   <Text
-                    fontSize="lg"
+                    fontSize="xl"
                     color="teal.50"
                     mt="2"
                     textAlign="center"

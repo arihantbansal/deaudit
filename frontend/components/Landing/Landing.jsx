@@ -52,8 +52,7 @@ const Landing = () => {
         </Text>
         <Link href="/explore" textDecor="none">
           <Button
-            fontFamily="Space Grotesk"
-            bg="red.900"
+            background="red.900"
             variant="solid"
             my="6"
             color="white"
@@ -61,17 +60,20 @@ const Landing = () => {
             borderRadius="30px"
             borderStyle="solid"
             borderWidth="1px"
+            px="30px"
+            py="7"
             letterSpacing="0.5px"
             size="lg"
-            fontSize="lg"
+            fontFamily="Eirian"
+            fontSize="2xl"
             _active={{
-              bg: "transparent",
               border: "white",
+              bg: "transparent",
               borderWidth: "1px",
               borderStyle: "solid",
             }}
             _hover={{
-              bg: "red.700",
+              bg: "red.800",
               textDecoration: "none",
             }}
           >

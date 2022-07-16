@@ -5,7 +5,7 @@ import WalletLink from "walletlink";
 import { useCallback, useContext, useEffect, useReducer } from "react";
 import Web3Modal from "web3modal";
 import { ellipseAddress, getChainData } from "../../lib/utilities";
-import { Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
+import { Button, Flex, Heading, Link, useToast } from "@chakra-ui/react";
 import { StateContext } from "../../contexts/StateContext";
 
 let providerOptions = {
@@ -162,6 +162,7 @@ const Modal = () => {
         height="15vh"
         backdropFilter="auto"
         backdropBlur="sm"
+        zIndex="100"
         backdropContrast="85%"
         position="fixed"
         top="0"
@@ -170,33 +171,42 @@ const Modal = () => {
         justifyContent="space-between"
         flexDir="row"
       >
-        <Heading
-          fontSize="5xl"
-          p="3"
-          ml="10"
-          fontFamily="Geostar"
-          letterSpacing="2px"
-          color="white"
-        >
-          DEAUDIT
-        </Heading>
+        <Link href="/" passHref color="white">
+          <Heading
+            fontSize="5xl"
+            p="3"
+            ml="10"
+            fontFamily="Geostar Fill"
+            letterSpacing="2px"
+            color="white"
+          >
+            DEAUDIT
+          </Heading>
+        </Link>
 
-        <Flex m="20" justifyContent="space-around" flexDir="row">
+        <Flex m="20" justifyContent="space-around" flexDir="row" gap="10">
+          <Link href="/new-audit">
+            <Button
+              className="connect-button"
+              variant="solid"
+              size="lg"
+              fontSize="1.3em"
+              _hover={{
+                bg: "transparent",
+                color: "#fecaca",
+              }}
+            >
+              Request Audit
+            </Button>
+          </Link>
+
           {web3Provider ? (
             <Button
-              fontFamily="Space Grotesk"
-              bg="transparent"
-              variant="solid"
-              borderRadius="30px"
-              borderWidth="1px"
-              borderStyle="solid"
-              borderColor="#fecaca"
+              className="connect-button"
               onClick={disconnect}
-              color="white"
-              w="fit-content"
+              variant="solid"
               size="lg"
-              fontSize="xl"
-              padding={["10px", "20px"]}
+              fontSize="1.3em"
               _hover={{
                 bg: "transparent",
                 color: "#fecaca",
@@ -206,24 +216,16 @@ const Modal = () => {
             </Button>
           ) : (
             <Button
-              fontFamily="Space Grotesk"
-              bg="transparent"
+              className="connect-button"
               variant="solid"
-              borderRadius="30px"
-              borderWidth="1px"
-              borderStyle="solid"
-              borderColor="#fecaca"
-              onClick={connectWeb3Modal}
-              color="white"
               size="lg"
-              padding={["10px", "20px"]}
-              fontSize="xl"
-              w="fit-content"
               _hover={{
                 bg: "transparent",
                 color: "#fecaca",
                 border: "1px solid #fecaca",
               }}
+              onClick={connectWeb3Modal}
+              fontSize="1.3em"
             >
               Connect
             </Button>

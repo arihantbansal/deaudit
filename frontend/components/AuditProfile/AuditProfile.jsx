@@ -1,14 +1,20 @@
 import {
   Box,
   Button,
-  Center,
-  Container,
   Flex,
   Heading,
-  Image,
   Link,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalBody,
   Text,
   VStack,
+  useDisclosure,
+  ModalHeader,
+  ModalCloseButton,
+  ModalFooter,
+  Textarea,
 } from "@chakra-ui/react";
 import { ellipseAddress } from "@lib/utilities";
 import Head from "next/head";
@@ -16,6 +22,9 @@ import React from "react";
 import { GoUnverified } from "react-icons/go";
 import { MdVerified } from "react-icons/md";
 import { TbExternalLink } from "react-icons/tb";
+import { BsBug } from "react-icons/bs";
+import { RiMoneyDollarCircleLine } from "react-icons/ri";
+import { GiInjustice } from "react-icons/gi";
 import styles from "../../styles/AuditLines.module.scss";
 
 const AuditProfile = ({ contractAddress }) => {
@@ -53,14 +62,13 @@ const AuditProfile = ({ contractAddress }) => {
   ];
 
   const title = `Audit ${ellipseAddress(contractAddress)}`;
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <Flex flexDir="column">
-        <Head>
-          <title>{title}</title>
-        </Head>
+      <Head>
+        <title>{title}</title>
+      </Head>
       <Flex className={styles.container}>
-      
         {[...Array(300)].map((e, i) => (
           <Box className={styles.line} key={i}></Box>
         ))}
@@ -68,45 +76,145 @@ const AuditProfile = ({ contractAddress }) => {
       <Flex
         flexDir="column"
         position="absolute"
-        top="10"
+        top="20vh"
         w="100vw"
         m="auto"
         textAlign="center"
       >
-        <Heading color="white" my="4" fontSize="1.5em" fontFamily="Geostar Fill">
+        <Heading
+          color="white"
+          my="4"
+          flexDir="row"
+          fontSize="1.5em"
+          className="head"
+          display="inline-block"
+          _selection={{
+            color: "red.800",
+            background: "white",
+          }}
+        >
           Contract :
           <Link
             color="red.200"
             display="inline-flex"
+            fontSize="1.1em"
             mx="4"
-            fontFamily="Geostar"
-            letterSpacing="-0.8px"
+            className="audit"
+            letterSpacing="1px"
             href={`https://mumbai.polygonscan.com/address/${contractAddress}`}
             _hover={{
-              color: "red.100",
+              color: "red.50",
+            }}
+            _selection={{
+              color: "red.800",
+              background: "white",
             }}
           >
             {contractAddress}
           </Link>
         </Heading>
 
-        <Heading color="white" my="4" fontSize="1.3em" fontFamily="Geostar Fill">
-          Creator :
+        <Heading
+          color="white"
+          my="4"
+          fontSize="1.5em"
+          className="head"
+          _selection={{
+            color: "red.800",
+            background: "white",
+          }}
+        >
+          Requestor :
           <Link
             color="red.200"
             display="inline-flex"
             mx="4"
-            fontFamily="Geostar"
+            className="audit"
             href={`/user/${creator}`}
             _hover={{
-              color: "red.100",
+              color: "red.50",
+            }}
+            _selection={{
+              color: "red.800",
+              background: "white",
             }}
           >
             {creator}
           </Link>
         </Heading>
+        <Button
+          size="lg"
+          mx="auto"
+          my="6"
+          fontFamily="Eirian"
+          border="1px"
+          borderColor="red.200"
+          borderRadius="10px"
+          letterSpacing="0.5px"
+          fontSize="1.5em"
+          bg="white"
+          color="red.800"
+          onClick={onOpen}
+          _hover={{
+            bg: "transparent",
+            color: "red.100",
+          }}
+          leftIcon={<BsBug />}
+        >
+          Report a Bug
+        </Button>
+        <Modal isOpen={isOpen} onClose={onClose} isCentered>
+          <ModalOverlay />
+          <ModalContent bgColor="#0F0301">
+            <ModalCloseButton />
+            <ModalHeader className="modal-head">Report Bug</ModalHeader>
+            <ModalBody>
+              <Textarea
+                required
+                placeholder="Description"
+                size="lg"
+                border="1px"
+                borderColor="red.200"
+                borderRadius="10px"
+                fontFamily="Space Grotesk"
+                rows="6"
+                cols="50"
+                fontSize="1.2em"
+                color="red.100"
+                boxShadow="none"
+                _focus={{
+                  borderColor: "red.200",
+                  boxShadow: "none",
+                }}
+              />
+            </ModalBody>
+
+            <ModalFooter>
+              <Button
+                size="md"
+                fontFamily="Eirian"
+                border="1px"
+                borderColor="red.200"
+                borderRadius="10px"
+                fontSize="1.2em"
+                bg="transparent"
+                color="gray.200"
+                onClick={onClose}
+                _hover={{
+                  bg: "gray.200",
+                  color: "red.800",
+                }}
+                colorScheme="red"
+                mr={3}
+              >
+                Submit
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
         <Flex
-          m="4"
+          m="2"
           p="4"
           w="100%"
           h="fit-content"
@@ -114,7 +222,24 @@ const AuditProfile = ({ contractAddress }) => {
           justifyContent="center"
           alignItems="center"
         >
-          <Heading color="white" my="4" fontSize="4xl" className="head">
+          <Heading
+            color="white"
+            my="4"
+            fontSize="4xl"
+            className="head"
+            // fontFamily="Atures"
+            display="inline-flex"
+            _selection={{
+              color: "red.800",
+              background: "white",
+            }}
+          >
+            <GiInjustice
+              size="1.4em"
+              style={{
+                marginRight: "0.5em",
+              }}
+            />
             Jury Members :
           </Heading>
           <Flex
@@ -128,15 +253,19 @@ const AuditProfile = ({ contractAddress }) => {
             <Heading color="white" my="4" fontSize="2xl">
               {juryMembers.map((juryMember, index) => {
                 return (
-                  <Box key={index} mt="2" mx="4">
+                  <Box key={index} py="2" mx="4">
                     <Link
-                      fontSize="xl"
+                      fontSize="1.1em"
                       color="red.200"
                       className="address"
                       display="inline-flex"
                       href={`/user/${juryMember}`}
+                      _selection={{
+                        color: "red.800",
+                        background: "white",
+                      }}
                       _hover={{
-                        color: "red.100",
+                        color: "red.50",
                       }}
                     >
                       {juryMember}
@@ -154,8 +283,24 @@ const AuditProfile = ({ contractAddress }) => {
           justifyContent="center"
           alignItems="center"
         >
-          <Heading color="white" my="6" fontSize="4xl" className="head">
-            Pool Sizes :
+          <Heading
+            color="white"
+            my="6"
+            fontSize="4xl"
+            className="head"
+            display="inline-flex"
+            _selection={{
+              color: "red.800",
+              background: "white",
+            }}
+          >
+            <RiMoneyDollarCircleLine
+              size="1.3em"
+              style={{
+                marginRight: "0.5em",
+              }}
+            />
+            Current pool Sizes :
           </Heading>
           <Flex
             w="60%"
@@ -169,29 +314,42 @@ const AuditProfile = ({ contractAddress }) => {
             {Object.keys(poolSizes).map((poolSize, index) => {
               return (
                 <VStack key={index} my="4" gap="4">
-                  <Heading color="white" fontSize="3xl" fontFamily="Geostar">
+                  <Heading
+                    color="white"
+                    fontSize="4xl"
+                    fontFamily="Monosphere"
+                    _selection={{
+                      color: "red.800",
+                      background: "white",
+                    }}
+                  >
                     {poolSize}
                   </Heading>
                   <Heading
                     color="white"
                     fontSize="xl"
                     fontFamily="Major Mono Display"
+                    _selection={{
+                      color: "red.800",
+                      background: "white",
+                    }}
                   >
                     {poolSizes[poolSize]}
                   </Heading>
                   <Button
-                    fontFamily="Space Grotesk"
-                    bg="transparent"
+                    fontFamily="Eirian"
+                    bg="gray.200"
                     variant="solid"
-                    borderRadius="30px"
+                    borderRadius="10px"
                     borderWidth="1px"
                     borderStyle="solid"
                     borderColor="#fecaca"
-                    color="white"
+                    color="red.800"
                     size="lg"
-                    padding="2px 20px"
-                    fontSize="xl"
-                    w="fit-content"
+                    fontSize="2xl"
+                    h="fit-content"
+                    paddingX="6"
+                    paddingY="2"
                     _hover={{
                       bg: "transparent",
                       color: "#fecaca",
@@ -216,8 +374,26 @@ const AuditProfile = ({ contractAddress }) => {
           filter="brightness(900%)"
           blendMode="color-dodge"
         >
-          <Heading color="white" my="4" fontSize="4xl" className="head">
-            Bugs reported by :
+          <Heading
+            color="white"
+            my="4"
+            mx="3"
+            fontSize="4xl"
+            className="head"
+            display="inline-flex"
+            _selected={true}
+            _selection={{
+              backgroundColor: "red.50",
+              color: "black",
+            }}
+          >
+            <BsBug
+              size="1.3em"
+              style={{
+                marginRight: "0.5em",
+              }}
+            />
+            Bugs reported :
           </Heading>
           <Flex
             w="100vw"
@@ -238,7 +414,7 @@ const AuditProfile = ({ contractAddress }) => {
                   my="4"
                   mx="4"
                   borderWidth="1px"
-                  borderColor="red.100"
+                  borderColor="red.50"
                   borderStart="solid"
                   p="6"
                   borderRadius="15px"
@@ -249,7 +425,7 @@ const AuditProfile = ({ contractAddress }) => {
                     display="inline-flex"
                     className="address"
                     _hover={{
-                      color: "red.100",
+                      color: "red.50",
                     }}
                     _selected={true}
                     _selection={{
@@ -261,7 +437,7 @@ const AuditProfile = ({ contractAddress }) => {
                   </Text>
                   <Text
                     fontSize="xl"
-                    color="red.100"
+                    color="red.50"
                     mt="2"
                     textAlign="center"
                     m="auto"
