@@ -5,12 +5,12 @@ import {
   Heading,
   HStack,
   Image,
-  Link,
   Text,
   VStack,
 } from "@chakra-ui/react";
 import Head from "next/head";
 import { FiTwitter, FiGithub } from "react-icons/fi";
+import { Link as Linker } from "@chakra-ui/react";
 import { MdVerified } from "react-icons/md";
 import { GoUnverified } from "react-icons/go";
 import { TbExternalLink } from "react-icons/tb";
@@ -19,6 +19,7 @@ import { AiOutlineAudit } from "react-icons/ai";
 import { GiInjustice } from "react-icons/gi";
 import styles from "../../styles/UserLines.module.scss";
 import { ellipseAddress } from "@lib/utilities";
+import Link from "next/link";
 
 const UserProfile = ({ userAddress }) => {
   let juryForAudit = [
@@ -123,21 +124,21 @@ const UserProfile = ({ userAddress }) => {
             background: "white",
           }}
         >
-          <Link
+          <Linker
             href={`https://app.ens.domains/name/${ENS}`}
             target="_blank"
             rel="noopener noreferrer"
           >
             {ENS}
-          </Link>
+          </Linker>
         </Heading>
         <HStack gap="5" my="4">
-          <Link href="https://www.google.com">
+          <Linker href="https://www.google.com" target="_blank">
             <FiTwitter size="3em" />
-          </Link>
-          <Link href="https://www.google.com">
+          </Linker>
+          <Linker href="https://www.google.com" target="_blank">
             <FiGithub size="3em" />
-          </Link>
+          </Linker>
         </HStack>
         <Flex
           m="4"
@@ -181,21 +182,25 @@ const UserProfile = ({ userAddress }) => {
               {juryForAudit.map((audit, index) => {
                 return (
                   <Box key={index} py="2" mx="4">
-                    <Link
-                      fontSize="1.1em"
-                      className="address"
-                      color="teal.100"
-                      display="inline-flex"
-                      href={`/audit/${audit}`}
-                      _selection={{
-                        color: "teal.800",
-                        background: "white",
-                      }}
-                      _hover={{
-                        color: "teal.100",
-                      }}
-                    >
-                      {audit}
+                    <Link href={`/audit/${audit}`} passHref>
+                      <a>
+                        <Text
+                          fontSize="1.1em"
+                          className="address"
+                          color="teal.100"
+                          display="inline-flex"
+                          href={`/audit/${audit}`}
+                          _selection={{
+                            color: "teal.800",
+                            background: "white",
+                          }}
+                          _hover={{
+                            color: "teal.100",
+                          }}
+                        >
+                          {audit}
+                        </Text>
+                      </a>
                     </Link>
                   </Box>
                 );
@@ -250,21 +255,24 @@ const UserProfile = ({ userAddress }) => {
               {requestedAudits.map((audit, index) => {
                 return (
                   <VStack key={index} py="2" mx="4">
-                    <Link
-                      fontSize="1.1em"
-                      color="teal.100"
-                      display="inline-flex"
-                      className="address"
-                      href={`/audit/${audit}`}
-                      _selection={{
-                        color: "teal.800",
-                        background: "white",
-                      }}
-                      _hover={{
-                        color: "teal.50",
-                      }}
-                    >
-                      {audit}
+                    <Link href={`/audit/${audit}`} passHref>
+                      <a>
+                        <Text
+                          fontSize="1.1em"
+                          color="teal.100"
+                          display="inline-flex"
+                          className="address"
+                          _selection={{
+                            color: "teal.800",
+                            background: "white",
+                          }}
+                          _hover={{
+                            color: "teal.50",
+                          }}
+                        >
+                          {audit}
+                        </Text>
+                      </a>
                     </Link>
                   </VStack>
                 );
@@ -322,7 +330,7 @@ const UserProfile = ({ userAddress }) => {
                   borderRadius="15px"
                 >
                   <Text
-                    fontSize="xl"
+                    fontSize="2xl"
                     color="teal.100"
                     display="inline-flex"
                     className="address"
@@ -360,16 +368,13 @@ const UserProfile = ({ userAddress }) => {
                     gap="4"
                   >
                     {bug.verified ? (
-                      <MdVerified size="1.3em" color="green" />
+                      <MdVerified size="1.4em" color="green" />
                     ) : (
-                      <GoUnverified size="1.3em" color="teal" />
+                      <GoUnverified size="1.4em" color="teal" />
                     )}
 
-                    <Link
-                      href={`/audit/${bug.contractAddress}`}
-                      color="teal.100"
-                    >
-                      <TbExternalLink size="1.3em" />
+                    <Link href={`/audit/${bug.contractAddress}`} passHref>
+                      <TbExternalLink size="1.4em" className="link" />
                     </Link>
                   </Flex>
                 </VStack>

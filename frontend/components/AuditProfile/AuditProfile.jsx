@@ -3,7 +3,6 @@ import {
   Button,
   Flex,
   Heading,
-  Link,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -16,6 +15,7 @@ import {
   ModalFooter,
   Textarea,
 } from "@chakra-ui/react";
+import { Link as Linker } from "@chakra-ui/react";
 import { ellipseAddress } from "@lib/utilities";
 import Head from "next/head";
 import React from "react";
@@ -26,6 +26,7 @@ import { BsBug } from "react-icons/bs";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { GiInjustice } from "react-icons/gi";
 import styles from "../../styles/AuditLines.module.scss";
+import Link from "next/link";
 
 const AuditProfile = ({ contractAddress }) => {
   let creator = "0xaC6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F";
@@ -94,13 +95,14 @@ const AuditProfile = ({ contractAddress }) => {
           }}
         >
           Contract :
-          <Link
+          <Linker
             color="red.200"
             display="inline-flex"
             fontSize="1.1em"
             mx="4"
             className="audit"
             letterSpacing="1px"
+            target="_blank"
             href={`https://mumbai.polygonscan.com/address/${contractAddress}`}
             _hover={{
               color: "red.50",
@@ -111,7 +113,7 @@ const AuditProfile = ({ contractAddress }) => {
             }}
           >
             {contractAddress}
-          </Link>
+          </Linker>
         </Heading>
 
         <Heading
@@ -125,21 +127,24 @@ const AuditProfile = ({ contractAddress }) => {
           }}
         >
           Requestor :
-          <Link
-            color="red.200"
-            display="inline-flex"
-            mx="4"
-            className="audit"
-            href={`/user/${creator}`}
-            _hover={{
-              color: "red.50",
-            }}
-            _selection={{
-              color: "red.800",
-              background: "white",
-            }}
-          >
-            {creator}
+          <Link href={`/user/${creator}`} passHref>
+            <a>
+              <Text
+                color="red.200"
+                display="inline-flex"
+                mx="4"
+                className="audit"
+                _hover={{
+                  color: "red.50",
+                }}
+                _selection={{
+                  color: "red.800",
+                  background: "white",
+                }}
+              >
+                {creator}
+              </Text>
+            </a>
           </Link>
         </Heading>
         <Button
@@ -227,7 +232,6 @@ const AuditProfile = ({ contractAddress }) => {
             my="4"
             fontSize="4xl"
             className="head"
-            // fontFamily="Atures"
             display="inline-flex"
             _selection={{
               color: "red.800",
@@ -254,21 +258,24 @@ const AuditProfile = ({ contractAddress }) => {
               {juryMembers.map((juryMember, index) => {
                 return (
                   <Box key={index} py="2" mx="4">
-                    <Link
-                      fontSize="1.1em"
-                      color="red.200"
-                      className="address"
-                      display="inline-flex"
-                      href={`/user/${juryMember}`}
-                      _selection={{
-                        color: "red.800",
-                        background: "white",
-                      }}
-                      _hover={{
-                        color: "red.50",
-                      }}
-                    >
-                      {juryMember}
+                    <Link href={`/user/${juryMember}`} passHref>
+                      <a>
+                        <Text
+                          fontSize="1.1em"
+                          color="red.200"
+                          className="address"
+                          display="inline-flex"
+                          _selection={{
+                            color: "red.800",
+                            background: "white",
+                          }}
+                          _hover={{
+                            color: "red.50",
+                          }}
+                        >
+                          {juryMember}
+                        </Text>
+                      </a>
                     </Link>
                   </Box>
                 );
@@ -420,7 +427,7 @@ const AuditProfile = ({ contractAddress }) => {
                   borderRadius="15px"
                 >
                   <Text
-                    fontSize="xl"
+                    fontSize="2xl"
                     color="red.200"
                     display="inline-flex"
                     className="address"
@@ -456,13 +463,13 @@ const AuditProfile = ({ contractAddress }) => {
                     gap="4"
                   >
                     {bug.verified ? (
-                      <MdVerified size="1.3em" color="green" />
+                      <MdVerified size="1.4em" color="green" />
                     ) : (
-                      <GoUnverified size="1.3em" color="red" />
+                      <GoUnverified size="1.4em" color="red" />
                     )}
 
-                    <Link href={`/user/${bug.userAddress}`} color="purple.200">
-                      <TbExternalLink size="1.3em" />
+                    <Link href={`/user/${bug.userAddress}`} passHref>
+                      <TbExternalLink size="1.4em" className="link" />
                     </Link>
                   </Flex>
                 </VStack>

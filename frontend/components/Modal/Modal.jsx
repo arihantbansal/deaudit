@@ -2,11 +2,12 @@ import Head from "next/head";
 import { providers } from "ethers";
 import { sequence } from "0xsequence";
 import WalletLink from "walletlink";
-import { useCallback, useContext, useEffect, useReducer } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import Web3Modal from "web3modal";
-import { ellipseAddress, getChainData } from "../../lib/utilities";
-import { Button, Flex, Heading, Link, useToast } from "@chakra-ui/react";
+import { getChainData } from "../../lib/utilities";
+import { Button, Flex, Heading, useToast } from "@chakra-ui/react";
 import { StateContext } from "../../contexts/StateContext";
+import Link from "next/link";
 
 let providerOptions = {
   "custom-walletlink": {
@@ -172,16 +173,18 @@ const Modal = () => {
         flexDir="row"
       >
         <Link href="/" passHref color="white">
-          <Heading
-            fontSize="5xl"
-            p="3"
-            ml="10"
-            fontFamily="Geostar Fill"
-            letterSpacing="2px"
-            color="white"
-          >
-            DEAUDIT
-          </Heading>
+          <a>
+            <Heading
+              fontSize="5xl"
+              p="3"
+              ml="10"
+              fontFamily="Geostar Fill"
+              letterSpacing="2px"
+              color="white"
+            >
+              DEAUDIT
+            </Heading>
+          </a>
         </Link>
 
         <Flex m="20" justifyContent="space-around" flexDir="row" gap="10">

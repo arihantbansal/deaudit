@@ -20,6 +20,14 @@ input:-webkit-autofill:active {
   transition: all 0s 50000s;
 }
 
+.link {
+  cursor: pointer !important;
+}
+
+.link:hover {
+  cursor: pointer !important;
+}
+
 input:focus {
   outline: none;
 }
