@@ -176,6 +176,7 @@ const AuditProfile = ({ contractAddress }) => {
             <ModalBody>
               <Textarea
                 required
+                spellCheck="false"
                 placeholder="Description"
                 size="lg"
                 border="1px"

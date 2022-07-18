@@ -17,6 +17,7 @@ import { TbExternalLink } from "react-icons/tb";
 import { BsBug } from "react-icons/bs";
 import { AiOutlineAudit } from "react-icons/ai";
 import { GiInjustice } from "react-icons/gi";
+import { useEnsName } from "wagmi";
 import styles from "../../styles/UserLines.module.scss";
 import { ellipseAddress } from "@lib/utilities";
 import Link from "next/link";
@@ -57,7 +58,9 @@ const UserProfile = ({ userAddress }) => {
   ];
 
   const title = `User ${ellipseAddress(userAddress)}`;
-  const ENS = `${"felix"}.eth`;
+  const { data, isError, isLoading } = useEnsName({
+    address: userAddress,
+  });
 
   return (
     <Flex>
@@ -79,7 +82,7 @@ const UserProfile = ({ userAddress }) => {
         <Flex
           w="100%"
           h="85vh"
-          bgImage="https://images.pexels.com/photos/1342460/pexels-photo-1342460.jpeg?cs=srgb&dl=pexels-vitaly-vlasov-1342460.jpg&fm=jpg"
+          bgImage="https://images.unsplash.com/photo-1563089145-599997674d42?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8"
           bgSize="cover"
           bgPos="center"
           bgRepeat="no-repeat"
@@ -93,7 +96,7 @@ const UserProfile = ({ userAddress }) => {
           alt="Audit"
           w="48"
           h="48"
-          src="https://images.unsplash.com/photo-1582266255765-fa5cf1a1d501?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8"
+          src="https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8"
           borderRadius="full"
           objectFit="cover"
           borderWidth="2px"
@@ -102,12 +105,12 @@ const UserProfile = ({ userAddress }) => {
           mb="4"
         />
         <Heading
-          color="teal.100"
+          color="purple.100"
           my="4"
           fontSize="1.8em"
           className="audit"
           _selection={{
-            color: "teal.800",
+            color: "purple.800",
             background: "white",
           }}
         >
@@ -115,21 +118,32 @@ const UserProfile = ({ userAddress }) => {
         </Heading>
 
         <Heading
-          color="teal.100"
+          color="purple.100"
           my="4"
           fontSize="1.8em"
           className="head"
           _selection={{
-            color: "teal.800",
+            color: "purple.800",
             background: "white",
           }}
         >
           <Linker
-            href={`https://app.ens.domains/name/${ENS}`}
+            href={
+              !isLoading && !isError && data
+                ? `https://app.ens.domains/name/${data}`
+                : "#"
+            }
             target="_blank"
             rel="noopener noreferrer"
           >
-            {ENS}
+            ENS : &nbsp;
+            {isLoading ? (
+              <span>Loading...</span>
+            ) : isError ? (
+              <span>Error</span>
+            ) : (
+              <span>{data}</span>
+            )}
           </Linker>
         </Heading>
         <HStack gap="5" my="4">
@@ -157,7 +171,7 @@ const UserProfile = ({ userAddress }) => {
             className="head"
             display="inline-flex"
             _selection={{
-              color: "teal.800",
+              color: "purple.800",
               background: "white",
             }}
           >
@@ -187,15 +201,15 @@ const UserProfile = ({ userAddress }) => {
                         <Text
                           fontSize="1.1em"
                           className="address"
-                          color="teal.100"
+                          color="purple.100"
                           display="inline-flex"
                           href={`/audit/${audit}`}
                           _selection={{
-                            color: "teal.800",
+                            color: "purple.800",
                             background: "white",
                           }}
                           _hover={{
-                            color: "teal.100",
+                            color: "purple.100",
                           }}
                         >
                           {audit}
@@ -224,7 +238,7 @@ const UserProfile = ({ userAddress }) => {
             className="head"
             display="inline-flex"
             _selection={{
-              color: "teal.800",
+              color: "purple.800",
               background: "white",
             }}
           >
@@ -259,15 +273,15 @@ const UserProfile = ({ userAddress }) => {
                       <a>
                         <Text
                           fontSize="1.1em"
-                          color="teal.100"
+                          color="purple.100"
                           display="inline-flex"
                           className="address"
                           _selection={{
-                            color: "teal.800",
+                            color: "purple.800",
                             background: "white",
                           }}
                           _hover={{
-                            color: "teal.50",
+                            color: "purple.50",
                           }}
                         >
                           {audit}
@@ -324,23 +338,23 @@ const UserProfile = ({ userAddress }) => {
                   my="4"
                   mx="4"
                   borderWidth="0.5px"
-                  borderColor="teal.50"
+                  borderColor="purple.50"
                   borderStart="solid"
                   p="6"
                   borderRadius="15px"
                 >
                   <Text
                     fontSize="2xl"
-                    color="teal.100"
+                    color="purple.100"
                     display="inline-flex"
                     className="address"
                     _hover={{
-                      color: "teal.50",
+                      color: "purple.50",
                     }}
                     blendMode="unset"
                     _selected={true}
                     _selection={{
-                      backgroundColor: "teal.700",
+                      backgroundColor: "purple.700",
                       color: "black",
                     }}
                   >
@@ -348,13 +362,13 @@ const UserProfile = ({ userAddress }) => {
                   </Text>
                   <Text
                     fontSize="xl"
-                    color="teal.50"
+                    color="purple.50"
                     mt="2"
                     textAlign="center"
                     m="auto"
                     _selected={true}
                     _selection={{
-                      backgroundColor: "teal.700",
+                      backgroundColor: "purple.700",
                       color: "black",
                     }}
                   >
@@ -370,7 +384,7 @@ const UserProfile = ({ userAddress }) => {
                     {bug.verified ? (
                       <MdVerified size="1.4em" color="green" />
                     ) : (
-                      <GoUnverified size="1.4em" color="teal" />
+                      <GoUnverified size="1.4em" color="purple" />
                     )}
 
                     <Link href={`/audit/${bug.contractAddress}`} passHref>

@@ -6,15 +6,33 @@ import "@styles/globals.scss";
 const Modal = dynamic(() => import("../components/Modal/Modal.jsx"), {
   ssr: false,
 });
+import {
+  createClient,
+  configureChains,
+  defaultChains,
+  WagmiConfig,
+} from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
+
+const { provider, webSocketProvider } = configureChains(defaultChains, [
+  publicProvider(),
+]);
+
+const client = createClient({
+  provider,
+  webSocketProvider,
+});
 
 function MyApp({ Component, pageProps }) {
   return (
-    <StateProvider>
-      <ChakraProvider theme={theme}>
-        <Modal />
-        <Component {...pageProps} />
-      </ChakraProvider>
-    </StateProvider>
+    <WagmiConfig client={client}>
+      <StateProvider>
+        <ChakraProvider theme={theme}>
+          <Modal />
+          <Component {...pageProps} />
+        </ChakraProvider>
+      </StateProvider>
+    </WagmiConfig>
   );
 }
 

@@ -65,6 +65,7 @@ const NewAudit = () => {
         <Textarea
           id="description"
           placeholder="Description"
+          spellCheck="false"
           size="lg"
           border="1px"
           borderColor="red.200"

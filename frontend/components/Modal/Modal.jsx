@@ -4,8 +4,8 @@ import { sequence } from "0xsequence";
 import WalletLink from "walletlink";
 import { useCallback, useContext, useEffect } from "react";
 import Web3Modal from "web3modal";
-import { getChainData } from "../../lib/utilities";
-import { Button, Flex, Heading, useToast } from "@chakra-ui/react";
+import { ellipseAddress, getChainData } from "../../lib/utilities";
+import { Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
 import { StateContext } from "../../contexts/StateContext";
 import Link from "next/link";
 
@@ -210,23 +210,14 @@ const Modal = () => {
               variant="solid"
               size="lg"
               fontSize="1.3em"
-              _hover={{
-                bg: "transparent",
-                color: "#fecaca",
-              }}
             >
-              Disconnect
+              {chainData.name === "Error" ? null : ellipseAddress(address)}
             </Button>
           ) : (
             <Button
               className="connect-button"
               variant="solid"
               size="lg"
-              _hover={{
-                bg: "transparent",
-                color: "#fecaca",
-                border: "1px solid #fecaca",
-              }}
               onClick={connectWeb3Modal}
               fontSize="1.3em"
             >

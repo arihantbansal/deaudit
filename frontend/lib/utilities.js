@@ -29,7 +29,7 @@ export function getChainData(chainId) {
   return chainData;
 }
 
-export function ellipseAddress(address = "", width = 5) {
+export function ellipseAddress(address = "", width = 6) {
   if (!address) {
     return "";
   }
