@@ -1,0 +1,49 @@
+{
+	"env": {
+		"node": true,
+		"commonjs": true,
+		"es2022": true,
+		"jest/globals": true
+	},
+	"extends": [
+		"eslint:recommended",
+		"plugin:import/recommended",
+		"plugin:prettier/recommended",
+		"plugin:import/errors",
+		"plugin:import/warnings"
+	],
+	"parserOptions": {
+		"ecmaVersion": "latest",
+		"sourceType": "module"
+	},
+	"plugins": ["prettier", "import"],
+	"rules": {
+		"indent": ["error", "tab"],
+		"linebreak-style": ["error", "windows"],
+		"quotes": ["error", "double"],
+		"semi": ["error", "always"],
+		"import/no-unresolved": 2,
+		"import/no-commonjs": 2,
+		"import/extensions": [
+			"error",
+			"ignorePackages",
+			{
+				"js": "never",
+				"jsx": "never"
+			}
+		],
+		"import/resolver": {
+			"node": {
+				"extensions": [".js", ".jsx"],
+				"moduleDirectory": ["node_modules", "src/"]
+			}
+		},
+		"prettier/prettier": [
+			"error",
+			{
+				"endOfLine": "auto"
+			}
+		]
+	}
+}
+

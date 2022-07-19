@@ -1,0 +1,6 @@
+/node_modules/*
+# build artefacts
+build/*
+coverage/*
+# 3rd party libs
+# /src/public/
