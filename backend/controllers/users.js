@@ -5,17 +5,12 @@ import supabase from "../supabase/client.js";
  * @route POST /user/
  */
 export const addUser = async (req, res) => {
-	if (!req.body.hasOwnProperty("name")) {
-		return res.status(400).json({
-			message: "Name is required",
-		});
-	}
-
-	let { name } = req.body;
+	let { name, address } = req.body;
 
 	const { data, error } = await supabase.from("users").insert([
 		{
 			name,
+			address,
 		},
 	]);
 
@@ -50,5 +45,27 @@ export const getUserData = async (req, res) => {
 
 	return res.status(200).json({
 		data: users[0],
+	});
+};
+
+/**
+ * Update user data
+ * @route PUT /user/:id
+ */
+export const updateUserData = async (req, res) => {
+	const { data: user, error } = await supabase
+		.from("users")
+		.update([{ ...req.body }])
+		.where("id", req.params.id);
+
+	if (error) {
+		return res.status(500).json({
+			message: "Error updating user data",
+			error,
+		});
+	}
+
+	return res.status(200).json({
+		data: user[0],
 	});
 };
