@@ -52,7 +52,7 @@ input:focus {
 }
 
 .web3modal-modal-lightbox {
-  z-index: 10 !important;
+  z-index: 100 !important;
 }
 *[data-hover] {
   -webkit-text-decoration: none !important;
@@ -68,6 +68,6 @@ input:focus {
   box-shadow: none !important;
 }
 
-*:focus {
+input:focus {
   box-shadow: none !important;
 }

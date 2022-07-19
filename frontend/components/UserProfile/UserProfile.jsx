@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import {
   Box,
   Button,
@@ -17,11 +17,12 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  Textarea,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import Head from "next/head";
-import { FiTwitter, FiGithub, FiSettings } from "react-icons/fi";
+import { FiTwitter, FiGithub, FiSettings, FiLinkedin } from "react-icons/fi";
 import { Link as Linker } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 import { MdVerified } from "react-icons/md";
@@ -69,15 +70,48 @@ const UserProfile = ({ userAddress }) => {
     },
   ];
 
-  const title = `User ${ellipseAddress(userAddress)}`;
   const { data, isError, isLoading } = useEnsName({
     address: userAddress,
   });
   const [state] = useStateContext();
-  const [jury, setJury] = useState(false);
-  const [github, setGithub] = useState("");
-  const [twitter, setTwitter] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const cutAddress = "User " + ellipseAddress(userAddress);
+  let [title, setTitle] = useState("");
+
+  const initialState = {
+    github: "",
+    twitter: "",
+    linkedin: "",
+    jury: false,
+    bio: "Auditor",
+  };
+
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case "setGithub":
+        return { ...state, github: action.payload };
+      case "setTwitter":
+        return { ...state, twitter: action.payload };
+      case "setLinkedin":
+        return { ...state, linkedin: action.payload };
+      case "setJury":
+        return { ...state, jury: action.payload };
+      case "setBio":
+        return { ...state, bio: action.payload };
+      default:
+        return state;
+    }
+  };
+
+  const [socialState, dispatch] = useReducer(reducer, initialState);
+
+  useEffect(() => {
+    if (state.address === userAddress) {
+      setTitle("Your Profile");
+    } else {
+      setTitle(cutAddress);
+    }
+  }, [state, userAddress, cutAddress]);
 
   return (
     <Flex>
@@ -170,7 +204,7 @@ const UserProfile = ({ userAddress }) => {
             href={
               !isLoading && !isError && data
                 ? `https://app.ens.domains/name/${data}`
-                : "#"
+                : null
             }
             target="_blank"
             rel="noopener noreferrer"
@@ -190,22 +224,53 @@ const UserProfile = ({ userAddress }) => {
           <ModalOverlay />
           <ModalContent bgColor="#0F0301">
             <ModalCloseButton />
-            <ModalHeader className="modal-head">Settings</ModalHeader>
+            <ModalHeader className="modal-head">Profile Settings</ModalHeader>
             <ModalBody>
               <Checkbox
                 size="lg"
                 colorScheme="purple"
                 borderColor="purple.100"
                 fontFamily="Geostar Fill"
-                my="4"
+                mb="3"
                 fontSize="3xl"
-                isChecked={jury}
+                isChecked={socialState.jury}
                 onChange={() => {
-                  setJury(!jury);
+                  dispatch({ type: "setJury", payload: !socialState.jury });
                 }}
               >
                 Apply for Jury
               </Checkbox>
+              <FormLabel htmlFor="bio" fontFamily="Eirian">
+                Bio
+              </FormLabel>
+              <Textarea
+                id="bio"
+                placeholder="Tell us about yourself"
+                spellCheck="false"
+                size="lg"
+                border="1px"
+                borderColor="purple.50"
+                borderRadius="10px"
+                fontFamily="Eirian"
+                rows="3"
+                cols="40"
+                value={socialState.bio}
+                onChange={(e) => {
+                  dispatch({ type: "setBio", payload: e.target.value });
+                }}
+                mb="2"
+                fontSize="1.2em"
+                color="purple.100"
+                boxShadow="none"
+                _focus={{
+                  borderColor: "purple.50",
+                  boxShadow: "none",
+                }}
+                _hover={{
+                  borderColor: "purple.50",
+                  boxShadow: "none",
+                }}
+              />
 
               <FormLabel htmlFor="github" fontFamily="Eirian" my="2">
                 Github Username
@@ -218,9 +283,13 @@ const UserProfile = ({ userAddress }) => {
                 borderColor="purple.100"
                 fontFamily="Eirian"
                 fontSize="xl"
-                value={github}
+                _focus={{
+                  borderColor: "purple.50",
+                  boxShadow: "none",
+                }}
+                value={socialState.github}
                 onChange={(e) => {
-                  setGithub(e.target.value);
+                  dispatch({ type: "setGithub", payload: e.target.value });
                 }}
               />
 
@@ -234,18 +303,36 @@ const UserProfile = ({ userAddress }) => {
                 borderColor="purple.100"
                 fontFamily="Eirian"
                 variant="outline"
-                mb="4"
                 fontSize="xl"
-                value={twitter}
+                value={socialState.twitter}
                 boxShadow="none"
                 onChange={(e) => {
-                  setTwitter(e.target.value);
+                  dispatch({ type: "setTwitter", payload: e.target.value });
                 }}
                 _focus={{
                   borderColor: "purple.50",
                   boxShadow: "none",
                 }}
-                _hover={{
+              />
+
+              <FormLabel htmlFor="linkedin" fontFamily="Eirian" my="2">
+                LinkedIn Username
+              </FormLabel>
+              <Input
+                size="md"
+                id="linkedin"
+                colorScheme="purple"
+                borderColor="purple.100"
+                fontFamily="Eirian"
+                variant="outline"
+                mb="2"
+                fontSize="xl"
+                value={socialState.linkedin}
+                boxShadow="none"
+                onChange={(e) => {
+                  dispatch({ type: "setLinkedin", payload: e.target.value });
+                }}
+                _focus={{
                   borderColor: "purple.50",
                   boxShadow: "none",
                 }}
@@ -254,7 +341,7 @@ const UserProfile = ({ userAddress }) => {
               <FormLabel
                 htmlFor="profile"
                 fontFamily="Eirian"
-                my="4"
+                my="3"
                 fontWeight="bold"
               >
                 Profile Image
@@ -281,7 +368,7 @@ const UserProfile = ({ userAddress }) => {
               <FormLabel
                 htmlFor="cover"
                 fontFamily="Eirian"
-                my="4"
+                my="3"
                 fontWeight="bold"
               >
                 Cover Image
@@ -322,12 +409,34 @@ const UserProfile = ({ userAddress }) => {
           </ModalContent>
         </Modal>
 
+        <Text
+          fontFamily="Atures"
+          fontSize="1.8em"
+          color="purple.100"
+          my="2"
+          letterSpacing="1px"
+        >
+          {socialState.bio}
+        </Text>
+
         <HStack gap="5" my="4">
-          <Linker href={`https://www.twitter.com/${twitter}`} target="_blank">
-            <FiTwitter size="3em" />
+          <Linker
+            href={`https://www.twitter.com/${socialState.twitter}`}
+            target="_blank"
+          >
+            <FiTwitter size="2.5em" />
           </Linker>
-          <Linker href={`https://www.github.com/${github}`} target="_blank">
-            <FiGithub size="3em" />
+          <Linker
+            href={`https://www.github.com/${socialState.github}`}
+            target="_blank"
+          >
+            <FiGithub size="2.5em" />
+          </Linker>
+          <Linker
+            href={`https://www.linkedin.com/in/${socialState.linkedin}`}
+            target="_blank"
+          >
+            <FiLinkedin size="2.5em" />
           </Linker>
         </HStack>
         <Flex

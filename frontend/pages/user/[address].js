@@ -1,8 +1,10 @@
 import Modal from "@components/Modal/Modal";
 import UserProfile from "@components/UserProfile/UserProfile";
-import { StateContext, useStateContext } from "contexts/StateContext";
+import { ellipseAddress } from "@lib/utilities";
+import { useStateContext } from "contexts/StateContext";
+import Head from "next/head";
 import Router, { useRouter } from "next/router";
-import { useContext, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const User = () => {
   const exists = true;
@@ -13,12 +15,7 @@ const User = () => {
     document.documentElement.style.setProperty("--button-color", "#D6BCFA");
   }, []);
 
-  if (exists)
-    return (
-      <>
-        <UserProfile userAddress={address} />
-      </>
-    );
+  if (exists) return <UserProfile userAddress={address} />;
   else Router.push("/404");
 };
 

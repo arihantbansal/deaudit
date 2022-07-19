@@ -1,20 +1,18 @@
 import {
   Box,
   Button,
-  Center,
-  Container,
   Flex,
   FormControl,
   FormLabel,
   Heading,
   Input,
-  Textarea,
-  VStack,
 } from "@chakra-ui/react";
-import Head from "next/head";
-import React from "react";
+import  Router from "next/router";
+import React, { useState } from "react";
 
 const NewAudit = () => {
+  const [contractAddress, setContractAddress] = useState("");
+
   return (
     <Flex flexDir="column">
       <Flex className="container">
@@ -33,6 +31,7 @@ const NewAudit = () => {
           New Audit
         </Heading>
         <Flex flexDir="column" mt="8" fontFamily="Space Grotesk">
+          <form>
           <FormControl my="2" isRequired>
             <FormLabel
               htmlFor="contractAddress"
@@ -43,11 +42,15 @@ const NewAudit = () => {
               Contract Address
             </FormLabel>
             <Input
+            required
               placeholder="Contract Address"
               id="contractAddress"
               size="lg"
+              value={contractAddress}
+              onChange={(e) => setContractAddress(e.target.value)}
               variant="outline"
               borderColor="pink.50"
+              spellCheck="false"
               borderWidth="1px"
               borderRadius="5px"
               mb="10"
@@ -62,38 +65,6 @@ const NewAudit = () => {
               }}
             />
           </FormControl>
-          <FormLabel
-            htmlFor="description"
-            fontSize="lg"
-            color="gray.200"
-            textAlign="left"
-          >
-            Description
-          </FormLabel>
-          <Textarea
-            id="description"
-            placeholder="Description"
-            spellCheck="false"
-            size="lg"
-            border="1px"
-            borderColor="pink.50"
-            borderRadius="10px"
-            fontFamily="Space Grotesk"
-            rows="6"
-            cols="50"
-            mb="10"
-            fontSize="1.2em"
-            color="pink.100"
-            boxShadow="none"
-            _focus={{
-              borderColor: "pink.50",
-              boxShadow: "none",
-            }}
-            _hover={{
-              borderColor: "pink.50",
-              boxShadow: "none",
-            }}
-          />
 
           <Button
             size="lg"
@@ -101,9 +72,16 @@ const NewAudit = () => {
             border="1px"
             w="fit-content"
             mx="auto"
+            type="submit"
+            float="right"
             borderColor="pink.200"
             borderRadius="10px"
             fontSize="1.3em"
+            onClick={(e) => {
+              e.preventDefault();
+              console.log(contractAddress);
+              Router.push(`/audit/${contractAddress}`);
+            }}
             bg="transparent"
             color="pink.200"
             _hover={{
@@ -115,6 +93,7 @@ const NewAudit = () => {
           >
             Submit
           </Button>
+          </form>
         </Flex>
       </Flex>
     </Flex>

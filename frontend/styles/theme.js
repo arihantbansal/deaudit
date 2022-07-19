@@ -31,6 +31,11 @@ const components = {
       },
     },
   },
+  Input: {
+    baseStyle: {
+      _focus: { boxShadow: "none", border: "none" },
+    },
+  },
   Input: { baseStyle: { _focus: { boxShadow: "none" } } },
 };
 

@@ -196,7 +196,7 @@ const Modal = () => {
               size="lg"
               fontSize="1.3em"
             >
-              Request Audit
+              New Audit
             </Button>
           </Link>
 
