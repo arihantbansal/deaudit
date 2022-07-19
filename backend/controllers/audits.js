@@ -62,7 +62,49 @@ export const getAuditData = async (req, res) => {
 		});
 	}
 
+	for (var bug in audit[0].bugs_reported) {
+		let { data: bugData, error } = await supabase
+			.from("bugs")
+			.select("*")
+			.eq("id", bug);
+
+		if (error) {
+			return res.status(500).json({
+				message: "Error fetching bug data",
+				error,
+			});
+		}
+
+		audit[0].bugs_reported[bug] = bugData[0];
+	}
+
 	return res.status(200).json({
 		data: audit[0],
+	});
+};
+
+/**
+ * Update audit data
+ * @route PUT /audit/:id
+ */
+export const updateAuditData = async (req, res) => {
+	const { data, error } = await supabase
+		.from("audits")
+		.update([
+			{
+				...req.body,
+			},
+		])
+		.where("id", req.params.id);
+
+	if (error) {
+		return res.status(500).json({
+			message: "Error updating audit",
+			error,
+		});
+	}
+
+	return res.status(200).json({
+		data: data[0],
 	});
 };

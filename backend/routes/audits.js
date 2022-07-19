@@ -1,5 +1,10 @@
 import express from "express";
-import { addAudit, getAudit } from "../controllers/audits.js";
+import {
+	addAudit,
+	getAllAudits,
+	getAuditData,
+	updateAuditData,
+} from "../controllers/audits.js";
 
 const auditRouter = express.Router();
 
@@ -13,6 +18,10 @@ auditRouter.post("/", addAudit);
 
 //@route	GET /audit/:id
 //@desc		Get audit details
-auditRouter.get("/:id", getAudit);
+auditRouter.get("/:id", getAuditData);
+
+//@route	PUT /audit/:id
+//@desc		Update audit details
+auditRouter.put("/:id", updateAuditData);
 
 export default auditRouter;
