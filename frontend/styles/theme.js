@@ -31,6 +31,7 @@ const components = {
       },
     },
   },
+  Input: { baseStyle: { _focus: { boxShadow: "none" } } },
 };
 
 const theme = extendTheme({ styles, config, components });

@@ -1,11 +1,12 @@
 import { ChakraProvider } from "@chakra-ui/react";
 import theme from "@styles/theme";
-import dynamic from "next/dynamic.js";
+import dynamic from "next/dynamic";
 import { StateProvider } from "contexts/StateContext";
 import "@styles/globals.scss";
-const Modal = dynamic(() => import("../components/Modal/Modal.jsx"), {
-  ssr: false,
-});
+import "@styles/colors.scss";
+// const Modal = dynamic(() => import("../components/Modal/Modal.jsx"), {
+//   ssr: false,
+// });
 import {
   createClient,
   configureChains,
@@ -13,6 +14,7 @@ import {
   WagmiConfig,
 } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
+import Modal from "@components/Modal/Modal";
 
 const { provider, webSocketProvider } = configureChains(defaultChains, [
   publicProvider(),
@@ -25,14 +27,14 @@ const client = createClient({
 
 function MyApp({ Component, pageProps }) {
   return (
-    <WagmiConfig client={client}>
-      <StateProvider>
+    <StateProvider>
+      <WagmiConfig client={client}>
         <ChakraProvider theme={theme}>
           <Modal />
           <Component {...pageProps} />
         </ChakraProvider>
-      </StateProvider>
-    </WagmiConfig>
+      </WagmiConfig>
+    </StateProvider>
   );
 }
 

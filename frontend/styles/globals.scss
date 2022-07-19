@@ -51,14 +51,23 @@ input:focus {
   letter-spacing: 2px;
 }
 
-.connect-button {
-  font-family: "Eirian" !important;
-  border-radius: 30px !important;
-  background: transparent !important;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #fecaca;
-  color: white;
-  width: fit-content;
-  padding: 25px;
+.web3modal-modal-lightbox {
+  z-index: 10 !important;
+}
+*[data-hover] {
+  -webkit-text-decoration: none !important;
+  text-decoration: none !important;
+}
+
+*:hover {
+  -webkit-text-decoration: none !important;
+  text-decoration: none !important;
+}
+
+*[data-focus] {
+  box-shadow: none !important;
+}
+
+*:focus {
+  box-shadow: none !important;
 }

@@ -1,5 +1,5 @@
 import { ColorModeScript } from "@chakra-ui/react";
-import Fonts from "@components/Fonts";
+import Fonts from "@components/Fonts/Fonts";
 import theme from "@styles/theme";
 import NextDocument, { Html, Head, Main, NextScript } from "next/document";
 

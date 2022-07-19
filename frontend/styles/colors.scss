@@ -1,3 +1,10 @@
+:root {
+  --line-color: rgba(65, 3, 3, 0.351);
+  --button-color: #fed7d7;
+}
+
+$lineColor: var(--line-color);
+$buttonColor: var(--button-color);
 $numberOfLines: 350;
 
 .container {
@@ -17,11 +24,15 @@ $numberOfLines: 350;
     display: flex;
     flex-direction: column;
     background-color: rgb(0, 0, 0);
-    box-shadow: 10px 2px 2px 1px #2102476c;
+    box-shadow: 10px 2px 2px 1px $lineColor;
     animation-iteration-count: infinite;
     animation-direction: alternate;
     animation-fill-mode: both;
     will-change: opacity;
+
+    &:hover {
+      opacity: 0;
+    }
 
     @for $i from 1 through $numberOfLines {
       &:nth-child(#{$i}) {
@@ -53,4 +64,20 @@ $numberOfLines: 350;
       }
     }
   }
+}
+
+.connect-button {
+  font-family: "Eirian" !important;
+  border-radius: 30px !important;
+  background: transparent !important;
+  border-width: 1px;
+  border-style: solid;
+  border-color: $buttonColor;
+  color: white;
+  width: fit-content;
+  padding: 25px;
+}
+
+.connect-button:hover {
+  color: $buttonColor;
 }

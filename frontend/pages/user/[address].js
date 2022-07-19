@@ -1,11 +1,25 @@
+import Modal from "@components/Modal/Modal";
 import UserProfile from "@components/UserProfile/UserProfile";
-import { useRouter } from "next/router";
+import { StateContext, useStateContext } from "contexts/StateContext";
+import Router, { useRouter } from "next/router";
+import { useContext, useEffect } from "react";
 
 const User = () => {
+  const exists = true;
   const router = useRouter();
   const { address } = router.query;
+  useEffect(() => {
+    document.documentElement.style.setProperty("--line-color", "#2102476c");
+    document.documentElement.style.setProperty("--button-color", "#D6BCFA");
+  }, []);
 
-  return <UserProfile userAddress={address} />;
+  if (exists)
+    return (
+      <>
+        <UserProfile userAddress={address} />
+      </>
+    );
+  else Router.push("/404");
 };
 
 export default User;
