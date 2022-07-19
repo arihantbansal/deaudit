@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"moduleResolution": "node16",
+		"moduleResolution": "node",
 		"target": "es6",
 		"baseUrl": ".",
 		"paths": {

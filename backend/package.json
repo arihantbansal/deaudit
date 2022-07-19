@@ -7,7 +7,8 @@
 	"scripts": {
 		"start": "node index.js",
 		"dev": "nodemon index.js",
-		"test": "echo \"Error: no test specified\" && exit 1"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"lint": "eslint . && yarn prettier --write ."
 	},
 	"keywords": [],
 	"author": "arihantbansal",
@@ -23,6 +24,7 @@
 	"devDependencies": {
 		"eslint": "^8.20.0",
 		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-import": "^2.26.0",
 		"eslint-plugin-prettier": "^4.2.1",
 		"nodemon": "^2.0.19",
 		"prettier": "^2.7.1"

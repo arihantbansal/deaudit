@@ -1,3 +1,3 @@
 # DeAudit Backend
 
-Express server to parse contract information. Hosted on AWS
+Simple server to handle data. Hosted on AWS
