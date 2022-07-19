@@ -1,26 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
+  Button,
+  Checkbox,
   Flex,
+  FormLabel,
   Heading,
   HStack,
   Image,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Text,
+  useDisclosure,
   VStack,
 } from "@chakra-ui/react";
 import Head from "next/head";
-import { FiTwitter, FiGithub } from "react-icons/fi";
+import { FiTwitter, FiGithub, FiSettings } from "react-icons/fi";
 import { Link as Linker } from "@chakra-ui/react";
+import { useAccount } from "wagmi";
 import { MdVerified } from "react-icons/md";
 import { GoUnverified } from "react-icons/go";
-import { TbExternalLink } from "react-icons/tb";
 import { BsBug } from "react-icons/bs";
 import { AiOutlineAudit } from "react-icons/ai";
 import { GiInjustice } from "react-icons/gi";
 import { useEnsName } from "wagmi";
-import styles from "../../styles/UserLines.module.scss";
 import { ellipseAddress } from "@lib/utilities";
 import Link from "next/link";
+import { useStateContext } from "contexts/StateContext";
 
 const UserProfile = ({ userAddress }) => {
   let juryForAudit = [
@@ -61,12 +73,17 @@ const UserProfile = ({ userAddress }) => {
   const { data, isError, isLoading } = useEnsName({
     address: userAddress,
   });
+  const [state] = useStateContext();
+  const [jury, setJury] = useState(false);
+  const [github, setGithub] = useState("");
+  const [twitter, setTwitter] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Flex>
-      <Flex className={styles.container}>
+      <Flex className="container">
         {[...Array(350)].map((e, i) => (
-          <Box className={styles.line} key={i}></Box>
+          <Box className="line" key={i}></Box>
         ))}
       </Flex>
       <Flex
@@ -104,9 +121,31 @@ const UserProfile = ({ userAddress }) => {
           borderStyle="solid"
           mb="4"
         />
+
+        {!state.address ? null : state.address === userAddress ? (
+          <Button
+            fontSize="3em"
+            mx="auto"
+            position="relative"
+            top="-16"
+            left="20"
+            fontFamily="Eirian"
+            border="none"
+            borderRadius="10px"
+            letterSpacing="0.5px"
+            bg="transparent"
+            color="purple.200"
+            onClick={onOpen}
+            _hover={{
+              color: "purple.300",
+            }}
+            leftIcon={<FiSettings />}
+          />
+        ) : null}
         <Heading
           color="purple.100"
-          my="4"
+          mt="4"
+          mb="4"
           fontSize="1.8em"
           className="audit"
           _selection={{
@@ -146,11 +185,148 @@ const UserProfile = ({ userAddress }) => {
             )}
           </Linker>
         </Heading>
+
+        <Modal isOpen={isOpen} onClose={onClose} isCentepurple>
+          <ModalOverlay />
+          <ModalContent bgColor="#0F0301">
+            <ModalCloseButton />
+            <ModalHeader className="modal-head">Settings</ModalHeader>
+            <ModalBody>
+              <Checkbox
+                size="lg"
+                colorScheme="purple"
+                borderColor="purple.100"
+                fontFamily="Geostar Fill"
+                my="4"
+                fontSize="3xl"
+                isChecked={jury}
+                onChange={() => {
+                  setJury(!jury);
+                }}
+              >
+                Apply for Jury
+              </Checkbox>
+
+              <FormLabel htmlFor="github" fontFamily="Eirian" my="2">
+                Github Username
+              </FormLabel>
+              <Input
+                size="md"
+                id="github"
+                variant="outline"
+                colorScheme="purple"
+                borderColor="purple.100"
+                fontFamily="Eirian"
+                fontSize="xl"
+                value={github}
+                onChange={(e) => {
+                  setGithub(e.target.value);
+                }}
+              />
+
+              <FormLabel htmlFor="twitter" fontFamily="Eirian" my="2">
+                Twitter Username
+              </FormLabel>
+              <Input
+                size="md"
+                id="twitter"
+                colorScheme="purple"
+                borderColor="purple.100"
+                fontFamily="Eirian"
+                variant="outline"
+                mb="4"
+                fontSize="xl"
+                value={twitter}
+                boxShadow="none"
+                onChange={(e) => {
+                  setTwitter(e.target.value);
+                }}
+                _focus={{
+                  borderColor: "purple.50",
+                  boxShadow: "none",
+                }}
+                _hover={{
+                  borderColor: "purple.50",
+                  boxShadow: "none",
+                }}
+              />
+
+              <FormLabel
+                htmlFor="profile"
+                fontFamily="Eirian"
+                my="4"
+                fontWeight="bold"
+              >
+                Profile Image
+              </FormLabel>
+              <Input
+                placeHolder="Select profile picture"
+                size="lg"
+                fontFamily="Eirian"
+                backgroundColor="transparent"
+                id="profile"
+                type="file"
+                border="none"
+                boxShadow="none"
+                color="purple.200"
+                _focus={{
+                  borderColor: "purple.50",
+                  boxShadow: "none",
+                }}
+                _hover={{
+                  borderColor: "purple.50",
+                  boxShadow: "none",
+                }}
+              />
+              <FormLabel
+                htmlFor="cover"
+                fontFamily="Eirian"
+                my="4"
+                fontWeight="bold"
+              >
+                Cover Image
+              </FormLabel>
+              <Input
+                placeHolder="Select profile picture"
+                size="lg"
+                fontFamily="Eirian"
+                backgroundColor="transparent"
+                id="cover"
+                type="file"
+                border="none"
+                color="purple.200"
+              />
+            </ModalBody>
+
+            <ModalFooter>
+              <Button
+                size="md"
+                fontFamily="Eirian"
+                border="1px"
+                borderColor="purple.200"
+                borderRadius="10px"
+                fontSize="1.2em"
+                bg="transparent"
+                color="gray.200"
+                onClick={onClose}
+                _hover={{
+                  bg: "gray.200",
+                  color: "purple.800",
+                }}
+                colorScheme="purple"
+                mr={3}
+              >
+                Submit
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
         <HStack gap="5" my="4">
-          <Linker href="https://www.google.com" target="_blank">
+          <Linker href={`https://www.twitter.com/${twitter}`} target="_blank">
             <FiTwitter size="3em" />
           </Linker>
-          <Linker href="https://www.google.com" target="_blank">
+          <Linker href={`https://www.github.com/${github}`} target="_blank">
             <FiGithub size="3em" />
           </Linker>
         </HStack>
@@ -197,7 +373,7 @@ const UserProfile = ({ userAddress }) => {
                 return (
                   <Box key={index} py="2" mx="4">
                     <Link href={`/audit/${audit}`} passHref>
-                      <a>
+                      <Linker>
                         <Text
                           fontSize="1.1em"
                           className="address"
@@ -214,7 +390,7 @@ const UserProfile = ({ userAddress }) => {
                         >
                           {audit}
                         </Text>
-                      </a>
+                      </Linker>
                     </Link>
                   </Box>
                 );
@@ -343,23 +519,25 @@ const UserProfile = ({ userAddress }) => {
                   p="6"
                   borderRadius="15px"
                 >
-                  <Text
-                    fontSize="2xl"
-                    color="purple.100"
-                    display="inline-flex"
-                    className="address"
-                    _hover={{
-                      color: "purple.50",
-                    }}
-                    blendMode="unset"
-                    _selected={true}
-                    _selection={{
-                      backgroundColor: "purple.700",
-                      color: "black",
-                    }}
-                  >
-                    {bug.contractAddress}
-                  </Text>
+                  <Link href={`/audit/${bug.contractAddress}`} passHref>
+                    <Linker
+                      fontSize="2xl"
+                      color="purple.100"
+                      display="inline-flex"
+                      className="address"
+                      _hover={{
+                        color: "purple.50",
+                      }}
+                      blendMode="unset"
+                      _selected={true}
+                      _selection={{
+                        backgroundColor: "purple.700",
+                        color: "black",
+                      }}
+                    >
+                      {bug.contractAddress}
+                    </Linker>
+                  </Link>
                   <Text
                     fontSize="xl"
                     color="purple.50"
@@ -386,10 +564,6 @@ const UserProfile = ({ userAddress }) => {
                     ) : (
                       <GoUnverified size="1.4em" color="purple" />
                     )}
-
-                    <Link href={`/audit/${bug.contractAddress}`} passHref>
-                      <TbExternalLink size="1.4em" className="link" />
-                    </Link>
                   </Flex>
                 </VStack>
               );

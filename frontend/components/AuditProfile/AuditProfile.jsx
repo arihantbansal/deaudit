@@ -18,14 +18,13 @@ import {
 import { Link as Linker } from "@chakra-ui/react";
 import { ellipseAddress } from "@lib/utilities";
 import Head from "next/head";
-import React from "react";
+import React, { useEffect } from "react";
 import { GoUnverified } from "react-icons/go";
 import { MdVerified } from "react-icons/md";
 import { TbExternalLink } from "react-icons/tb";
 import { BsBug } from "react-icons/bs";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { GiInjustice } from "react-icons/gi";
-import styles from "../../styles/AuditLines.module.scss";
 import Link from "next/link";
 
 const AuditProfile = ({ contractAddress }) => {
@@ -69,9 +68,9 @@ const AuditProfile = ({ contractAddress }) => {
       <Head>
         <title>{title}</title>
       </Head>
-      <Flex className={styles.container}>
-        {[...Array(300)].map((e, i) => (
-          <Box className={styles.line} key={i}></Box>
+      <Flex className="container">
+        {[...Array(350)].map((e, i) => (
+          <Box className="line" key={i}></Box>
         ))}
       </Flex>
       <Flex
@@ -260,7 +259,7 @@ const AuditProfile = ({ contractAddress }) => {
                 return (
                   <Box key={index} py="2" mx="4">
                     <Link href={`/user/${juryMember}`} passHref>
-                      <a>
+                      <Linker>
                         <Text
                           fontSize="1.1em"
                           color="red.200"
@@ -276,7 +275,7 @@ const AuditProfile = ({ contractAddress }) => {
                         >
                           {juryMember}
                         </Text>
-                      </a>
+                      </Linker>
                     </Link>
                   </Box>
                 );
@@ -427,22 +426,24 @@ const AuditProfile = ({ contractAddress }) => {
                   p="6"
                   borderRadius="15px"
                 >
-                  <Text
-                    fontSize="2xl"
-                    color="red.200"
-                    display="inline-flex"
-                    className="address"
-                    _hover={{
-                      color: "red.50",
-                    }}
-                    _selected={true}
-                    _selection={{
-                      backgroundColor: "purple.700",
-                      color: "black",
-                    }}
-                  >
-                    {bug.userAddress}
-                  </Text>
+                  <Link href={`/user/${bug.userAddress}`} passHref>
+                    <Linker
+                      fontSize="2xl"
+                      color="red.200"
+                      display="inline-flex"
+                      className="address"
+                      _hover={{
+                        color: "red.50",
+                      }}
+                      _selected={true}
+                      _selection={{
+                        backgroundColor: "purple.700",
+                        color: "black",
+                      }}
+                    >
+                      {bug.userAddress}
+                    </Linker>
+                  </Link>
                   <Text
                     fontSize="xl"
                     color="red.50"
@@ -468,10 +469,6 @@ const AuditProfile = ({ contractAddress }) => {
                     ) : (
                       <GoUnverified size="1.4em" color="red" />
                     )}
-
-                    <Link href={`/user/${bug.userAddress}`} passHref>
-                      <TbExternalLink size="1.4em" className="link" />
-                    </Link>
                   </Flex>
                 </VStack>
               );

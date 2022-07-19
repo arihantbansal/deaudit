@@ -6,7 +6,7 @@ import { useCallback, useContext, useEffect } from "react";
 import Web3Modal from "web3modal";
 import { ellipseAddress, getChainData } from "../../lib/utilities";
 import { Button, Flex, Heading, Text, useToast } from "@chakra-ui/react";
-import { StateContext } from "../../contexts/StateContext";
+import { useStateContext } from "../../contexts/StateContext";
 import Link from "next/link";
 
 let providerOptions = {
@@ -29,38 +29,39 @@ let providerOptions = {
   },
 };
 
-if (!window?.ethereum?.isSequence) {
-  providerOptions = {
-    ...providerOptions,
-    sequence: {
-      package: sequence,
-      options: {
-        appName: "Deaudit",
-        defaultNetwork: "mumbai",
-      },
-    },
-  };
-}
-
 let web3Modal;
-if (window) {
-  web3Modal = new Web3Modal({
-    network: "testnet",
-    cacheProvider: true,
-    theme: {
-      background: "#eee2e2",
-      border: "#170505",
-      main: "#170505",
-      secondary: "#000",
-    },
-    providerOptions,
-  });
-}
+if (typeof window !== "undefined") {
+  if (!window?.ethereum?.isSequence) {
+    providerOptions = {
+      ...providerOptions,
+      sequence: {
+        package: sequence,
+        options: {
+          appName: "Deaudit",
+          defaultNetwork: "mumbai",
+        },
+      },
+    };
+  }
 
+  if (window) {
+    web3Modal = new Web3Modal({
+      network: "testnet",
+      cacheProvider: true,
+      theme: {
+        background: "#eee2e2",
+        border: "#170505",
+        main: "#170505",
+        secondary: "#000",
+      },
+      providerOptions,
+    });
+  }
+}
 const Modal = () => {
   const toast = useToast();
   const [{ provider, web3Provider, address, chainId }, dispatch] =
-    useContext(StateContext);
+    useStateContext();
 
   const connect = async () => {
     const provider = await web3Modal.connect();
@@ -163,7 +164,7 @@ const Modal = () => {
         height="15vh"
         backdropFilter="auto"
         backdropBlur="sm"
-        zIndex="100"
+        zIndex="1000"
         backdropContrast="85%"
         position="fixed"
         top="0"
@@ -194,10 +195,6 @@ const Modal = () => {
               variant="solid"
               size="lg"
               fontSize="1.3em"
-              _hover={{
-                bg: "transparent",
-                color: "#fecaca",
-              }}
             >
               Request Audit
             </Button>
