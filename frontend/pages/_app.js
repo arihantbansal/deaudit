@@ -45,13 +45,17 @@ const wagmiClient = createClient({
   provider,
 });
 
+const rainbowTheme = midnightTheme();
+rainbowTheme.fonts.body = "Space Grotesk, sans-serif";
+rainbowTheme.colors.accentColor = "transparent";
+
 function MyApp({ Component, pageProps }) {
   return (
     <WagmiConfig client={wagmiClient}>
       <RainbowKitProvider
         appInfo={appInfo}
         chains={chains}
-        theme={midnightTheme()}
+        theme={rainbowTheme}
         coolMode
       >
         <ChakraProvider theme={theme}>

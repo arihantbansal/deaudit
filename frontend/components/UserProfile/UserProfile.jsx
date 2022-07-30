@@ -33,7 +33,6 @@ import { GiInjustice } from "react-icons/gi";
 import { useEnsName } from "wagmi";
 import { ellipseAddress } from "@lib/utilities";
 import Link from "next/link";
-import { useStateContext } from "contexts/StateContext";
 
 const UserProfile = ({ userAddress }) => {
   let juryForAudit = [
@@ -73,7 +72,6 @@ const UserProfile = ({ userAddress }) => {
   const { data, isError, isLoading } = useEnsName({
     address: userAddress,
   });
-  const [state] = useStateContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cutAddress = "User " + ellipseAddress(userAddress);
   let [title, setTitle] = useState("");
@@ -104,14 +102,15 @@ const UserProfile = ({ userAddress }) => {
   };
 
   const [socialState, dispatch] = useReducer(reducer, initialState);
+  const { address, isConnecting, isDisconnected } = useAccount()
 
   useEffect(() => {
-    if (state.address === userAddress) {
+    if (address === userAddress) {
       setTitle("Your Profile");
     } else {
       setTitle(cutAddress);
     }
-  }, [state, userAddress, cutAddress]);
+  }, [userAddress, cutAddress,address]);
 
   return (
     <Flex>
@@ -156,14 +155,14 @@ const UserProfile = ({ userAddress }) => {
           mb="4"
         />
 
-        {!state.address ? null : state.address === userAddress ? (
+        {!address ? null : address === userAddress ? (
           <Button
             fontSize="3em"
             mx="auto"
             position="relative"
             top="-16"
             left="20"
-            fontFamily="Eirian"
+            fontFamily="Space Grotesk"
             border="none"
             borderRadius="10px"
             letterSpacing="0.5px"
@@ -227,7 +226,7 @@ const UserProfile = ({ userAddress }) => {
             <ModalHeader className="modal-head">Profile Settings</ModalHeader>
             <ModalBody>
               <Checkbox
-                size="lg"
+                size="md"
                 colorScheme="purple"
                 borderColor="purple.100"
                 fontFamily="Geostar Fill"
@@ -240,7 +239,7 @@ const UserProfile = ({ userAddress }) => {
               >
                 Apply for Jury
               </Checkbox>
-              <FormLabel htmlFor="bio" fontFamily="Eirian">
+              <FormLabel htmlFor="bio" fontSize="md" fontFamily="Space Grotesk">
                 Bio
               </FormLabel>
               <Textarea
@@ -251,7 +250,7 @@ const UserProfile = ({ userAddress }) => {
                 border="1px"
                 borderColor="purple.50"
                 borderRadius="10px"
-                fontFamily="Eirian"
+                fontFamily="Space Grotesk"
                 rows="3"
                 cols="40"
                 value={socialState.bio}
@@ -272,7 +271,7 @@ const UserProfile = ({ userAddress }) => {
                 }}
               />
 
-              <FormLabel htmlFor="github" fontFamily="Eirian" my="2">
+              <FormLabel htmlFor="github" fontSize="sm" fontFamily="Space Grotesk" my="2">
                 Github Username
               </FormLabel>
               <Input
@@ -281,8 +280,8 @@ const UserProfile = ({ userAddress }) => {
                 variant="outline"
                 colorScheme="purple"
                 borderColor="purple.100"
-                fontFamily="Eirian"
-                fontSize="xl"
+                fontFamily="Space Grotesk"
+                fontSize="lg"
                 _focus={{
                   borderColor: "purple.50",
                   boxShadow: "none",
@@ -293,7 +292,7 @@ const UserProfile = ({ userAddress }) => {
                 }}
               />
 
-              <FormLabel htmlFor="twitter" fontFamily="Eirian" my="2">
+              <FormLabel htmlFor="twitter" fontSize="sm" fontFamily="Space Grotesk" my="2">
                 Twitter Username
               </FormLabel>
               <Input
@@ -301,9 +300,9 @@ const UserProfile = ({ userAddress }) => {
                 id="twitter"
                 colorScheme="purple"
                 borderColor="purple.100"
-                fontFamily="Eirian"
+                fontFamily="Space Grotesk"
                 variant="outline"
-                fontSize="xl"
+                fontSize="lg"
                 value={socialState.twitter}
                 boxShadow="none"
                 onChange={(e) => {
@@ -315,7 +314,7 @@ const UserProfile = ({ userAddress }) => {
                 }}
               />
 
-              <FormLabel htmlFor="linkedin" fontFamily="Eirian" my="2">
+              <FormLabel htmlFor="linkedin" fontSize="sm" fontFamily="Space Grotesk" my="2">
                 LinkedIn Username
               </FormLabel>
               <Input
@@ -323,10 +322,10 @@ const UserProfile = ({ userAddress }) => {
                 id="linkedin"
                 colorScheme="purple"
                 borderColor="purple.100"
-                fontFamily="Eirian"
+                fontFamily="Space Grotesk"
                 variant="outline"
                 mb="2"
-                fontSize="xl"
+                fontSize="lg"
                 value={socialState.linkedin}
                 boxShadow="none"
                 onChange={(e) => {
@@ -340,7 +339,7 @@ const UserProfile = ({ userAddress }) => {
 
               <FormLabel
                 htmlFor="profile"
-                fontFamily="Eirian"
+                fontFamily="Space Grotesk"
                 my="3"
                 fontWeight="bold"
               >
@@ -348,8 +347,8 @@ const UserProfile = ({ userAddress }) => {
               </FormLabel>
               <Input
                 placeHolder="Select profile picture"
-                size="lg"
-                fontFamily="Eirian"
+                size="md"
+                fontFamily="Space Grotesk"
                 backgroundColor="transparent"
                 id="profile"
                 type="file"
@@ -367,7 +366,7 @@ const UserProfile = ({ userAddress }) => {
               />
               <FormLabel
                 htmlFor="cover"
-                fontFamily="Eirian"
+                fontFamily="Space Grotesk"
                 my="3"
                 fontWeight="bold"
               >
@@ -375,8 +374,8 @@ const UserProfile = ({ userAddress }) => {
               </FormLabel>
               <Input
                 placeHolder="Select profile picture"
-                size="lg"
-                fontFamily="Eirian"
+                size="md"
+                fontFamily="Space Grotesk"
                 backgroundColor="transparent"
                 id="cover"
                 type="file"
@@ -388,7 +387,7 @@ const UserProfile = ({ userAddress }) => {
             <ModalFooter>
               <Button
                 size="md"
-                fontFamily="Eirian"
+                fontFamily="Space Grotesk"
                 border="1px"
                 borderColor="purple.200"
                 borderRadius="10px"

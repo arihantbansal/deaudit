@@ -61,12 +61,12 @@ const Landing = () => {
             borderRadius="30px"
             borderStyle="solid"
             borderWidth="1px"
-            px="30px"
-            py="7"
+            px="20px"
+            py="5"
             letterSpacing="0.5px"
-            size="lg"
-            fontFamily="Eirian"
-            fontSize="2xl"
+            size="sm"
+            fontFamily="Space Grotesk"
+            fontSize="md"
             _active={{
               border: "white",
               bg: "transparent",

@@ -9,7 +9,6 @@ const User = () => {
 
   useEffect(() => {
     document.documentElement.style.setProperty("--line-color", "#2102476c");
-    document.documentElement.style.setProperty("--button-color", "#D6BCFA");
   }, []);
 
   if (exists) return <UserProfile userAddress={address} />;

@@ -18,10 +18,9 @@ import {
 import { Link as Linker } from "@chakra-ui/react";
 import { ellipseAddress } from "@lib/utilities";
 import Head from "next/head";
-import React, { useEffect } from "react";
+import React from "react";
 import { GoUnverified } from "react-icons/go";
 import { MdVerified } from "react-icons/md";
-import { TbExternalLink } from "react-icons/tb";
 import { BsBug } from "react-icons/bs";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { GiInjustice } from "react-icons/gi";

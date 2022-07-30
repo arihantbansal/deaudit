@@ -68,7 +68,7 @@ const NewAudit = () => {
 
             <Button
               size="lg"
-              fontFamily="Eirian"
+              fontFamily="Space Grotesk"
               border="1px"
               w="fit-content"
               mx="auto"
