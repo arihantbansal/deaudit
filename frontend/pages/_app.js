@@ -1,40 +1,65 @@
 import { ChakraProvider } from "@chakra-ui/react";
+import {
+  RainbowKitProvider,
+  getDefaultWallets,
+  midnightTheme,
+} from "@rainbow-me/rainbowkit";
+import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
+import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
+import { publicProvider } from "wagmi/providers/public";
 import theme from "@styles/theme";
-import dynamic from "next/dynamic";
-import { StateProvider } from "contexts/StateContext";
+import NavBar from "@components/NavBar/NavBar";
 import "@styles/globals.scss";
 import "@styles/colors.scss";
-// const Modal = dynamic(() => import("../components/Modal/Modal.jsx"), {
-//   ssr: false,
-// });
-import {
-  createClient,
-  configureChains,
-  defaultChains,
-  WagmiConfig,
-} from "wagmi";
-import { publicProvider } from "wagmi/providers/public";
-import Modal from "@components/Modal/Modal";
+import "@rainbow-me/rainbowkit/styles.css";
 
-const { provider, webSocketProvider } = configureChains(defaultChains, [
-  publicProvider(),
-]);
+const { chains, provider } = configureChains(
+  [
+    // chain.polygon,
+    chain.polygonMumbai,
+  ],
+  [
+    jsonRpcProvider({
+      rpc: () => {
+        return {
+          http: "https://rpc.ankr.com/polygon_mumbai",
+        };
+      },
+    }),
+    publicProvider(),
+  ]
+);
 
-const client = createClient({
+const { connectors } = getDefaultWallets({
+  appName: "DeAudit",
+  chains,
+});
+
+const appInfo = {
+  appName: "DeAudit",
+};
+
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
   provider,
-  webSocketProvider,
 });
 
 function MyApp({ Component, pageProps }) {
   return (
-    <StateProvider>
-      <WagmiConfig client={client}>
+    <WagmiConfig client={wagmiClient}>
+      <RainbowKitProvider
+        appInfo={appInfo}
+        chains={chains}
+        theme={midnightTheme()}
+        coolMode
+      >
         <ChakraProvider theme={theme}>
-          <Modal />
+          <NavBar />
           <Component {...pageProps} />
         </ChakraProvider>
-      </WagmiConfig>
-    </StateProvider>
+      </RainbowKitProvider>
+    </WagmiConfig>
   );
 }
 

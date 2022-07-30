@@ -9,10 +9,10 @@
     "lint": "next lint && yarn prettier --write ."
   },
   "dependencies": {
-    "0xsequence": "^0.39.6",
     "@chakra-ui/react": "2.2.3",
     "@emotion/react": "11",
     "@emotion/styled": "11",
+    "@rainbow-me/rainbowkit": "^0.4.5",
     "ethers": "^5.6.9",
     "framer-motion": "6",
     "next": "12.1.6",
@@ -21,10 +21,7 @@
     "react-icons": "^4.4.0",
     "react-lottie": "^1.2.3",
     "sass": "^1.53.0",
-    "wagmi": "^0.5.9",
-    "walletlink": "^2.5.0",
-    "web3": "^1.7.4",
-    "web3modal": "^1.9.8"
+    "wagmi": "^0.6.0"
   },
   "devDependencies": {
     "eslint": "8.18.0",

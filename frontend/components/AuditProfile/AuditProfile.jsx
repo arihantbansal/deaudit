@@ -62,7 +62,8 @@ const AuditProfile = ({ contractAddress }) => {
   ];
 
   const title = `Audit ${ellipseAddress(contractAddress)}`;
-  const { isOpen, onOpen, onClose } = useDisclosure();
+	const { isOpen, onOpen, onClose } = useDisclosure();
+	
   return (
     <Flex flexDir="column">
       <Head>

@@ -1,5 +1,5 @@
 import AuditProfile from "@components/AuditProfile/AuditProfile";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 const Audit = () => {
@@ -16,7 +16,7 @@ const Audit = () => {
   }, []);
 
   if (exists) return <AuditProfile contractAddress={address} />;
-  else Router.push("/404");
+  else router.push("/404");
 };
 
 export default Audit;

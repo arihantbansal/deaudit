@@ -12,6 +12,7 @@ const Landing = () => {
       preserveAspectRatio: "xMidYMid slice",
     },
   };
+
   return (
     <Flex
       w="100vw"
