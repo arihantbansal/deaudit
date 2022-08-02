@@ -3,13 +3,12 @@ import { Global } from "@emotion/react";
 const Fonts = () => (
   <Global
     styles={`
-        @font-face {
-                font-family: 'Eirian';
-                font-style: normal;
-                font-weight: normal;
-                src: url('/fonts/Eirian.ttf') format('truetype');
-
-        }
+    @font-face {
+        font-family: 'Eirian';
+        font-style: normal;
+        font-weight: normal;
+        src: url('/fonts/Eirian.ttf') format('truetype');
+    }
     @font-face {
         font-family: 'Geostar';
         font-style: normal;

@@ -21,7 +21,8 @@
     "react-icons": "^4.4.0",
     "react-lottie": "^1.2.3",
     "sass": "^1.53.0",
-    "wagmi": "^0.6.0"
+    "wagmi": "^0.6.0",
+    "web3.storage": "^4.3.0"
   },
   "devDependencies": {
     "eslint": "8.18.0",

@@ -2,6 +2,7 @@ import React, { useEffect, useReducer, useState } from "react";
 import {
   Box,
   Button,
+  Center,
   Checkbox,
   Flex,
   FormLabel,
@@ -16,6 +17,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Spinner,
   Text,
   Textarea,
   useDisclosure,
@@ -33,8 +35,16 @@ import { GiInjustice } from "react-icons/gi";
 import { useEnsName } from "wagmi";
 import { ellipseAddress } from "@lib/utilities";
 import Link from "next/link";
+import { Web3Storage } from "web3.storage";
+
+// Construct with token and endpoint
+const client = new Web3Storage({
+  token:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGQ2OUZiZERiNkI3YTZDYTA5MEU1ZDdlMENlNTU3MDJBNmEyRTMwZEUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTk0MjQxMTQ1MzAsIm5hbWUiOiJkZWF1ZGl0In0.brbCSwSRpKGpzPA_uz2LtoUUQlq0HXv_gzta7dQsjxE",
+});
 
 const UserProfile = ({ userAddress }) => {
+  // Dummy data, to be fetched from chain and backend
   let juryForAudit = [
     "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
     "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
@@ -69,19 +79,21 @@ const UserProfile = ({ userAddress }) => {
     },
   ];
 
-  const { data, isError, isLoading } = useEnsName({
-    address: userAddress,
-  });
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  // Modal and page title utilities
+  const profileModal = useDisclosure();
+  const loadingModal = useDisclosure();
+  const { data, isError, isLoading } = useEnsName({ address: userAddress });
   const cutAddress = "User " + ellipseAddress(userAddress);
   let [title, setTitle] = useState("");
+  const { address, isConnecting, isDisconnected } = useAccount();
 
+  // Handling user text-data
   const initialState = {
     github: "",
     twitter: "",
     linkedin: "",
     jury: false,
-    bio: "Auditor",
+    bio: "Crypto Enthusiast",
   };
 
   const reducer = (state, action) => {
@@ -102,7 +114,48 @@ const UserProfile = ({ userAddress }) => {
   };
 
   const [socialState, dispatch] = useReducer(reducer, initialState);
-  const { address, isConnecting, isDisconnected } = useAccount()
+
+  // Handling user image-data
+  const [profileImage, setProfileImage] = useState(
+    "https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8"
+  );
+  const [coverImage, setCoverImage] = useState(
+    "https://images.unsplash.com/photo-1563089145-599997674d42?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8"
+  );
+
+  const handleProfile = async (e) => {
+    loadingModal.onOpen();
+    const file = e.target.files;
+    const rootCid = await client.put(file, {
+      name: file[0].name + "-" + userAddress,
+      maxRetries: 3,
+    });
+
+    const res = await client.get(rootCid);
+    const returnFile = await res.files();
+    setProfileImage(
+      "https://" + rootCid + ".ipfs.dweb.link/" + returnFile[0].name
+    );
+    loadingModal.onClose();
+    profileModal.onClose();
+  };
+
+  const handleCover = async (e) => {
+    loadingModal.onOpen();
+    const file = e.target.files;
+    const rootCid = await client.put(file, {
+      name: file[0].name + "-" + userAddress,
+      maxRetries: 3,
+    });
+
+    const res = await client.get(rootCid);
+    const returnFile = await res.files();
+    setCoverImage(
+      "https://" + rootCid + ".ipfs.dweb.link/" + returnFile[0].name
+    );
+    loadingModal.onClose();
+    profileModal.onClose();
+  };
 
   useEffect(() => {
     if (address === userAddress) {
@@ -110,7 +163,9 @@ const UserProfile = ({ userAddress }) => {
     } else {
       setTitle(cutAddress);
     }
-  }, [userAddress, cutAddress,address]);
+  }, [userAddress, cutAddress, address]);
+
+  // TODO Fetching user data from backend using useEffect
 
   return (
     <Flex>
@@ -132,7 +187,7 @@ const UserProfile = ({ userAddress }) => {
         <Flex
           w="100%"
           h="85vh"
-          bgImage="https://images.unsplash.com/photo-1563089145-599997674d42?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8"
+          bgImage={`url(${coverImage})`}
           bgSize="cover"
           bgPos="center"
           bgRepeat="no-repeat"
@@ -146,7 +201,7 @@ const UserProfile = ({ userAddress }) => {
           alt="Audit"
           w="48"
           h="48"
-          src="https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8"
+          src={profileImage}
           borderRadius="full"
           objectFit="cover"
           borderWidth="2px"
@@ -168,7 +223,7 @@ const UserProfile = ({ userAddress }) => {
             letterSpacing="0.5px"
             bg="transparent"
             color="purple.200"
-            onClick={onOpen}
+            onClick={profileModal.onOpen}
             _hover={{
               color: "purple.300",
             }}
@@ -189,11 +244,11 @@ const UserProfile = ({ userAddress }) => {
           {userAddress}
         </Heading>
 
-        <Heading
+        <Text
           color="purple.100"
           my="4"
-          fontSize="1.8em"
-          className="head"
+          fontSize="1.7em"
+          fontFamily="Azeret Thin"
           _selection={{
             color: "purple.800",
             background: "white",
@@ -212,16 +267,20 @@ const UserProfile = ({ userAddress }) => {
             {isLoading ? (
               <span>Loading...</span>
             ) : isError ? (
-              <span>Error</span>
+              <span>N/A</span>
             ) : (
               <span>{data}</span>
             )}
           </Linker>
-        </Heading>
+        </Text>
 
-        <Modal isOpen={isOpen} onClose={onClose} isCentepurple>
+        <Modal
+          isOpen={profileModal.isOpen}
+          onClose={profileModal.onClose}
+          isCentered
+        >
           <ModalOverlay />
-          <ModalContent bgColor="#0F0301">
+          <ModalContent bgColor="#0d0717">
             <ModalCloseButton />
             <ModalHeader className="modal-head">Profile Settings</ModalHeader>
             <ModalBody>
@@ -239,14 +298,14 @@ const UserProfile = ({ userAddress }) => {
               >
                 Apply for Jury
               </Checkbox>
-              <FormLabel htmlFor="bio" fontSize="md" fontFamily="Space Grotesk">
+              <FormLabel htmlFor="bio" fontSize="sm" fontFamily="Space Grotesk">
                 Bio
               </FormLabel>
               <Textarea
                 id="bio"
                 placeholder="Tell us about yourself"
                 spellCheck="false"
-                size="lg"
+                size="md"
                 border="1px"
                 borderColor="purple.50"
                 borderRadius="10px"
@@ -258,7 +317,7 @@ const UserProfile = ({ userAddress }) => {
                   dispatch({ type: "setBio", payload: e.target.value });
                 }}
                 mb="2"
-                fontSize="1.2em"
+                fontSize="1em"
                 color="purple.100"
                 boxShadow="none"
                 _focus={{
@@ -271,7 +330,12 @@ const UserProfile = ({ userAddress }) => {
                 }}
               />
 
-              <FormLabel htmlFor="github" fontSize="sm" fontFamily="Space Grotesk" my="2">
+              <FormLabel
+                htmlFor="github"
+                fontSize="sm"
+                fontFamily="Space Grotesk"
+                my="2"
+              >
                 Github Username
               </FormLabel>
               <Input
@@ -292,7 +356,12 @@ const UserProfile = ({ userAddress }) => {
                 }}
               />
 
-              <FormLabel htmlFor="twitter" fontSize="sm" fontFamily="Space Grotesk" my="2">
+              <FormLabel
+                htmlFor="twitter"
+                fontSize="sm"
+                fontFamily="Space Grotesk"
+                my="2"
+              >
                 Twitter Username
               </FormLabel>
               <Input
@@ -314,7 +383,12 @@ const UserProfile = ({ userAddress }) => {
                 }}
               />
 
-              <FormLabel htmlFor="linkedin" fontSize="sm" fontFamily="Space Grotesk" my="2">
+              <FormLabel
+                htmlFor="linkedin"
+                fontSize="sm"
+                fontFamily="Space Grotesk"
+                my="2"
+              >
                 LinkedIn Username
               </FormLabel>
               <Input
@@ -343,14 +417,14 @@ const UserProfile = ({ userAddress }) => {
                 my="3"
                 fontWeight="bold"
               >
-                Profile Image
+                Cover Image
               </FormLabel>
               <Input
-                placeHolder="Select profile picture"
+                placeholder="Select cover image"
                 size="md"
                 fontFamily="Space Grotesk"
                 backgroundColor="transparent"
-                id="profile"
+                id="cover"
                 type="file"
                 border="none"
                 boxShadow="none"
@@ -363,6 +437,7 @@ const UserProfile = ({ userAddress }) => {
                   borderColor: "purple.50",
                   boxShadow: "none",
                 }}
+                onChange={(e) => handleCover(e)}
               />
               <FormLabel
                 htmlFor="cover"
@@ -370,17 +445,18 @@ const UserProfile = ({ userAddress }) => {
                 my="3"
                 fontWeight="bold"
               >
-                Cover Image
+                Profile Image
               </FormLabel>
               <Input
-                placeHolder="Select profile picture"
+                placeholder="Select profile image"
                 size="md"
                 fontFamily="Space Grotesk"
                 backgroundColor="transparent"
-                id="cover"
+                id="profile"
                 type="file"
                 border="none"
                 color="purple.200"
+                onChange={(e) => handleProfile(e)}
               />
             </ModalBody>
 
@@ -394,7 +470,7 @@ const UserProfile = ({ userAddress }) => {
                 fontSize="1.2em"
                 bg="transparent"
                 color="gray.200"
-                onClick={onClose}
+                onClick={profileModal.onClose}
                 _hover={{
                   bg: "gray.200",
                   color: "purple.800",
@@ -408,12 +484,36 @@ const UserProfile = ({ userAddress }) => {
           </ModalContent>
         </Modal>
 
+        <Modal
+          isCentered
+          onClose={loadingModal.onClose}
+          isOpen={loadingModal.isOpen}
+          closeOnOverlayClick={false}
+          size="md"
+        >
+          <ModalOverlay />
+          <ModalContent bgColor="#0d0717">
+            <ModalBody>
+              <ModalHeader
+                fontSize="2xl"
+                color="purple.100"
+                fontFamily="Space Grotesk"
+                textAlign="center"
+              >
+                Updating Image...
+              </ModalHeader>
+              <Center my="2">
+                <Spinner size="xl" color="purple.100" fontSize="3xl" />
+              </Center>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+
         <Text
-          fontFamily="Atures"
-          fontSize="1.8em"
+          fontFamily="Azeret Thin"
+          fontSize="1.5em"
           color="purple.100"
-          my="2"
-          letterSpacing="1px"
+          mb="2"
         >
           {socialState.bio}
         </Text>

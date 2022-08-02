@@ -5,7 +5,6 @@ import Link from "next/link";
 
 const NavBar = () => {
   return (
-
     <>
       <Head>
         <title>Deaudit</title>
@@ -15,10 +14,10 @@ const NavBar = () => {
         bg="transparent"
         w="100%"
         height="12vh"
-        backdropBlur="lg"
+        backdropBlur="3xl"
         backdropFilter="auto"
         zIndex="1000"
-        backdropContrast="80%"
+        backdropContrast="90%"
         position="fixed"
         top="0"
         left="0"
@@ -57,11 +56,10 @@ const NavBar = () => {
               New Audit
             </Button>
           </Link>
-        <ConnectButton chainStatus={"icon"} />
+          <ConnectButton chainStatus={"icon"} />
         </Flex>
       </Flex>
     </>
-
   );
 };
 

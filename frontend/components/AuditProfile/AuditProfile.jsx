@@ -61,8 +61,8 @@ const AuditProfile = ({ contractAddress }) => {
   ];
 
   const title = `Audit ${ellipseAddress(contractAddress)}`;
-	const { isOpen, onOpen, onClose } = useDisclosure();
-	
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <Flex flexDir="column">
       <Head>
@@ -150,13 +150,12 @@ const AuditProfile = ({ contractAddress }) => {
           size="lg"
           mx="auto"
           my="6"
-          fontFamily="Eirian"
+          fontFamily="Space Grotesk"
           border="1px"
           borderColor="red.200"
           borderRadius="10px"
-          letterSpacing="0.5px"
-          fontSize="1.5em"
-          bg="white"
+          fontSize="1.3em"
+          bg="red.100"
           color="red.800"
           onClick={onOpen}
           _hover={{
@@ -324,7 +323,7 @@ const AuditProfile = ({ contractAddress }) => {
                   <Heading
                     color="white"
                     fontSize="4xl"
-                    fontFamily="Monosphere"
+                    fontFamily="Azeret Thin"
                     _selection={{
                       color: "red.800",
                       background: "white",
@@ -344,7 +343,7 @@ const AuditProfile = ({ contractAddress }) => {
                     {poolSizes[poolSize]}
                   </Heading>
                   <Button
-                    fontFamily="Eirian"
+                    fontFamily="Space Grotesk"
                     bg="gray.200"
                     variant="solid"
                     borderRadius="10px"
@@ -353,7 +352,7 @@ const AuditProfile = ({ contractAddress }) => {
                     borderColor="#fecaca"
                     color="red.800"
                     size="lg"
-                    fontSize="2xl"
+                    fontSize="xl"
                     h="fit-content"
                     paddingX="6"
                     paddingY="2"
