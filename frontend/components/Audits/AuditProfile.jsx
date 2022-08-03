@@ -126,7 +126,7 @@ const AuditProfile = ({ contractAddress }) => {
           }}
         >
           Requestor :
-          <Link href={`/user/${creator}`} passHref>
+          <Link href={`/users/${creator}`} passHref>
             <a>
               <Text
                 color="red.200"
@@ -257,7 +257,7 @@ const AuditProfile = ({ contractAddress }) => {
               {juryMembers.map((juryMember, index) => {
                 return (
                   <Box key={index} py="2" mx="4">
-                    <Link href={`/user/${juryMember}`} passHref>
+                    <Link href={`/users/${juryMember}`} passHref>
                       <Linker>
                         <Text
                           fontSize="1.1em"
@@ -404,8 +404,7 @@ const AuditProfile = ({ contractAddress }) => {
           <Flex
             w="100vw"
             h="fit-content"
-            flexDir="row"
-            flexWrap="wrap"
+            flexDir="column"
             justifyContent="center"
             alignItems="center"
             textAlign="center"
@@ -419,13 +418,14 @@ const AuditProfile = ({ contractAddress }) => {
                   key={index}
                   my="4"
                   mx="4"
+                  w="50vw"
                   borderWidth="1px"
                   borderColor="red.50"
                   borderStart="solid"
                   p="6"
                   borderRadius="15px"
                 >
-                  <Link href={`/user/${bug.userAddress}`} passHref>
+                  <Link href={`/users/${bug.userAddress}`} passHref>
                     <Linker
                       fontSize="2xl"
                       color="red.200"

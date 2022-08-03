@@ -179,6 +179,7 @@ const UserProfile = ({ userAddress }) => {
         justify="center"
         alignItems="center"
         pos="absolute"
+        overflowX="hidden"
         top="0"
       >
         <Head>
@@ -580,14 +581,14 @@ const UserProfile = ({ userAddress }) => {
               {juryForAudit.map((audit, index) => {
                 return (
                   <Box key={index} py="2" mx="4">
-                    <Link href={`/audit/${audit}`} passHref>
+                    <Link href={`/audits/${audit}`} passHref>
                       <Linker>
                         <Text
                           fontSize="1.1em"
                           className="address"
                           color="purple.100"
                           display="inline-flex"
-                          href={`/audit/${audit}`}
+                          href={`/audits/${audit}`}
                           _selection={{
                             color: "purple.800",
                             background: "white",
@@ -653,7 +654,7 @@ const UserProfile = ({ userAddress }) => {
               {requestedAudits.map((audit, index) => {
                 return (
                   <VStack key={index} py="2" mx="4">
-                    <Link href={`/audit/${audit}`} passHref>
+                    <Link href={`/audits/${audit}`} passHref>
                       <a>
                         <Text
                           fontSize="1.1em"
@@ -710,6 +711,7 @@ const UserProfile = ({ userAddress }) => {
             flexWrap="wrap"
             justifyContent="center"
             alignItems="center"
+            overflowX="hidden"
             textAlign="center"
             my="4"
             fontSize="2xl"
@@ -721,13 +723,14 @@ const UserProfile = ({ userAddress }) => {
                   key={index}
                   my="4"
                   mx="4"
+                  w="50vw"
                   borderWidth="0.5px"
                   borderColor="purple.50"
                   borderStart="solid"
                   p="6"
                   borderRadius="15px"
                 >
-                  <Link href={`/audit/${bug.contractAddress}`} passHref>
+                  <Link href={`/audits/${bug.contractAddress}`} passHref>
                     <Linker
                       fontSize="2xl"
                       color="purple.100"

@@ -1,4 +1,12 @@
-import { Box, Heading, Flex, Button, Link, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Flex,
+  Button,
+  Link,
+  Text,
+  HStack,
+} from "@chakra-ui/react";
 import Lottie from "react-lottie";
 import styles from "../../styles/Landing.module.scss";
 import blockchain from "../../public/assets/blockchain.json";
@@ -30,10 +38,8 @@ const Landing = () => {
         alignItems="left"
       >
         <Heading
-          fontFamily="Space Mono"
           fontSize="6xl"
-          letterSpacing="1.2"
-          fontWeight="bold"
+          letterSpacing="1px"
           display="flex"
           className={styles.heading}
           my="6"
@@ -51,36 +57,60 @@ const Landing = () => {
           Digital marketplace for requesting, creating <br /> and applying for
           auditing proposals.
         </Text>
-        <Link href="/explore" textDecor="none">
-          <Button
-            background="red.900"
-            variant="solid"
-            my="6"
-            color="white"
-            borderColor="red.900"
-            borderRadius="30px"
-            borderStyle="solid"
-            borderWidth="1px"
-            px="20px"
-            py="5"
-            letterSpacing="0.5px"
-            size="sm"
-            fontFamily="Space Grotesk"
-            fontSize="md"
-            _active={{
-              border: "white",
-              bg: "transparent",
-              borderWidth: "1px",
-              borderStyle: "solid",
-            }}
-            _hover={{
-              bg: "red.800",
-              textDecoration: "none",
-            }}
-          >
-            Explore Marketplace
-          </Button>
-        </Link>
+        <HStack spacing="4" my="6" w="30vw">
+          <Link href="/audits" textDecor="none">
+            <Button
+              background="red.900"
+              variant="solid"
+              color="red.100"
+              borderColor="red"
+              rounded="3xl"
+              borderStyle="solid"
+              px="20px"
+              py="5"
+              letterSpacing="0.5px"
+              size="lg"
+              fontFamily="Space Grotesk"
+              fontSize="lg"
+              _active={{
+                border: "white",
+                bg: "transparent",
+                borderWidth: "1px",
+                borderStyle: "solid",
+              }}
+              _hover={{
+                transform: "scale(1.05)",
+              }}
+            >
+              Audits
+            </Button>
+          </Link>
+          <Link href="/users" textDecor="none">
+            <Button
+              background="transparent"
+              color="white"
+              rounded="3xl"
+              border="1px solid #f2b4b4;"
+              px="20px"
+              py="5"
+              letterSpacing="0.5px"
+              size="lg"
+              fontFamily="Space Grotesk"
+              fontSize="lg"
+              _active={{
+                border: "white",
+                bg: "transparent",
+                borderWidth: "1px",
+                borderStyle: "solid",
+              }}
+              _hover={{
+                transform: "scale(1.05)",
+              }}
+            >
+              Users
+            </Button>
+          </Link>
+        </HStack>
       </Flex>
       <Box w="55vw">
         <Lottie options={defaultOptions} width={500} />
