@@ -1,4 +1,4 @@
-import UserProfile from "@components/UserProfile/UserProfile";
+import UserProfile from "@components/Users/UserProfile";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 

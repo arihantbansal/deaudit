@@ -1,4 +1,4 @@
-import AuditProfile from "@components/AuditProfile/AuditProfile";
+import AuditProfile from "@components/Audits/AuditProfile";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
