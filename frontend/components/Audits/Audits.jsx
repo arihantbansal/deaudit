@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Flex, Link, Heading, Text, Button } from "@chakra-ui/react";
 import { BsBug } from "react-icons/bs";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
-import styles from "@styles/Audits.module.scss";
+import styles from "@styles/Listing.module.scss";
 import { useRouter } from "next/router";
 
 const Audits = () => {
@@ -30,7 +30,7 @@ const Audits = () => {
       justifyContent="center"
       flexDir="column"
     >
-      {audits.map(audit => (
+      {audits.map((audit) => (
         <Flex
           key={audit.id}
           h="fit-content"
