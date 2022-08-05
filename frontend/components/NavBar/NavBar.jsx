@@ -28,14 +28,14 @@ const NavBar = () => {
         <Link href="/" passHref color="white">
           <a>
             <Heading
-              fontSize="5xl"
+              fontSize="2.4em"
               p="3"
               ml="10"
               fontFamily="Geostar Fill"
               letterSpacing="2px"
               color="white"
             >
-              DeAudit
+              DEAUDIT
             </Heading>
           </a>
         </Link>
@@ -52,7 +52,7 @@ const NavBar = () => {
                 transform: "scale(1.05)",
               }}
             >
-              New Audit
+              Create Audit
             </Button>
           </Link>
           <ConnectButton chainStatus={"icon"} />

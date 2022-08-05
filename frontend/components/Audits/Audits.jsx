@@ -1,26 +1,12 @@
 import React from "react";
-import { Box, Flex, Link, Heading, Text, Button } from "@chakra-ui/react";
+import { Box, Flex, Link, Heading, Text } from "@chakra-ui/react";
 import { BsBug } from "react-icons/bs";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import styles from "@styles/Listing.module.scss";
 import { useRouter } from "next/router";
 
-const Audits = () => {
+const Audits = ({ audits }) => {
   const router = useRouter();
-  const audits = [
-    {
-      id: 1,
-      name: "AuditDAO",
-      address: "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
-      creator: "0x3b5e3af9c9c6c5dcd09cef8f3d3c9c74d9ac2a2a",
-      bugs: 2,
-      createdAt: "2020-01-01",
-      poolSizes: {
-        NoBug: "5.3",
-        YesBug: "2.1",
-      },
-    },
-  ];
 
   return (
     <Flex
@@ -59,10 +45,10 @@ const Audits = () => {
               Contract Name : {audit.name}
             </Heading>
             <Heading className={styles.auditHeader}>
-              Address : {audit.address}
+              Contract Address : {audit.address}
             </Heading>
             <Heading className={styles.auditHeader}>
-              Created By : {audit.creator}
+              Audit creator : {audit.creator}
             </Heading>
           </Flex>
           <Flex
@@ -77,7 +63,6 @@ const Audits = () => {
               flexDir="row"
               justifyContent="space-evenly"
               alignItems="center"
-              float="left"
               gap="12"
             >
               {/* <Flex justifyContent="center" alignItems="center" gap="4"> */}
