@@ -1,5 +1,4 @@
-import dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config";
 
 const PORT = process.env.PORT;
 const SUPABASE_URL = process.env.SUPABASE_URL;

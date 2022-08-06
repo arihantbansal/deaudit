@@ -1,4 +1,4 @@
-import supabase from "../supabase/client.js";
+import supabase from "../supabase/client";
 
 /**
  * Add audit data
@@ -28,7 +28,7 @@ export const addAudit = async (req, res) => {
  * @route GET /audit/
  */
 export const getAllAudits = async (req, res) => {
-	let { data: audits, error } = await supabase
+	const { data: audits, error } = await supabase
 		.from("audits")
 		.select("*")
 		.order("id", { ascending: false });
@@ -50,7 +50,7 @@ export const getAllAudits = async (req, res) => {
  * @route GET /audit/:id
  */
 export const getAuditData = async (req, res) => {
-	let { data: audit, error } = await supabase
+	const { data: audit, error } = await supabase
 		.from("audits")
 		.select("*")
 		.eq("id", req.params.id);
@@ -61,9 +61,9 @@ export const getAuditData = async (req, res) => {
 			error,
 		});
 	}
-
-	for (var bug in audit[0].bugs_reported) {
-		let { data: bugData, error } = await supabase
+	let bug;
+	for (bug in audit[0].bugs_reported) {
+		const { data: bugData, error } = await supabase
 			.from("bugs")
 			.select("*")
 			.eq("id", bug);
@@ -95,7 +95,7 @@ export const updateAuditData = async (req, res) => {
 				...req.body,
 			},
 		])
-		.where("id", req.params.id);
+		.eq("id", req.params.id);
 
 	if (error) {
 		return res.status(500).json({

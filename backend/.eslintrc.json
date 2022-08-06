@@ -5,31 +5,16 @@
 	},
 	"extends": [
 		"eslint:recommended",
-		"plugin:import/recommended",
-		"plugin:prettier/recommended",
-		"plugin:import/errors",
-		"plugin:import/warnings"
+		"plugin:@typescript-eslint/recommended",
+		"plugin:prettier/recommended"
 	],
-	"parserOptions": {
-		"ecmaVersion": "latest",
-		"sourceType": "module"
-	},
-	"plugins": ["prettier", "import"],
+	"parser": "@typescript-eslint/parser",
+	"plugins": ["@typescript-eslint", "prettier"],
 	"rules": {
 		"indent": ["error", "tab"],
 		"linebreak-style": ["error", "windows"],
 		"quotes": ["error", "double"],
 		"semi": ["error", "always"],
-		"import/no-unresolved": [2, { "commonjs": true }],
-		"import/no-commonjs": 2,
-		"import/extensions": [
-			"error",
-			"ignorePackages",
-			{
-				"js": "never",
-				"jsx": "never"
-			}
-		],
 		"prettier/prettier": [
 			"error",
 			{
@@ -38,4 +23,3 @@
 		]
 	}
 }
-

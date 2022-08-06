@@ -4,7 +4,7 @@ import {
 	getAllAudits,
 	getAuditData,
 	updateAuditData,
-} from "../controllers/audits.js";
+} from "../controllers/audits";
 
 const auditRouter = express.Router();
 

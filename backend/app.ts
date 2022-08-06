@@ -5,7 +5,7 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 
 // import routers
-import userRouter from "./routes/users.js";
+import userRouter from "./routes/users";
 
 const app = express();
 

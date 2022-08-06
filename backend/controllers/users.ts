@@ -1,11 +1,11 @@
-import supabase from "../supabase/client.js";
+import supabase from "../supabase/client";
 
 /**
  * Add user data
  * @route POST /user/
  */
 export const addUser = async (req, res) => {
-	let { name, address } = req.body;
+	const { name, address } = req.body;
 
 	const { data, error } = await supabase.from("users").insert([
 		{
@@ -31,7 +31,7 @@ export const addUser = async (req, res) => {
  * @route GET /user/:id
  */
 export const getUserData = async (req, res) => {
-	let { data: users, error } = await supabase
+	const { data: users, error } = await supabase
 		.from("users")
 		.select("*")
 		.eq("id", req.params.id);
@@ -56,7 +56,7 @@ export const updateUserData = async (req, res) => {
 	const { data: user, error } = await supabase
 		.from("users")
 		.update([{ ...req.body }])
-		.where("id", req.params.id);
+		.eq("id", req.params.id);
 
 	if (error) {
 		return res.status(500).json({
