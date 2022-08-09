@@ -32,7 +32,7 @@ const NewAudit = () => {
 
   const handleKeyDown = (e) => {
     if (tag.length > 0 && !tags.includes(tag) && e.key === "Enter") {
-      setTags([...tags, camelCase(tag)]);
+      setTags([...tags, camelCase(tag.substring(0, 15).toLowerCase())]);
       setTag("");
     }
   };
