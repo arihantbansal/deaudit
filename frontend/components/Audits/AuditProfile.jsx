@@ -14,6 +14,9 @@ import {
   ModalCloseButton,
   ModalFooter,
   Textarea,
+  HStack,
+  Tag,
+  Center,
 } from "@chakra-ui/react";
 import { Link as Linker } from "@chakra-ui/react";
 import { ellipseAddress } from "@lib/utilities";
@@ -27,38 +30,40 @@ import { GiInjustice } from "react-icons/gi";
 import Link from "next/link";
 
 const AuditProfile = ({ contractAddress }) => {
-  let creator = "0xaC6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F";
-
-  let juryMembers = [
-    "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-    "0x95Fce0ECfc530cfbfaA70D8644a8De8E12De723e",
-    "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-    "0x95Fce0ECfc530cfbfaA70D8644a8De8E12De723e",
-    "0xaC6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-  ];
-
-  let poolSizes = {
-    NoBug: "5.3 MATIC",
-    YesBug: "2.1 MATIC",
+  const audit = {
+    id: 1,
+    name: "AuditDAO",
+    address: "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
+    creator: "0x3b5e3af9c9c6c5dcd09cef8f3d3c9c74d9ac2a2a",
+    juryMembers: [
+      "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
+      "0x95Fce0ECfc530cfbfaA70D8644a8De8E12De723e",
+      "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
+    ],
+    bugs: [
+      {
+        userAddress: "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
+        description: "Not ownable",
+        verified: true,
+      },
+      {
+        userAddress: "0x95Fce0ECfc530cfbfaA70D8644a8De8E12De723e",
+        description: "Can use OpenZeppelin to ensure reusability",
+        verified: false,
+      },
+      {
+        userAddress: "0xaC6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
+        description: "Would be better to implement ERC1155 instead of 721",
+        verified: true,
+      },
+    ],
+    createdAt: "2020-01-01",
+    poolSizes: {
+      NoBug: "5.3 MATIC",
+      YesBug: "2.1 MATIC",
+    },
+    tags: ["erc721", "polygon"],
   };
-
-  let bugsReported = [
-    {
-      userAddress: "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-      description: "Not ownable",
-      verified: true,
-    },
-    {
-      userAddress: "0x95Fce0ECfc530cfbfaA70D8644a8De8E12De723e",
-      description: "Can use OpenZeppelin to ensure reusability",
-      verified: false,
-    },
-    {
-      userAddress: "0xaC6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-      description: "Would be better to implement ERC1155 instead of 721",
-      verified: true,
-    },
-  ];
 
   const title = `Audit ${ellipseAddress(contractAddress)}`;
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -126,7 +131,7 @@ const AuditProfile = ({ contractAddress }) => {
           }}
         >
           Requestor :
-          <Link href={`/users/${creator}`} passHref>
+          <Link href={`/users/${audit.creator}`} passHref>
             <a>
               <Text
                 color="red.200"
@@ -141,11 +146,29 @@ const AuditProfile = ({ contractAddress }) => {
                   background: "white",
                 }}
               >
-                {creator}
+                {audit.creator}
               </Text>
             </a>
           </Link>
         </Heading>
+        <Center m="4">
+          <HStack gap="2">
+            {audit.tags.map((tag, index) => (
+              <Tag
+                key={index}
+                size="lg"
+                variant="solid"
+                border="none"
+                fontFamily="Space Grotesk"
+                cursor="pointer"
+                colorScheme="red"
+                userSelect="none"
+              >
+                {tag}
+              </Tag>
+            ))}
+          </HStack>
+        </Center>
         <Button
           size="lg"
           mx="auto"
@@ -254,7 +277,7 @@ const AuditProfile = ({ contractAddress }) => {
             textAlign="center"
           >
             <Heading color="white" my="4" fontSize="2xl">
-              {juryMembers.map((juryMember, index) => {
+              {audit.juryMembers.map((juryMember, index) => {
                 return (
                   <Box key={index} py="2" mx="4">
                     <Link href={`/users/${juryMember}`} passHref>
@@ -317,7 +340,7 @@ const AuditProfile = ({ contractAddress }) => {
             alignItems="center"
             textAlign="center"
           >
-            {Object.keys(poolSizes).map((poolSize, index) => {
+            {Object.keys(audit.poolSizes).map((poolSize, index) => {
               return (
                 <VStack key={index} my="4" gap="4">
                   <Heading
@@ -340,7 +363,7 @@ const AuditProfile = ({ contractAddress }) => {
                       background: "white",
                     }}
                   >
-                    {poolSizes[poolSize]}
+                    {audit.poolSizes[poolSize]}
                   </Heading>
                   <Button
                     fontFamily="Space Grotesk"
@@ -412,7 +435,7 @@ const AuditProfile = ({ contractAddress }) => {
             fontSize="2xl"
             fontFamily="Space Grotesk"
           >
-            {bugsReported.map((bug, index) => {
+            {audit.bugs.map((bug, index) => {
               return (
                 <VStack
                   key={index}

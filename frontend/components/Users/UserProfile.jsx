@@ -235,8 +235,9 @@ const UserProfile = ({ userAddress }) => {
           color="purple.100"
           mt="4"
           mb="4"
-          fontSize="1.8em"
-          className="audit"
+          fontSize="2em"
+          letterSpacing="0.5px"
+          fontFamily="Space Grotesk"
           _selection={{
             color: "purple.800",
             background: "white",
