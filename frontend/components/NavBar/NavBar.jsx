@@ -28,7 +28,7 @@ const NavBar = () => {
         <Link href="/" passHref color="white">
           <a>
             <Heading
-              fontSize="2.4em"
+              fontSize="2.2em"
               p="3"
               ml="10"
               fontFamily="Geostar Fill"
@@ -40,14 +40,28 @@ const NavBar = () => {
           </a>
         </Link>
 
-        <Flex m="20" justifyContent="space-around" flexDir="row" gap="10">
-          <Link href="/new-audit">
+        <Flex m="20" justifyContent="space-around" flexDir="row" gap="2">
+          <Link href="/audits">
             <Button
               variant="solid"
               bg="transparent"
               fontFamily="Space Grotesk"
               size="md"
-              fontSize="1em"
+              fontSize="lg"
+              _hover={{
+                transform: "scale(1.05)",
+              }}
+            >
+              Listed Audits
+            </Button>
+          </Link>
+          <Link href="/new-audit">
+            <Button
+              variant="solid"
+              bg="transparent"
+              fontSize="lg"
+              fontFamily="Space Grotesk"
+              size="md"
               _hover={{
                 transform: "scale(1.05)",
               }}

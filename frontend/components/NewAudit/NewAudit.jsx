@@ -5,13 +5,42 @@ import {
   FormControl,
   FormLabel,
   Heading,
+  HStack,
   Input,
+  Tag,
+  TagCloseButton,
+  TagLabel,
+  Text,
 } from "@chakra-ui/react";
 import Router from "next/router";
 import React, { useState } from "react";
+import { camelCase } from "lodash";
+import styles from "../../styles/NewAudit.module.scss";
 
 const NewAudit = () => {
   const [contractAddress, setContractAddress] = useState("");
+  const [tags, setTags] = useState([]);
+  const [tag, setTag] = useState("");
+
+  const handleDelete = (id) => {
+    setTags((prev) => {
+      return prev.filter((_, index) => {
+        return id !== index;
+      });
+    });
+  };
+
+  const handleKeyDown = (e) => {
+    if (tag.length > 0 && !tags.includes(tag) && e.key === "Enter") {
+      setTags([...tags, camelCase(tag)]);
+      setTag("");
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    Router.push(`/audits/${contractAddress}`);
+  };
 
   return (
     <Flex flexDir="column">
@@ -33,12 +62,7 @@ const NewAudit = () => {
         <Flex flexDir="column" mt="8" fontFamily="Space Grotesk">
           <form>
             <FormControl my="2" isRequired>
-              <FormLabel
-                htmlFor="contractAddress"
-                fontSize="lg"
-                color="pink.50"
-                textAlign="left"
-              >
+              <FormLabel htmlFor="contractAddress" fontSize="lg">
                 Contract Address
               </FormLabel>
               <Input
@@ -49,51 +73,55 @@ const NewAudit = () => {
                 value={contractAddress}
                 onChange={(e) => setContractAddress(e.target.value)}
                 variant="outline"
-                borderColor="pink.50"
                 spellCheck="false"
-                borderWidth="1px"
-                borderRadius="5px"
-                mb="10"
-                boxShadow="none"
-                _focus={{
-                  borderColor: "pink.50",
-                  boxShadow: "none",
-                }}
-                _hover={{
-                  borderColor: "pink.50",
-                  boxShadow: "none",
-                }}
+                className={styles.input}
               />
             </FormControl>
-
-            <Button
-              size="lg"
-              fontFamily="Space Grotesk"
-              border="1px"
-              w="fit-content"
-              mx="auto"
-              type="submit"
-              float="right"
-              borderColor="pink.200"
-              borderRadius="10px"
-              fontSize="1.3em"
-              onClick={(e) => {
-                e.preventDefault();
-                console.log(contractAddress);
-                Router.push(`/audit/${contractAddress}`);
-              }}
-              bg="transparent"
-              color="pink.200"
-              _hover={{
-                borderColor: "pink.600",
-                color: "pink.600",
-              }}
-              colorScheme="pink"
-              mr={3}
-            >
-              Submit
-            </Button>
+            <FormControl>
+              <FormLabel htmlFor="tags" fontSize="lg" className={styles.text}>
+                Add relevant Tags
+              </FormLabel>
+              <Input
+                required
+                placeholder="Tags"
+                id="tags"
+                size="lg"
+                value={tag}
+                onChange={(e) => setTag(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e)}
+                variant="outline"
+                spellCheck="false"
+                className={styles.input}
+              />
+            </FormControl>
+            <HStack spacing={4}>
+              {tags.length > 0
+                ? tags.map((tag, index) => (
+                    <Tag
+                      size="lg"
+                      key={index}
+                      variant="solid"
+                      cursor="pointer"
+                      colorScheme="red"
+                      userSelect="none"
+                    >
+                      <TagLabel>{tag}</TagLabel>
+                      <TagCloseButton onClick={() => handleDelete(index)} />
+                    </Tag>
+                  ))
+                : null}
+            </HStack>
           </form>
+          <Button
+            size="lg"
+            my="8"
+            type="submit"
+            onClick={(e) => handleSubmit(e)}
+            className={styles.button}
+            colorScheme="pink"
+          >
+            Submit
+          </Button>
         </Flex>
       </Flex>
     </Flex>
