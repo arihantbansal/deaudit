@@ -1,21 +1,26 @@
 import AuditProfile from "@components/Audits/AuditProfile";
-import { useRouter } from "next/router";
+import { config } from "@lib/utilities";
+import {useRouter } from "next/router";
 import { useEffect } from "react";
 
-const Audit = () => {
-  const exists = true;
+const Audit = (props) => {
   const router = useRouter();
-  const { address } = router.query;
-
   useEffect(() => {
-    document.documentElement.style.setProperty(
-      "--line-color",
-      "rgba(65, 3, 3, 0.351)"
-    );
+    document.documentElement.style.setProperty("--line-color", "#2102476c");
   }, []);
 
-  if (exists) return <AuditProfile contractAddress={address} />;
-  else router.push("/404");
+  if(props.audit !== null) return <AuditProfile audit={props.audit.data} />;
+  else { if(typeof window !== "undefined") router.push("/404"); }
+
 };
+
+export async function getServerSideProps(context) {
+  const address = context.query.address;
+  const res = await fetch(`${config}/audits/${address}`);
+  const audit = await res.json();
+
+  if(audit.data === undefined) return { props: { audit: null } };
+  return { props: { audit } };
+}
 
 export default Audit;

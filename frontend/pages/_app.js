@@ -7,7 +7,7 @@ import {
 import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { publicProvider } from "wagmi/providers/public";
-import theme from "@styles/theme";
+import theme, { styles } from "@styles/theme";
 import NavBar from "@components/NavBar/NavBar";
 import "@styles/globals.scss";
 import "@styles/colors.scss";
@@ -47,7 +47,7 @@ const wagmiClient = createClient({
 
 const rainbowTheme = midnightTheme();
 rainbowTheme.fonts.body = "Space Grotesk, sans-serif";
-rainbowTheme.colors.accentColor = "transparent";
+rainbowTheme.colors.accentColor = "red";
 
 function MyApp({ Component, pageProps }) {
   return (
