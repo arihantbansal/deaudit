@@ -6,6 +6,7 @@ import morgan from "morgan";
 
 // import routers
 import userRouter from "./routes/users";
+import auditRouter from "./routes/audits";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(cors());
 
 app.use(morgan("dev"));
 
-app.use("/user", userRouter);
+app.use("/users", userRouter);
+app.use("/audits", auditRouter);
 
 export default app;

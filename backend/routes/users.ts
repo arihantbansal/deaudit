@@ -1,18 +1,26 @@
 import express from "express";
-import { addUser, getUserData, updateUserData } from "../controllers/users";
+import {
+	addUser,
+	getAllUsers,
+	getUserData,
+	updateUserData,
+} from "../controllers/users";
 
 const userRouter = express.Router();
 
-//@route	POST /user/
+//@route	GET /users
+//@desc		GET users
+userRouter.get("/", getAllUsers);
+//@route	POST /users/
 //@desc		Add user
 userRouter.post("/", addUser);
 
-//@route	GET /user/:id
+//@route	GET /users/:address
 //@desc		Get user details
-userRouter.get("/:id", getUserData);
+userRouter.get("/:address", getUserData);
 
-//@route	PUT /user/:id
+//@route	PUT /users/:address
 //@desc		Update user data
-userRouter.put("/:id", updateUserData);
+userRouter.put("/:address", updateUserData);
 
 export default userRouter;

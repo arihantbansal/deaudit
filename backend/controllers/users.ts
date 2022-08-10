@@ -26,6 +26,24 @@ export const addUser = async (req, res) => {
 	});
 };
 
+export const getAllUsers = async (req, res) => {
+	const { data: users, error } = await supabase
+		.from("users")
+		.select("*")
+		.order("id", { ascending: false });
+
+	if (error) {
+		return res.status(500).json({
+			message: "Error fetching users",
+			error,
+		});
+	}
+
+	return res.status(200).json({
+		data: users,
+	});
+};
+
 /**
  * Retrieve user data
  * @route GET /user/:id
@@ -34,7 +52,7 @@ export const getUserData = async (req, res) => {
 	const { data: users, error } = await supabase
 		.from("users")
 		.select("*")
-		.eq("id", req.params.id);
+		.eq("address", req.params.address);
 
 	if (error) {
 		return res.status(500).json({
@@ -56,7 +74,7 @@ export const updateUserData = async (req, res) => {
 	const { data: user, error } = await supabase
 		.from("users")
 		.update([{ ...req.body }])
-		.eq("id", req.params.id);
+		.eq("address", req.params.address);
 
 	if (error) {
 		return res.status(500).json({

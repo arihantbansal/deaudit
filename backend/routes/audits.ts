@@ -16,12 +16,12 @@ auditRouter.get("/", getAllAudits);
 //@desc		Add audit
 auditRouter.post("/", addAudit);
 
-//@route	GET /audit/:id
+//@route	GET /audit/:address
 //@desc		Get audit details
-auditRouter.get("/:id", getAuditData);
+auditRouter.get("/:address", getAuditData);
 
-//@route	PUT /audit/:id
+//@route	PUT /audit/:address
 //@desc		Update audit details
-auditRouter.put("/:id", updateAuditData);
+auditRouter.put("/:address", updateAuditData);
 
 export default auditRouter;

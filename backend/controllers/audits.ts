@@ -53,7 +53,7 @@ export const getAuditData = async (req, res) => {
 	const { data: audit, error } = await supabase
 		.from("audits")
 		.select("*")
-		.eq("id", req.params.id);
+		.eq("contract_address", req.params.address);
 
 	if (error) {
 		return res.status(500).json({
@@ -61,22 +61,24 @@ export const getAuditData = async (req, res) => {
 			error,
 		});
 	}
-	let bug;
-	for (bug in audit[0].bugs_reported) {
-		const { data: bugData, error } = await supabase
-			.from("bugs")
-			.select("*")
-			.eq("id", bug);
+	// let bug;
+	// if (audit[0].bugs_reported) {
+	// 	for (bug in audit[0].bugs_reported) {
+	// 		const { data: bugData, error } = await supabase
+	// 			.from("bugs")
+	// 			.select("*")
+	// 			.eq("id", bug);
 
-		if (error) {
-			return res.status(500).json({
-				message: "Error fetching bug data",
-				error,
-			});
-		}
+	// 		if (error) {
+	// 			return res.status(500).json({
+	// 				message: "Error fetching bug data",
+	// 				error,
+	// 			});
+	// 		}
 
-		audit[0].bugs_reported[bug] = bugData[0];
-	}
+	// 		audit[0].bugs_reported[bug] = bugData[0];
+	// 	}
+	// }
 
 	return res.status(200).json({
 		data: audit[0],
@@ -95,7 +97,7 @@ export const updateAuditData = async (req, res) => {
 				...req.body,
 			},
 		])
-		.eq("id", req.params.id);
+		.eq("contract_address", req.params.address);
 
 	if (error) {
 		return res.status(500).json({
