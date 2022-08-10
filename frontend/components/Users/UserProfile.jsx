@@ -33,9 +33,9 @@ import { BsBug } from "react-icons/bs";
 import { AiOutlineAudit } from "react-icons/ai";
 import { GiInjustice } from "react-icons/gi";
 import { useEnsName } from "wagmi";
-import { ellipseAddress } from "@lib/utilities";
-import Link from "next/link";
+import { config, ellipseAddress } from "@lib/utilities";
 import { Web3Storage } from "web3.storage";
+import Link from "next/link";
 
 // Construct with token and endpoint
 const client = new Web3Storage({
@@ -43,60 +43,33 @@ const client = new Web3Storage({
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGQ2OUZiZERiNkI3YTZDYTA5MEU1ZDdlMENlNTU3MDJBNmEyRTMwZEUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTk0MjQxMTQ1MzAsIm5hbWUiOiJkZWF1ZGl0In0.brbCSwSRpKGpzPA_uz2LtoUUQlq0HXv_gzta7dQsjxE",
 });
 
-const UserProfile = ({ userAddress }) => {
-  // Dummy data, to be fetched from chain and backend
-  let juryForAudit = [
-    "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-    "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-    "0xaC6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-    "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-    "0xaC6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-  ];
-
-  let requestedAudits = [
-    "0x95Fce0ECfc530cfbfaA70D8644a8De8E12De723e",
-    "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-    "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-    "0x95Fce0ECfc530cfbfaA70D8644a8De8E12De723e",
-    "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-  ];
-
-  let bugsReported = [
-    {
-      contractAddress: "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-      description: "Not ownable",
-      verified: true,
-    },
-    {
-      contractAddress: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-      description: "Can use OpenZeppelin to ensure reusability",
-      verified: false,
-    },
-    {
-      contractAddress: "0xaC6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-      description: "Would be better to implement ERC1155 instead of 721",
-      verified: true,
-    },
-  ];
-
+const UserProfile = ({ user }) => {
   // Modal and page title utilities
   const profileModal = useDisclosure();
   const loadingModal = useDisclosure();
-  const { data, isError, isLoading } = useEnsName({ address: userAddress });
-  const cutAddress = "User " + ellipseAddress(userAddress);
+  const { data, isError, isLoading } = useEnsName({ address: user.address });
+  const cutAddress = "User " + ellipseAddress(user.address);
   let [title, setTitle] = useState("");
-  const { address, isConnecting, isDisconnected } = useAccount();
+  const { address } = useAccount();
 
   // Handling user text-data
-  const initialState = {
-    github: "",
-    twitter: "",
-    linkedin: "",
-    jury: false,
-    bio: "Crypto Enthusiast",
+  const initialSocialState = {
+    github: user.github_username,
+    twitter: user.twitter_username,
+    linkedin: user.linkedin_username,
+    bio: user.bio,
+    profileImage: user.profile_image,
+    coverImage: user.cover_image,
   };
 
-  const reducer = (state, action) => {
+  const initialUserState = {
+    audits_requested: user.audits_requested,
+    bugs_reported: user.bugs_reported,
+    jury_of: user.jury_of,
+    on_jury: user.on_jury,
+  };
+
+  const socialReducer = (state, action) => {
     switch (action.type) {
       case "setGithub":
         return { ...state, github: action.payload };
@@ -104,38 +77,67 @@ const UserProfile = ({ userAddress }) => {
         return { ...state, twitter: action.payload };
       case "setLinkedin":
         return { ...state, linkedin: action.payload };
-      case "setJury":
-        return { ...state, jury: action.payload };
       case "setBio":
         return { ...state, bio: action.payload };
+      case "setProfileImage":
+        return { ...state, profileImage: action.payload };
+      case "setCoverImage":
+        return { ...state, coverImage: action.payload };
       default:
         return state;
     }
   };
 
-  const [socialState, dispatch] = useReducer(reducer, initialState);
+  const userReducer = (state, action) => {
+    switch (action.type) {
+      case "setJury":
+        return { ...state, jury: action.payload };
+      case "setAuditsRequested":
+        return { ...state, audits_requested: action.payload };
+      case "setBugsReported":
+        return { ...state, bugs_reported: action.payload };
+      case "setJuryOf":
+        return { ...state, jury_of: action.payload };
+      case "setOnJury":
+        return { ...state, on_jury: action.payload };
+      default:
+        return state;
+    }
+  };
 
-  // Handling user image-data
-  const [profileImage, setProfileImage] = useState(
-    "https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8"
+  const [socialState, socialDispatch] = useReducer(
+    socialReducer,
+    initialSocialState
   );
-  const [coverImage, setCoverImage] = useState(
-    "https://images.unsplash.com/photo-1563089145-599997674d42?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8"
-  );
+  const [userState, userDispatch] = useReducer(userReducer, initialUserState);
 
   const handleProfile = async (e) => {
     loadingModal.onOpen();
     const file = e.target.files;
     const rootCid = await client.put(file, {
-      name: file[0].name + "-" + userAddress,
+      name: file[0].name + "-" + user.address,
       maxRetries: 3,
     });
 
     const res = await client.get(rootCid);
     const returnFile = await res.files();
-    setProfileImage(
-      "https://" + rootCid + ".ipfs.dweb.link/" + returnFile[0].name
-    );
+    const image =
+      "https://" + rootCid + ".ipfs.dweb.link/" + returnFile[0].name;
+    fetch(`${config}/users/${user.address}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        profile_image: image,
+      }),
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          socialDispatch({ type: "setProfileImage", payload: image });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     loadingModal.onClose();
     profileModal.onClose();
   };
@@ -144,31 +146,43 @@ const UserProfile = ({ userAddress }) => {
     loadingModal.onOpen();
     const file = e.target.files;
     const rootCid = await client.put(file, {
-      name: file[0].name + "-" + userAddress,
+      name: file[0].name + "-" + user.address,
       maxRetries: 3,
     });
 
     const res = await client.get(rootCid);
     const returnFile = await res.files();
-    setCoverImage(
-      "https://" + rootCid + ".ipfs.dweb.link/" + returnFile[0].name
-    );
+    const image =
+      "https://" + rootCid + ".ipfs.dweb.link/" + returnFile[0].name;
+    fetch(`${config}/users/${user.address}`, {
+      method: "PUT",
+      body: JSON.stringify({
+        cover_image: image,
+      }),
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          socialDispatch({ type: "setCoverImage", payload: image });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     loadingModal.onClose();
     profileModal.onClose();
   };
 
   useEffect(() => {
-    if (address === userAddress) {
+    if (address === user.address) {
       setTitle("Your Profile");
     } else {
       setTitle(cutAddress);
     }
-  }, [userAddress, cutAddress, address]);
-
-  // TODO Fetching user data from backend using useEffect
+  }, [cutAddress, address, user.address]);
 
   return (
-    <Flex>
+    <Center w="100vw">
       <Flex className="container">
         {[...Array(350)].map((e, i) => (
           <Box className="line" key={i}></Box>
@@ -181,6 +195,7 @@ const UserProfile = ({ userAddress }) => {
         pos="absolute"
         overflowX="hidden"
         top="0"
+        w="100vw"
       >
         <Head>
           <title>{title}</title>
@@ -188,7 +203,7 @@ const UserProfile = ({ userAddress }) => {
         <Flex
           w="100%"
           h="85vh"
-          bgImage={`url(${coverImage})`}
+          bgImage={`url(${socialState.coverImage})`}
           bgSize="cover"
           bgPos="center"
           bgRepeat="no-repeat"
@@ -202,7 +217,7 @@ const UserProfile = ({ userAddress }) => {
           alt="Audit"
           w="48"
           h="48"
-          src={profileImage}
+          src={socialState.profileImage}
           borderRadius="full"
           objectFit="cover"
           borderWidth="2px"
@@ -211,7 +226,7 @@ const UserProfile = ({ userAddress }) => {
           mb="4"
         />
 
-        {!address ? null : address === userAddress ? (
+        {!address ? null : address === user.address ? (
           <Button
             fontSize="3em"
             mx="auto"
@@ -243,7 +258,7 @@ const UserProfile = ({ userAddress }) => {
             background: "white",
           }}
         >
-          {userAddress}
+          {user.address}
         </Heading>
 
         <Text
@@ -293,9 +308,12 @@ const UserProfile = ({ userAddress }) => {
                 fontFamily="Geostar Fill"
                 mb="3"
                 fontSize="3xl"
-                isChecked={socialState.jury}
+                isChecked={userState.on_jury}
                 onChange={() => {
-                  dispatch({ type: "setJury", payload: !socialState.jury });
+                  userDispatch({
+                    type: "setOnJury",
+                    payload: !userState.on_jury,
+                  });
                 }}
               >
                 Apply for Jury
@@ -316,7 +334,7 @@ const UserProfile = ({ userAddress }) => {
                 cols="40"
                 value={socialState.bio}
                 onChange={(e) => {
-                  dispatch({ type: "setBio", payload: e.target.value });
+                  socialDispatch({ type: "setBio", payload: e.target.value });
                 }}
                 mb="2"
                 fontSize="1em"
@@ -354,7 +372,10 @@ const UserProfile = ({ userAddress }) => {
                 }}
                 value={socialState.github}
                 onChange={(e) => {
-                  dispatch({ type: "setGithub", payload: e.target.value });
+                  socialDispatch({
+                    type: "setGithub",
+                    payload: e.target.value,
+                  });
                 }}
               />
 
@@ -377,7 +398,10 @@ const UserProfile = ({ userAddress }) => {
                 value={socialState.twitter}
                 boxShadow="none"
                 onChange={(e) => {
-                  dispatch({ type: "setTwitter", payload: e.target.value });
+                  socialDispatch({
+                    type: "setTwitter",
+                    payload: e.target.value,
+                  });
                 }}
                 _focus={{
                   borderColor: "purple.50",
@@ -405,7 +429,10 @@ const UserProfile = ({ userAddress }) => {
                 value={socialState.linkedin}
                 boxShadow="none"
                 onChange={(e) => {
-                  dispatch({ type: "setLinkedin", payload: e.target.value });
+                  socialDispatch({
+                    type: "setLinkedin",
+                    payload: e.target.value,
+                  });
                 }}
                 _focus={{
                   borderColor: "purple.50",
@@ -579,7 +606,7 @@ const UserProfile = ({ userAddress }) => {
             py="2"
           >
             <Heading my="4" fontSize="2xl">
-              {juryForAudit.map((audit, index) => {
+              {userState.jury_of?.map((audit, index) => {
                 return (
                   <Box key={index} py="2" mx="4">
                     <Link href={`/audits/${audit}`} passHref>
@@ -589,7 +616,6 @@ const UserProfile = ({ userAddress }) => {
                           className="address"
                           color="purple.100"
                           display="inline-flex"
-                          href={`/audits/${audit}`}
                           _selection={{
                             color: "purple.800",
                             background: "white",
@@ -601,7 +627,7 @@ const UserProfile = ({ userAddress }) => {
                           {audit}
                         </Text>
                       </Linker>
-                    </Link>
+                      </Link>
                   </Box>
                 );
               })}
@@ -652,11 +678,11 @@ const UserProfile = ({ userAddress }) => {
               fontSize="2xl"
               fontFamily="Cutive Mono"
             >
-              {requestedAudits.map((audit, index) => {
+              {userState.audits_requested?.map((audit, index) => {
                 return (
                   <VStack key={index} py="2" mx="4">
                     <Link href={`/audits/${audit}`} passHref>
-                      <a>
+                      <Linker>
                         <Text
                           fontSize="1.1em"
                           color="purple.100"
@@ -672,7 +698,7 @@ const UserProfile = ({ userAddress }) => {
                         >
                           {audit}
                         </Text>
-                      </a>
+                      </Linker>
                     </Link>
                   </VStack>
                 );
@@ -718,7 +744,7 @@ const UserProfile = ({ userAddress }) => {
             fontSize="2xl"
             fontFamily="Space Grotesk"
           >
-            {bugsReported.map((bug, index) => {
+            {userState.bugs_reported?.map((bug, index) => {
               return (
                 <VStack
                   key={index}
@@ -731,7 +757,7 @@ const UserProfile = ({ userAddress }) => {
                   p="6"
                   borderRadius="15px"
                 >
-                  <Link href={`/audits/${bug.contractAddress}`} passHref>
+                  <Link href={`/audits/${bug.audit_id}`} passHref>
                     <Linker
                       fontSize="2xl"
                       color="purple.100"
@@ -747,9 +773,9 @@ const UserProfile = ({ userAddress }) => {
                         color: "black",
                       }}
                     >
-                      {bug.contractAddress}
+                      {bug.audit_id}
                     </Linker>
-                  </Link>
+                    </Link>
                   <Text
                     fontSize="xl"
                     color="purple.50"
@@ -765,7 +791,7 @@ const UserProfile = ({ userAddress }) => {
                     Description : {bug.description}
                   </Text>
 
-                  <Flex
+                  {/* <Flex
                     flexDir="row"
                     justifyContent="space-evenly"
                     alignItems="center"
@@ -776,14 +802,14 @@ const UserProfile = ({ userAddress }) => {
                     ) : (
                       <GoUnverified size="1.4em" color="purple" />
                     )}
-                  </Flex>
+                  </Flex> */}
                 </VStack>
               );
             })}
           </Flex>
         </Flex>
       </Flex>
-    </Flex>
+    </Center>
   );
 };
 

@@ -14,13 +14,16 @@ import {
 } from "@chakra-ui/react";
 import Router from "next/router";
 import React, { useState } from "react";
-import { camelCase } from "lodash";
 import styles from "../../styles/NewAudit.module.scss";
+import { config, pascalCase } from "@lib/utilities";
+import { useAccount } from "wagmi";
 
 const NewAudit = () => {
   const [contractAddress, setContractAddress] = useState("");
   const [tags, setTags] = useState([]);
   const [tag, setTag] = useState("");
+  const { address } = useAccount();
+
 
   const handleDelete = (id) => {
     setTags((prev) => {
@@ -32,14 +35,34 @@ const NewAudit = () => {
 
   const handleKeyDown = (e) => {
     if (tag.length > 0 && !tags.includes(tag) && e.key === "Enter") {
-      setTags([...tags, camelCase(tag.substring(0, 15).toLowerCase())]);
+      setTags([...tags, pascalCase(tag.substring(0, 15).toLowerCase())]);
       setTag("");
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    Router.push(`/audits/${contractAddress}`);
+    if(address) {
+      fetch(`${config}/audits`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+        created_by : address,
+        contract_address :contractAddress,
+        tags:  tags,
+        }),
+      })
+      .then((res) => {
+        if (res.status === 200)
+          Router.push(`/audits/${contractAddress}`);
+      }).catch((err) => {
+        console.log(err);
+      }
+      );
+    }
+    else alert("Please connect to a wallet");
   };
 
   return (

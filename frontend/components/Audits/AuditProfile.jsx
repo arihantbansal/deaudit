@@ -29,43 +29,8 @@ import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { GiInjustice } from "react-icons/gi";
 import Link from "next/link";
 
-const AuditProfile = ({ contractAddress }) => {
-  const audit = {
-    id: 1,
-    name: "AuditDAO",
-    address: "0x9f8f72aa9304c8b593d555f12ef6589cc3a579a2",
-    creator: "0x3b5e3af9c9c6c5dcd09cef8f3d3c9c74d9ac2a2a",
-    juryMembers: [
-      "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-      "0x95Fce0ECfc530cfbfaA70D8644a8De8E12De723e",
-      "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-    ],
-    bugs: [
-      {
-        userAddress: "0xA0C6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-        description: "Not ownable",
-        verified: true,
-      },
-      {
-        userAddress: "0x95Fce0ECfc530cfbfaA70D8644a8De8E12De723e",
-        description: "Can use OpenZeppelin to ensure reusability",
-        verified: false,
-      },
-      {
-        userAddress: "0xaC6dFF0CD9d034Ddb9fE46F9B9AeFbeC9EA4358F",
-        description: "Would be better to implement ERC1155 instead of 721",
-        verified: true,
-      },
-    ],
-    createdAt: "2020-01-01",
-    poolSizes: {
-      NoBug: "5.3 MATIC",
-      YesBug: "2.1 MATIC",
-    },
-    tags: ["erc721", "polygon"],
-  };
-
-  const title = `Audit ${ellipseAddress(contractAddress)}`;
+const AuditProfile = ({ audit }) => {
+  const title = `Audit ${ellipseAddress(audit.contract_address)}`;
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -86,9 +51,11 @@ const AuditProfile = ({ contractAddress }) => {
         m="auto"
         textAlign="center"
       >
+        <Heading className="head">{audit.name}</Heading>
+
         <Heading
           color="white"
-          my="4"
+          my="6"
           flexDir="row"
           fontSize="1.5em"
           className="head"
@@ -107,7 +74,7 @@ const AuditProfile = ({ contractAddress }) => {
             className="audit"
             letterSpacing="1px"
             target="_blank"
-            href={`https://mumbai.polygonscan.com/address/${contractAddress}`}
+            href={`https://mumbai.polygonscan.com/address/${audit.contract_address}`}
             _hover={{
               color: "red.50",
             }}
@@ -116,7 +83,7 @@ const AuditProfile = ({ contractAddress }) => {
               background: "white",
             }}
           >
-            {contractAddress}
+            {audit.contract_address}
           </Linker>
         </Heading>
 
@@ -131,8 +98,8 @@ const AuditProfile = ({ contractAddress }) => {
           }}
         >
           Requestor :
-          <Link href={`/users/${audit.creator}`} passHref>
-            <a>
+          <Link href={`/users/${audit.created_by}`} passHref>
+            <Linker>
               <Text
                 color="red.200"
                 display="inline-flex"
@@ -146,14 +113,14 @@ const AuditProfile = ({ contractAddress }) => {
                   background: "white",
                 }}
               >
-                {audit.creator}
+                {audit.created_by}
               </Text>
-            </a>
+              </Linker>
           </Link>
         </Heading>
         <Center m="4">
           <HStack gap="2">
-            {audit.tags.map((tag, index) => (
+            {audit.tags?.map((tag, index) => (
               <Tag
                 key={index}
                 size="lg"
@@ -219,11 +186,11 @@ const AuditProfile = ({ contractAddress }) => {
             <ModalFooter>
               <Button
                 size="md"
-                fontFamily="Eirian"
+                fontFamily="Space Grotesk"
                 border="1px"
                 borderColor="red.200"
                 borderRadius="10px"
-                fontSize="1.2em"
+                fontSize="1em"
                 bg="transparent"
                 color="gray.200"
                 onClick={onClose}
@@ -277,7 +244,7 @@ const AuditProfile = ({ contractAddress }) => {
             textAlign="center"
           >
             <Heading color="white" my="4" fontSize="2xl">
-              {audit.juryMembers.map((juryMember, index) => {
+              {audit.jury_members?.map((juryMember, index) => {
                 return (
                   <Box key={index} py="2" mx="4">
                     <Link href={`/users/${juryMember}`} passHref>
@@ -298,7 +265,7 @@ const AuditProfile = ({ contractAddress }) => {
                           {juryMember}
                         </Text>
                       </Linker>
-                    </Link>
+                      </Link>
                   </Box>
                 );
               })}
@@ -340,7 +307,7 @@ const AuditProfile = ({ contractAddress }) => {
             alignItems="center"
             textAlign="center"
           >
-            {Object.keys(audit.poolSizes).map((poolSize, index) => {
+            {/* {Object.keys(audit.poolSizes).map((poolSize, index) => {
               return (
                 <VStack key={index} my="4" gap="4">
                   <Heading
@@ -389,7 +356,7 @@ const AuditProfile = ({ contractAddress }) => {
                   </Button>
                 </VStack>
               );
-            })}
+            })} */}
           </Flex>
         </Flex>
 
@@ -435,7 +402,7 @@ const AuditProfile = ({ contractAddress }) => {
             fontSize="2xl"
             fontFamily="Space Grotesk"
           >
-            {audit.bugs.map((bug, index) => {
+            {audit.bugs_reported?.map((bug, index) => {
               return (
                 <VStack
                   key={index}
@@ -448,7 +415,7 @@ const AuditProfile = ({ contractAddress }) => {
                   p="6"
                   borderRadius="15px"
                 >
-                  <Link href={`/users/${bug.userAddress}`} passHref>
+                  <Link href={`/users/${bug.reported_by}`} passHref>
                     <Linker
                       fontSize="2xl"
                       color="red.200"
@@ -463,8 +430,8 @@ const AuditProfile = ({ contractAddress }) => {
                         color: "black",
                       }}
                     >
-                      {bug.userAddress}
-                    </Linker>
+                      {bug.reported_by}
+                  </Linker>
                   </Link>
                   <Text
                     fontSize="xl"
@@ -480,7 +447,7 @@ const AuditProfile = ({ contractAddress }) => {
                   >
                     Description : {bug.description}
                   </Text>
-                  <Flex
+                  {/* <Flex
                     flexDir="row"
                     justifyContent="space-evenly"
                     alignItems="center"
@@ -491,7 +458,7 @@ const AuditProfile = ({ contractAddress }) => {
                     ) : (
                       <GoUnverified size="1.4em" color="red" />
                     )}
-                  </Flex>
+                  </Flex> */}
                 </VStack>
               );
             })}

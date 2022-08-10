@@ -30,7 +30,8 @@ const Users = ({ users }) => {
               <Box
                 h="full"
                 bgSize="cover"
-                bgImage={`url("${user.coverImage}")`}
+                bgPos="center"
+                bgImage={`url("${user.cover_image}")`}
               ></Box>
             </Box>
 
@@ -39,13 +40,13 @@ const Users = ({ users }) => {
                 Wallet address : {user.address}
               </Heading>
               <Heading className={styles.userHeader}>
-                Audits created : {user.auditsCreated}
+                Audits created : {user.audits_requested?.length}
               </Heading>
               <Heading className={styles.userHeader}>
-                Bugs Reported : {user.bugsReported}
+                Bugs Reported : {user.bugs_reported?.length}
               </Heading>
               <Heading className={styles.userHeader}>
-                Amount of Audits judged : {user.juryOf}
+                Amount of Audits judged : {user.jury_of?.length}
               </Heading>
             </Box>
           </Box>

@@ -40,7 +40,7 @@ const NavBar = () => {
           </a>
         </Link>
 
-        <Flex m="20" justifyContent="space-around" flexDir="row" gap="2">
+        <Flex m="20" justifyContent="space-around" flexDir="row" gap="6">
           <Link href="/audits">
             <Button
               variant="solid"
@@ -52,7 +52,7 @@ const NavBar = () => {
                 transform: "scale(1.05)",
               }}
             >
-              Listed Audits
+              Audits
             </Button>
           </Link>
           <Link href="/new-audit">
@@ -66,7 +66,7 @@ const NavBar = () => {
                 transform: "scale(1.05)",
               }}
             >
-              Create Audit
+              New Audit
             </Button>
           </Link>
           <ConnectButton chainStatus={"icon"} />

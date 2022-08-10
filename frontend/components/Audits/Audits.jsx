@@ -19,7 +19,7 @@ import { GiInjustice } from "react-icons/gi";
 const Audits = ({ audits }) => {
   const router = useRouter();
 
-  // Tags for the audit
+  // TODO Tags for the audit
   const tagsFetchedFromDb = [
     "bug",
     "polygon",
@@ -96,7 +96,7 @@ const Audits = ({ audits }) => {
             color="red.100"
             cursor="pointer"
             onClick={() => {
-              router.push(`/audits/${audit.address}`);
+              router.push(`/audits/${audit.contract_address}`);
             }}
           >
             <Flex flexDir="column" shadow="lg" h="fit-content" p="10" w="80%">
@@ -104,15 +104,15 @@ const Audits = ({ audits }) => {
                 Contract Name : {audit.name}
               </Heading>
               <Heading className={styles.auditHeader}>
-                Contract Address : {audit.address}
+                Contract Address : {audit.contract_address}
               </Heading>
               <Heading className={styles.auditHeader}>
-                Audit creator : {audit.creator}
+                Audit creator : {audit.created_by}
               </Heading>
               {
                 <HStack spacing={4} mt="4" fontFamily="Space Grotesk">
-                  {audit.tags.length !== 0
-                    ? audit.tags.map((tag, index) => (
+                  {audit.tags?.length !== 0
+                    ? audit.tags?.map((tag, index) => (
                         <Tag
                           size="lg"
                           key={index}
@@ -141,7 +141,7 @@ const Audits = ({ audits }) => {
                 gap="12"
               >
                 <BsBug size="2em" />
-                <Text fontSize="2xl">{audit.bugs.length}</Text>
+                <Text fontSize="2xl">{audit.bugs_reported?.length}</Text>
               </Flex>
               <Flex
                 flexDir="row"
@@ -151,8 +151,8 @@ const Audits = ({ audits }) => {
               >
                 <RiMoneyDollarCircleLine size="2.4em" />
                 <Box float="left">
-                  <Text fontSize="xl">{audit.poolSizes.NoBug} N</Text>
-                  <Text fontSize="xl">{audit.poolSizes.YesBug} Y</Text>
+                  <Text fontSize="xl">{audit.poolSizes?.NoBug} N</Text>
+                  <Text fontSize="xl">{audit.poolSizes?.YesBug} Y</Text>
                 </Box>
               </Flex>
               <Flex
@@ -162,7 +162,7 @@ const Audits = ({ audits }) => {
                 gap="12"
               >
                 <GiInjustice size="2em" />
-                <Text fontSize="2xl">{audit.juryMembers.length}</Text>
+                <Text fontSize="2xl">{audit.jury_members?.length}</Text>
               </Flex>
             </Flex>
           </Flex>
