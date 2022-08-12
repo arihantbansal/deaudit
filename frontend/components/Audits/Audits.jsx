@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Flex,
@@ -15,21 +15,12 @@ import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import styles from "@styles/Listing.module.scss";
 import { useRouter } from "next/router";
 import { GiInjustice } from "react-icons/gi";
+import { config } from "@lib/utilities";
 
 const Audits = ({ audits }) => {
   const router = useRouter();
 
-  // TODO Tags for the audit
-  const tagsFetchedFromDb = [
-    "bug",
-    "polygon",
-    "harmony",
-    "centralized",
-    "erc721",
-    "dao",
-    "erc20",
-    "ethereum",
-  ];
+  const [tags, setTags] = useState([]);
 
   // Tags selected by user for filter
   const [selected, setSelected] = useState([]);
@@ -42,6 +33,21 @@ const Audits = ({ audits }) => {
       setSelected([...selected, tag]);
     }
   };
+
+  useEffect(() => {
+    const init = async () => {
+      fetch(`${config}/tags`)
+        .then((res) => res.json())
+        .then((result) => {
+          setTags(result?.data.tags);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    init();
+  }, []);
+
   return (
     <VStack mt="20vh" width="100%" gap="10">
       <Heading as="h1" size="xl" fontFamily="Geostar">
@@ -60,7 +66,7 @@ const Audits = ({ audits }) => {
       />
       <Text className={styles.text}>Filter by tags :</Text>
       <HStack gap="2">
-        {tagsFetchedFromDb.map((tag, index) => (
+        {tags?.map((tag, index) => (
           <Tag
             key={index}
             size="lg"
@@ -147,13 +153,10 @@ const Audits = ({ audits }) => {
                 flexDir="row"
                 justifyContent="space-around"
                 alignItems="center"
-                gap="6"
+                gap="2"
               >
                 <RiMoneyDollarCircleLine size="2.4em" />
-                <Box float="left">
-                  <Text fontSize="xl">{audit.poolSizes?.NoBug} N</Text>
-                  <Text fontSize="xl">{audit.poolSizes?.YesBug} Y</Text>
-                </Box>
+                <Text fontSize="xl">{audit.initial_pool_size} ETH</Text>
               </Flex>
               <Flex
                 flexDir="row"

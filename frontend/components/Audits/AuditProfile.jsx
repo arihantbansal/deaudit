@@ -29,7 +29,7 @@ import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { GiInjustice } from "react-icons/gi";
 import Link from "next/link";
 
-const AuditProfile = ({ audit }) => {
+const AuditProfile = ({ audit, bugs }) => {
   const title = `Audit ${ellipseAddress(audit.contract_address)}`;
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -115,7 +115,7 @@ const AuditProfile = ({ audit }) => {
               >
                 {audit.created_by}
               </Text>
-              </Linker>
+            </Linker>
           </Link>
         </Heading>
         <Center m="4">
@@ -145,12 +145,11 @@ const AuditProfile = ({ audit }) => {
           borderColor="red.200"
           borderRadius="10px"
           fontSize="1.3em"
-          bg="red.100"
-          color="red.800"
+          bg="transparent"
+          color="red.100"
           onClick={onOpen}
           _hover={{
-            bg: "transparent",
-            color: "red.100",
+            transform: "scale(1.05)",
           }}
           leftIcon={<BsBug />}
         >
@@ -265,7 +264,7 @@ const AuditProfile = ({ audit }) => {
                           {juryMember}
                         </Text>
                       </Linker>
-                      </Link>
+                    </Link>
                   </Box>
                 );
               })}
@@ -402,13 +401,14 @@ const AuditProfile = ({ audit }) => {
             fontSize="2xl"
             fontFamily="Space Grotesk"
           >
-            {audit.bugs_reported?.map((bug, index) => {
+            {bugs?.map((bug, index) => {
               return (
                 <VStack
                   key={index}
                   my="4"
                   mx="4"
                   w="50vw"
+                  h="36"
                   borderWidth="1px"
                   borderColor="red.50"
                   borderStart="solid"
@@ -417,7 +417,7 @@ const AuditProfile = ({ audit }) => {
                 >
                   <Link href={`/users/${bug.reported_by}`} passHref>
                     <Linker
-                      fontSize="2xl"
+                      fontSize="xl"
                       color="red.200"
                       display="inline-flex"
                       className="address"
@@ -430,8 +430,8 @@ const AuditProfile = ({ audit }) => {
                         color: "black",
                       }}
                     >
-                      {bug.reported_by}
-                  </Linker>
+                      By : {bug.reported_by}
+                    </Linker>
                   </Link>
                   <Text
                     fontSize="xl"
@@ -447,18 +447,6 @@ const AuditProfile = ({ audit }) => {
                   >
                     Description : {bug.description}
                   </Text>
-                  {/* <Flex
-                    flexDir="row"
-                    justifyContent="space-evenly"
-                    alignItems="center"
-                    gap="4"
-                  >
-                    {bug.verified ? (
-                      <MdVerified size="1.4em" color="green" />
-                    ) : (
-                      <GoUnverified size="1.4em" color="red" />
-                    )}
-                  </Flex> */}
                 </VStack>
               );
             })}

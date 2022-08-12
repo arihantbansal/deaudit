@@ -43,7 +43,7 @@ const client = new Web3Storage({
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGQ2OUZiZERiNkI3YTZDYTA5MEU1ZDdlMENlNTU3MDJBNmEyRTMwZEUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTk0MjQxMTQ1MzAsIm5hbWUiOiJkZWF1ZGl0In0.brbCSwSRpKGpzPA_uz2LtoUUQlq0HXv_gzta7dQsjxE",
 });
 
-const UserProfile = ({ user }) => {
+const UserProfile = ({ user, bugs }) => {
   // Modal and page title utilities
   const profileModal = useDisclosure();
   const loadingModal = useDisclosure();
@@ -627,7 +627,7 @@ const UserProfile = ({ user }) => {
                           {audit}
                         </Text>
                       </Linker>
-                      </Link>
+                    </Link>
                   </Box>
                 );
               })}
@@ -744,7 +744,7 @@ const UserProfile = ({ user }) => {
             fontSize="2xl"
             fontFamily="Space Grotesk"
           >
-            {userState.bugs_reported?.map((bug, index) => {
+            {bugs?.map((bug, index) => {
               return (
                 <VStack
                   key={index}
@@ -773,9 +773,9 @@ const UserProfile = ({ user }) => {
                         color: "black",
                       }}
                     >
-                      {bug.audit_id}
+                      In : {bug.audit_id}
                     </Linker>
-                    </Link>
+                  </Link>
                   <Text
                     fontSize="xl"
                     color="purple.50"
@@ -790,19 +790,6 @@ const UserProfile = ({ user }) => {
                   >
                     Description : {bug.description}
                   </Text>
-
-                  {/* <Flex
-                    flexDir="row"
-                    justifyContent="space-evenly"
-                    alignItems="center"
-                    gap="4"
-                  >
-                    {bug.verified ? (
-                      <MdVerified size="1.4em" color="green" />
-                    ) : (
-                      <GoUnverified size="1.4em" color="purple" />
-                    )}
-                  </Flex> */}
                 </VStack>
               );
             })}

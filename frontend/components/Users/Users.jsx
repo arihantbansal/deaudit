@@ -43,7 +43,8 @@ const Users = ({ users }) => {
                 Audits created : {user.audits_requested?.length}
               </Heading>
               <Heading className={styles.userHeader}>
-                Bugs Reported : {user.bugs_reported?.length}
+                Bugs Reported :{" "}
+                {user.bugs_reported ? user.bugs_reported.length : 0}
               </Heading>
               <Heading className={styles.userHeader}>
                 Amount of Audits judged : {user.jury_of?.length}

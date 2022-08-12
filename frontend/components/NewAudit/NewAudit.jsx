@@ -24,7 +24,6 @@ const NewAudit = () => {
   const [tag, setTag] = useState("");
   const { address } = useAccount();
 
-
   const handleDelete = (id) => {
     setTags((prev) => {
       return prev.filter((_, index) => {
@@ -42,27 +41,25 @@ const NewAudit = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if(address) {
+    if (address) {
       fetch(`${config}/audits`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-        created_by : address,
-        contract_address :contractAddress,
-        tags:  tags,
+          created_by: address,
+          contract_address: contractAddress,
+          tags: tags,
         }),
       })
-      .then((res) => {
-        if (res.status === 200)
-          Router.push(`/audits/${contractAddress}`);
-      }).catch((err) => {
-        console.log(err);
-      }
-      );
-    }
-    else alert("Please connect to a wallet");
+        .then((res) => {
+          if (res.status === 200) Router.push(`/audits/${contractAddress}`);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else alert("Please connect to a wallet");
   };
 
   return (
@@ -125,7 +122,7 @@ const NewAudit = () => {
                       key={index}
                       variant="solid"
                       cursor="pointer"
-                      colorScheme="red"
+                      colorScheme="green"
                       userSelect="none"
                     >
                       <TagLabel>{tag}</TagLabel>

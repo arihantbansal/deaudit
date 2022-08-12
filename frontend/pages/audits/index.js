@@ -15,8 +15,8 @@ const audits = (props) => {
 };
 
 export const getServerSideProps = async () => {
-  const res = await fetch(`${config}/audits/`);
-  const auditList = await res.json();
+  const auditres = await fetch(`${config}/audits/`);
+  const auditList = await auditres.json();
 
   return {
     props: {

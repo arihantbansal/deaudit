@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 const NewAudit = () => {
   useEffect(() => {
-    document.documentElement.style.setProperty("--line-color", "#f764A634");
+    document.documentElement.style.setProperty("--line-color", "#16de5222");
   }, []);
   return <Audit />;
 };
