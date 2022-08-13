@@ -27,8 +27,6 @@ import Head from "next/head";
 import { FiTwitter, FiGithub, FiSettings, FiLinkedin } from "react-icons/fi";
 import { Link as Linker } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
-import { MdVerified } from "react-icons/md";
-import { GoUnverified } from "react-icons/go";
 import { BsBug } from "react-icons/bs";
 import { AiOutlineAudit } from "react-icons/ai";
 import { GiInjustice } from "react-icons/gi";
@@ -54,10 +52,10 @@ const UserProfile = ({ user, bugs }) => {
 
   // Handling user text-data
   const initialSocialState = {
-    github: user.github_username,
-    twitter: user.twitter_username,
-    linkedin: user.linkedin_username,
-    bio: user.bio,
+    github: user.github_username ? user.github_username : "",
+    twitter: user.twitter_username ? user.twitter_username : "",
+    linkedin: user.linkedin_username ? user.linkedin_username : "",
+    bio: user.bio ? user.bio : "",
     profileImage: user.profile_image,
     coverImage: user.cover_image,
   };
@@ -111,7 +109,7 @@ const UserProfile = ({ user, bugs }) => {
   );
   const [userState, userDispatch] = useReducer(userReducer, initialUserState);
 
-  const handleProfile = async (e) => {
+  const handleProfileImage = async (e) => {
     loadingModal.onOpen();
     const file = e.target.files;
     const rootCid = await client.put(file, {
@@ -123,26 +121,12 @@ const UserProfile = ({ user, bugs }) => {
     const returnFile = await res.files();
     const image =
       "https://" + rootCid + ".ipfs.dweb.link/" + returnFile[0].name;
-    fetch(`${config}/users/${user.address}`, {
-      method: "PUT",
-      body: JSON.stringify({
-        profile_image: image,
-      }),
-    })
-      .then((res) => {
-        if (res.status === 200) {
-          socialDispatch({ type: "setProfileImage", payload: image });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
 
+    socialDispatch({ type: "setProfileImage", payload: image });
     loadingModal.onClose();
-    profileModal.onClose();
   };
 
-  const handleCover = async (e) => {
+  const handleCoverImage = async (e) => {
     loadingModal.onOpen();
     const file = e.target.files;
     const rootCid = await client.put(file, {
@@ -154,23 +138,35 @@ const UserProfile = ({ user, bugs }) => {
     const returnFile = await res.files();
     const image =
       "https://" + rootCid + ".ipfs.dweb.link/" + returnFile[0].name;
+    socialDispatch({ type: "setCoverImage", payload: image });
+    loadingModal.onClose();
+  };
+
+  const handleProfileModal = () => {
+    loadingModal.onOpen();
     fetch(`${config}/users/${user.address}`, {
       method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
-        cover_image: image,
+        twitter_username: socialState.twitter,
+        linkedin_username: socialState.linkedin,
+        linkedin_username: socialState.github,
+        bio: socialState.bio,
+        on_jury: userState.on_jury,
+        profile_image: socialState.profileImage,
+        cover_image: socialState.coverImage,
       }),
     })
       .then((res) => {
-        if (res.status === 200) {
-          socialDispatch({ type: "setCoverImage", payload: image });
-        }
+        console.log(res);
       })
       .catch((err) => {
         console.log(err);
       });
 
     loadingModal.onClose();
-    profileModal.onClose();
   };
 
   useEffect(() => {
@@ -243,8 +239,9 @@ const UserProfile = ({ user, bugs }) => {
             _hover={{
               color: "purple.300",
             }}
-            leftIcon={<FiSettings />}
-          />
+          >
+            <FiSettings />
+          </Button>
         ) : null}
         <Heading
           color="purple.100"
@@ -466,7 +463,7 @@ const UserProfile = ({ user, bugs }) => {
                   borderColor: "purple.50",
                   boxShadow: "none",
                 }}
-                onChange={(e) => handleCover(e)}
+                onChange={(e) => handleCoverImage(e)}
               />
               <FormLabel
                 htmlFor="cover"
@@ -485,7 +482,7 @@ const UserProfile = ({ user, bugs }) => {
                 type="file"
                 border="none"
                 color="purple.200"
-                onChange={(e) => handleProfile(e)}
+                onChange={(e) => handleProfileImage(e)}
               />
             </ModalBody>
 
@@ -499,7 +496,10 @@ const UserProfile = ({ user, bugs }) => {
                 fontSize="1.2em"
                 bg="transparent"
                 color="gray.200"
-                onClick={profileModal.onClose}
+                onClick={() => {
+                  handleProfileModal();
+                  profileModal.onClose();
+                }}
                 _hover={{
                   bg: "gray.200",
                   color: "purple.800",
@@ -529,7 +529,7 @@ const UserProfile = ({ user, bugs }) => {
                 fontFamily="Space Grotesk"
                 textAlign="center"
               >
-                Updating Image...
+                Updating data...
               </ModalHeader>
               <Center my="2">
                 <Spinner size="xl" color="purple.100" fontSize="3xl" />

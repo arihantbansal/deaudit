@@ -22,7 +22,8 @@ const NewAudit = () => {
   const [contractAddress, setContractAddress] = useState("");
   const [tags, setTags] = useState([]);
   const [tag, setTag] = useState("");
-  const { address } = useAccount();
+  const [poolSize, setPoolSize] = useState(0);
+  const { address, isConnecting, isDisconnected } = useAccount();
 
   const handleDelete = (id) => {
     setTags((prev) => {
@@ -40,26 +41,62 @@ const NewAudit = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (address) {
-      fetch(`${config}/audits`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          created_by: address,
-          contract_address: contractAddress,
-          tags: tags,
-        }),
+    fetch;
+
+    fetch(`${config}/users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        address: address,
+      }),
+    })
+      .then((res) => {
+        console.log(res);
       })
-        .then((res) => {
-          if (res.status === 200) Router.push(`/audits/${contractAddress}`);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else alert("Please connect to a wallet");
+      .catch((err) => {
+        console.log(err);
+      });
+
+    setContractAddress("");
+    setTags([]);
+    setPoolSize(0);
+
+    fetch(`${config}/audits`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        created_by: address,
+        contract_address: contractAddress,
+        tags: tags,
+        initial_pool_size: poolSize,
+      }),
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    fetch(`${config}/users/${address}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        audits_requested: [contractAddress],
+      }),
+    })
+      .then((res) => {
+        if (res.status === 200) Router.push(`/audits/${contractAddress}`);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -81,22 +118,42 @@ const NewAudit = () => {
         </Heading>
         <Flex flexDir="column" mt="8" fontFamily="Space Grotesk">
           <form>
-            <FormControl my="2" isRequired>
-              <FormLabel htmlFor="contractAddress" fontSize="lg">
-                Contract Address
-              </FormLabel>
-              <Input
-                required
-                placeholder="Contract Address"
-                id="contractAddress"
-                size="lg"
-                value={contractAddress}
-                onChange={(e) => setContractAddress(e.target.value)}
-                variant="outline"
-                spellCheck="false"
-                className={styles.input}
-              />
-            </FormControl>
+            <Flex flexDir="row" mt="8" justifyContent="space-evenly" gap="6">
+              <FormControl my="2" isRequired>
+                <FormLabel htmlFor="contractAddress" fontSize="lg">
+                  Contract Address
+                </FormLabel>
+                <Input
+                  required
+                  placeholder="Contract Address"
+                  id="contractAddress"
+                  w="36vw"
+                  size="lg"
+                  value={contractAddress}
+                  onChange={(e) => setContractAddress(e.target.value)}
+                  variant="outline"
+                  spellCheck="false"
+                  className={styles.input}
+                />
+              </FormControl>
+              <FormControl my="2" isRequired>
+                <FormLabel htmlFor="pool" fontSize="lg">
+                  Pool Size (MATIC)
+                </FormLabel>
+                <Input
+                  required
+                  placeholder="Pool"
+                  id="pool"
+                  size="lg"
+                  w="12vw"
+                  value={poolSize}
+                  onChange={(e) => setPoolSize(e.target.value)}
+                  variant="outline"
+                  type="number"
+                  className={styles.input}
+                />
+              </FormControl>
+            </Flex>
             <FormControl>
               <FormLabel htmlFor="tags" fontSize="lg" className={styles.text}>
                 Add relevant Tags
@@ -136,6 +193,7 @@ const NewAudit = () => {
             size="lg"
             my="8"
             type="submit"
+            disabled={isDisconnected}
             onClick={(e) => handleSubmit(e)}
             className={styles.button}
             colorScheme="pink"

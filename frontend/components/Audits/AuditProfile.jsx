@@ -19,19 +19,72 @@ import {
   Center,
 } from "@chakra-ui/react";
 import { Link as Linker } from "@chakra-ui/react";
-import { ellipseAddress } from "@lib/utilities";
+import { config, ellipseAddress } from "@lib/utilities";
 import Head from "next/head";
-import React from "react";
-import { GoUnverified } from "react-icons/go";
-import { MdVerified } from "react-icons/md";
+import React, { useState } from "react";
 import { BsBug } from "react-icons/bs";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { GiInjustice } from "react-icons/gi";
 import Link from "next/link";
+import { useAccount } from "wagmi";
 
 const AuditProfile = ({ audit, bugs }) => {
   const title = `Audit ${ellipseAddress(audit.contract_address)}`;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [bugDescription, setBugDescription] = useState("");
+
+  const { address, isConnecting, isDisconnected } = useAccount();
+  const bugsArray = bugs.map((bug) => bug.id);
+
+  const handleBugSubmit = async () => {
+    const response = await fetch(`${config}/bugs`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        audit_id: audit.contract_address,
+        reported_by: address,
+        description: bugDescription,
+      }),
+    });
+    const data = await response.json();
+    const num = data.data;
+
+    fetch(`${config}/audits/${audit.contract_address}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        bugs_reported: [...bugsArray, num],
+      }),
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    fetch(`${config}/users/${address}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        bugs_reported: [num],
+      }),
+    })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    setBugDescription("");
+  };
 
   return (
     <Flex flexDir="column">
@@ -174,6 +227,8 @@ const AuditProfile = ({ audit, bugs }) => {
                 cols="50"
                 fontSize="1.2em"
                 color="red.100"
+                value={bugDescription}
+                onChange={(e) => setBugDescription(e.target.value)}
                 boxShadow="none"
                 _focus={{
                   borderColor: "red.200",
@@ -192,7 +247,10 @@ const AuditProfile = ({ audit, bugs }) => {
                 fontSize="1em"
                 bg="transparent"
                 color="gray.200"
-                onClick={onClose}
+                onClick={() => {
+                  handleBugSubmit();
+                  onClose();
+                }}
                 _hover={{
                   bg: "gray.200",
                   color: "red.800",

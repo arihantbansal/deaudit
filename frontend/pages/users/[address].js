@@ -1,7 +1,10 @@
-import UserProfile from "@components/Users/UserProfile";
 import { config } from "@lib/utilities";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import dynamic from "next/dynamic";
+const UserProfile = dynamic(() => import("@components/Users/UserProfile"), {
+  ssr: false,
+});
 
 const User = (props) => {
   const router = useRouter();
@@ -10,7 +13,7 @@ const User = (props) => {
   }, []);
 
   if (props.user)
-    return <UserProfile user={props.user.data} bugs={props.bugList.data} />;
+    return <UserProfile user={props.user?.data} bugs={props.bugList.data} />;
   else {
     if (typeof window !== "undefined") router.push("/404");
   }
