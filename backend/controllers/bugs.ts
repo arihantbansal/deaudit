@@ -43,3 +43,27 @@ export const getBugsByUser = async (req, res) => {
 		data: bugs,
 	});
 };
+
+export const addBug = async (req, res) => {
+	const {audit_id, reported_by, description} = req.body;
+
+	const { data, error } = await supabase.from("bugs").insert([
+		{
+			audit_id,
+			reported_by,
+			description
+		},
+	]);
+
+	if (error) {
+		return res.status(500).json({
+			message: "Error adding bug",
+			error,
+		});
+	}
+
+	return res.status(200).json({
+		data: data[0].id,
+	});
+};
+

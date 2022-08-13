@@ -5,12 +5,11 @@ import supabase from "../supabase/client";
  * @route POST /user/
  */
 export const addUser = async (req, res) => {
-	const { name, address } = req.body;
+	const { address } = req.body;
 
 	const { data, error } = await supabase.from("users").insert([
 		{
-			name,
-			address,
+			address: address,
 		},
 	]);
 
@@ -71,12 +70,38 @@ export const getUserData = async (req, res) => {
  * @route PUT /user/:id
  */
 export const updateUserData = async (req, res) => {
-	const { data: user, error } = await supabase
+	const { data: data, error: err } = await supabase
 		.from("users")
-		.update([{ ...req.body }])
+		.select("audits_requested, jury_of, bugs_reported")
 		.eq("address", req.params.address);
 
-	if (error) {
+	const keys = Object.keys(req.body);
+
+	const { data: user, error } = await supabase
+		.from("users")
+		.update([
+			{
+				...req.body,
+				audits_requested: keys.includes("audits_requested")
+					? data[0].audits_requested === null
+						? req.body.audits_requested
+						: [...data[0].audits_requested, req.body.audits_requested[0]]
+					: data[0].audits_requested,
+				jury_of: keys.includes("jury_of")
+					? data[0].jury_of === null
+						? req.body.jury_of
+						: [...data[0].jury_of, req.body.jury_of[0]]
+					: data[0].jury_of,
+				bugs_reported: keys.includes("bugs_reported")
+					? data[0].bugs_reported === null
+						? req.body.bugs_reported
+						: [...data[0].bugs_reported, req.body.bugs_reported[0]]
+					: data[0].bugs_reported,
+			},
+		])
+		.eq("address", req.params.address);
+
+	if (error || err) {
 		return res.status(500).json({
 			message: "Error updating user data",
 			error,

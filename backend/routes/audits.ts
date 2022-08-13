@@ -8,7 +8,7 @@ import {
 
 const auditRouter = express.Router();
 
-//@route	GET /audit/
+//@route	GET /audits/
 //@desc		Get list of audits
 auditRouter.get("/", getAllAudits);
 
