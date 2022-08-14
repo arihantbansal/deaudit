@@ -151,8 +151,8 @@ const UserProfile = ({ user, bugs }) => {
       },
       body: JSON.stringify({
         twitter_username: socialState.twitter,
+        github_username: socialState.github,
         linkedin_username: socialState.linkedin,
-        linkedin_username: socialState.github,
         bio: socialState.bio,
         on_jury: userState.on_jury,
         profile_image: socialState.profileImage,

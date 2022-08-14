@@ -53,30 +53,27 @@ const Landing = () => {
           The Decentralized Audit Marketplace.
         </Heading>
         <Text
-          fontSize="xl"
-          fontFamily="Space Mono"
-          letterSpacing="-0.5px"
+          fontSize="lg"
+          fontFamily="Azeret Regular"
           fontWeight="normal"
           lineHeight="1.5"
           my="2"
         >
-          Digital marketplace for requesting, creating <br /> and applying for
+          Digital marketplace for requesting <br /> betting on and applying for{" "}
+          <br />
           auditing proposals.
         </Text>
         <Link href="/users" textDecor="none">
-          <HStack spacing="4" my="6" w="30vw">
+          <HStack my="6" w="30vw">
             <Button
               fontSize="2xl"
               size="lg"
               className={styles.button}
               _active={{
-                border: "white",
                 bg: "transparent",
-                borderWidth: "1px",
-                borderStyle: "solid",
               }}
             >
-              All users
+              Users
             </Button>
             <BsArrowRight fontSize="3em" className={styles.arrow} />
           </HStack>

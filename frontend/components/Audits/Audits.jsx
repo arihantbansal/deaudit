@@ -124,7 +124,7 @@ const Audits = ({ audits }) => {
                         <Tag
                           size="lg"
                           key={index}
-                          variant="solid"
+                          variant="outline"
                           colorScheme="red"
                         >
                           {tag}

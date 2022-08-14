@@ -3,14 +3,15 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Link as Linker } from "@chakra-ui/react";
 import Link from "next/link";
 import { useAccount } from "wagmi";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { config } from "@lib/utilities";
 
 const NavBar = () => {
   const { address, isConnecting, isDisconnected } = useAccount();
   const [exists, setExists] = useState(false);
 
-  const fetchUser = () => {
+
+  const fetchUser = useCallback(() => {
     address &&
       fetch(`${config}/users/${address}`)
         .then((res) => {
@@ -20,11 +21,11 @@ const NavBar = () => {
         .catch((err) => {
           setExists(false);
         });
-  };
+  } , [address]);
 
   useEffect(() => {
     fetchUser();
-  }, [address]);
+  }, [address,fetchUser]);
 
   return (
     <>
@@ -109,7 +110,7 @@ const NavBar = () => {
               </Linker>
             </Link>
           )}
-          <ConnectButton chainStatus={"icon"} showBalance={false} />
+          <ConnectButton chainStatus="icon" showBalance={false} />
         </Flex>
       </Flex>
     </>

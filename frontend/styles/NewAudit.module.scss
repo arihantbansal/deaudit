@@ -1,12 +1,10 @@
 $color: #fff5f7;
 $button-color: #16e053cd;
 $hover-color: #1b862999;
-$placeholder-color: #7e7e7e;
+$placeholder-color: #5b5a5a;
 
 .input {
   border-width: 1px;
-  border-radius: 5px;
-  margin-bottom: 20px;
   border-color: $color !important;
   box-shadow: none !important;
   &:focus {
@@ -34,7 +32,7 @@ $placeholder-color: #7e7e7e;
   border: 1px solid $button-color;
   width: fit-content;
   float: right;
-  font-size: 1.2em !important;
+  font-size: 1.1em !important;
   margin-right: 15px;
   background: transparent !important;
   color: $button-color !important;

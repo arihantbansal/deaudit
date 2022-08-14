@@ -12,7 +12,6 @@ const Audit = (props) => {
     );
   }, []);
 
-  console.log(props);
   if (props.audit !== null)
     return <AuditProfile audit={props.audit.data} bugs={props.bugList.data} />;
   else {

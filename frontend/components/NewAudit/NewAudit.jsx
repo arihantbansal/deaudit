@@ -7,23 +7,32 @@ import {
   Heading,
   HStack,
   Input,
+  Select,
   Tag,
   TagCloseButton,
   TagLabel,
-  Text,
 } from "@chakra-ui/react";
 import Router from "next/router";
 import React, { useState } from "react";
 import styles from "../../styles/NewAudit.module.scss";
 import { config, pascalCase } from "@lib/utilities";
-import { useAccount } from "wagmi";
+import { useAccount, allChains } from "wagmi";
+import Head from "next/head";
 
 const NewAudit = () => {
+  const chains = allChains.filter(
+    (c) =>
+      c?.rpcUrls?.alchemy?.includes("eth") ||
+      c?.rpcUrls?.alchemy?.includes("polygon")
+  );
   const [contractAddress, setContractAddress] = useState("");
   const [tags, setTags] = useState([]);
   const [tag, setTag] = useState("");
+  const [chain, setChain] = useState(chains[0].name);
+
+  console.log(chain);
   const [poolSize, setPoolSize] = useState(0);
-  const { address, isConnecting, isDisconnected } = useAccount();
+  const { address, _, isDisconnected } = useAccount();
 
   const handleDelete = (id) => {
     setTags((prev) => {
@@ -41,8 +50,6 @@ const NewAudit = () => {
   };
 
   const handleSubmit = (e) => {
-    fetch;
-
     fetch(`${config}/users`, {
       method: "POST",
       headers: {
@@ -73,6 +80,7 @@ const NewAudit = () => {
         contract_address: contractAddress,
         tags: tags,
         initial_pool_size: poolSize,
+        chain: chain,
       }),
     })
       .then((res) => {
@@ -101,6 +109,9 @@ const NewAudit = () => {
 
   return (
     <Flex flexDir="column">
+      <Head>
+        <title>New Audit</title>
+      </Head>
       <Flex className="container">
         {[...Array(350)].map((e, i) => (
           <Box className="line" key={i}></Box>
@@ -154,53 +165,88 @@ const NewAudit = () => {
                 />
               </FormControl>
             </Flex>
-            <FormControl>
-              <FormLabel htmlFor="tags" fontSize="lg" className={styles.text}>
-                Add relevant Tags
-              </FormLabel>
-              <Input
-                required
-                placeholder="Tags (Press enter to add)"
-                id="tags"
-                size="lg"
-                value={tag}
-                onChange={(e) => setTag(e.target.value)}
-                onKeyDown={(e) => handleKeyDown(e)}
-                variant="outline"
-                spellCheck="false"
-                className={styles.input}
-              />
-            </FormControl>
-            <HStack spacing={4}>
-              {tags.length > 0
-                ? tags.map((tag, index) => (
-                    <Tag
-                      size="lg"
-                      key={index}
-                      variant="solid"
-                      cursor="pointer"
-                      colorScheme="green"
-                      userSelect="none"
-                    >
-                      <TagLabel>{tag}</TagLabel>
-                      <TagCloseButton onClick={() => handleDelete(index)} />
-                    </Tag>
-                  ))
-                : null}
-            </HStack>
+
+            <Flex flexDir="row" mt="8" justifyContent="space-evenly" gap="6">
+              <FormControl>
+                <FormLabel htmlFor="tags" fontSize="lg" className={styles.text}>
+                  Add relevant tags
+                </FormLabel>
+                <Input
+                  required
+                  placeholder="Tags (Press enter to append)"
+                  id="tags"
+                  size="lg"
+                  mb="6"
+                  w="30vw"
+                  value={tag}
+                  onChange={(e) => setTag(e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(e)}
+                  variant="outline"
+                  spellCheck="false"
+                  className={styles.input}
+                />
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel
+                  htmlFor="chain"
+                  fontSize="lg"
+                  className={styles.text}
+                >
+                  Chain
+                </FormLabel>
+                <Select
+                  required
+                  id="chain"
+                  size="lg"
+                  value={chain}
+                  onChange={(e) => setChain(e.target.value)}
+                  variant="outline"
+                  spellCheck="false"
+                  className={styles.input}
+                >
+                  {chains.map((c) => (
+                    <option key={c.id} value={c.name}>
+                      {c.name}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+            </Flex>
           </form>
-          <Button
-            size="md"
-            my="6"
-            type="submit"
-            disabled={isDisconnected}
-            onClick={(e) => handleSubmit(e)}
-            className={styles.button}
-            colorScheme="pink"
-          >
-            Submit
-          </Button>
         </Flex>
+
+        <HStack spacing={4}>
+          {tags.length > 0
+            ? tags.map((tag, index) => (
+                <Tag
+                  size="lg"
+                  key={index}
+                  variant="outline"
+                  cursor="pointer"
+                  colorScheme="green"
+                  userSelect="none"
+                >
+                  <TagLabel>{tag}</TagLabel>
+                  <TagCloseButton onClick={() => handleDelete(index)} />
+                </Tag>
+              ))
+            : null}
+        </HStack>
+        <Button
+          size="md"
+          my="6"
+          type="submit"
+          disabled={isDisconnected}
+          onClick={(e) => {
+            if (poolSize > 0 && contractAddress.length > 0 && chain.name > 0)
+              handleSubmit(e);
+            else alert("Please fill in all the required fields.");
+          }}
+          className={styles.button}
+          colorScheme="pink"
+        >
+          Submit
+        </Button>
       </Flex>
     </Flex>
   );

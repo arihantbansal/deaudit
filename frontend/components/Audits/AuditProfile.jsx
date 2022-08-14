@@ -26,13 +26,16 @@ import { BsBug } from "react-icons/bs";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { GiInjustice } from "react-icons/gi";
 import Link from "next/link";
-import { useAccount } from "wagmi";
+import { allChains, useAccount } from "wagmi";
 
 const AuditProfile = ({ audit, bugs }) => {
   const title = `Audit ${ellipseAddress(audit.contract_address)}`;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [bugDescription, setBugDescription] = useState("");
-
+  const auditURL =
+    allChains.find((c) => c.name === audit.chain).blockExplorers.default.url +
+    "/" +
+    audit.contract_address;
   const { address, isConnecting, isDisconnected } = useAccount();
   const bugsArray = bugs.map((bug) => bug.id);
 
@@ -127,7 +130,7 @@ const AuditProfile = ({ audit, bugs }) => {
             className="audit"
             letterSpacing="1px"
             target="_blank"
-            href={`https://mumbai.polygonscan.com/address/${audit.contract_address}`}
+            href={auditURL}
             _hover={{
               color: "red.50",
             }}
@@ -171,24 +174,7 @@ const AuditProfile = ({ audit, bugs }) => {
             </Linker>
           </Link>
         </Heading>
-        <Center m="4">
-          <HStack gap="2">
-            {audit.tags?.map((tag, index) => (
-              <Tag
-                key={index}
-                size="lg"
-                variant="solid"
-                border="none"
-                fontFamily="Space Grotesk"
-                cursor="pointer"
-                colorScheme="red"
-                userSelect="none"
-              >
-                {tag}
-              </Tag>
-            ))}
-          </HStack>
-        </Center>
+
         <Button
           size="lg"
           mx="auto"
@@ -208,6 +194,24 @@ const AuditProfile = ({ audit, bugs }) => {
         >
           Report a Bug
         </Button>
+        <Center m="4">
+          <HStack gap="2">
+            {audit.tags?.map((tag, index) => (
+              <Tag
+                key={index}
+                size="lg"
+                variant="outline"
+                border="none"
+                fontFamily="Space Grotesk"
+                cursor="pointer"
+                colorScheme="red"
+                userSelect="none"
+              >
+                {tag}
+              </Tag>
+            ))}
+          </HStack>
+        </Center>
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
           <ModalOverlay />
           <ModalContent bgColor="#0F0301">
@@ -248,8 +252,10 @@ const AuditProfile = ({ audit, bugs }) => {
                 bg="transparent"
                 color="gray.200"
                 onClick={() => {
-                  handleBugSubmit();
-                  onClose();
+                  if (bugDescription.length > 0) {
+                    handleBugSubmit();
+                    onClose();
+                  }
                 }}
                 _hover={{
                   bg: "gray.200",
