@@ -1,15 +1,33 @@
 import { Button, Flex, Heading, Image } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-import Head from "next/head";
+import { Link as Linker } from "@chakra-ui/react";
 import Link from "next/link";
+import { useAccount } from "wagmi";
+import { useEffect, useState } from "react";
+import { config } from "@lib/utilities";
 
 const NavBar = () => {
+  const { address, isConnecting, isDisconnected } = useAccount();
+  const [exists, setExists] = useState(false);
+
+  const fetchUser = () => {
+    address &&
+      fetch(`${config}/users/${address}`)
+        .then((res) => {
+          if (res.status === 200) setExists(true);
+          else setExists(false);
+        })
+        .catch((err) => {
+          setExists(false);
+        });
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, [address]);
+
   return (
     <>
-      <Head>
-        <title>Deaudit</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <Flex
         bg="transparent"
         w="100%"
@@ -41,35 +59,57 @@ const NavBar = () => {
         </Link>
 
         <Flex m="20" justifyContent="space-around" flexDir="row" gap="6">
-          <Link href="/audits">
-            <Button
-              variant="solid"
-              bg="transparent"
-              fontFamily="Space Grotesk"
-              size="md"
-              fontSize="lg"
-              _hover={{
-                transform: "scale(1.05)",
-              }}
-            >
-              Audits
-            </Button>
+          <Link href="/audits" passHref>
+            <Linker>
+              <Button
+                variant="solid"
+                bg="transparent"
+                fontFamily="Space Grotesk"
+                size="md"
+                fontSize="lg"
+                _hover={{
+                  transform: "scale(1.05)",
+                }}
+              >
+                Audits
+              </Button>
+            </Linker>
           </Link>
-          <Link href="/new-audit">
-            <Button
-              variant="solid"
-              bg="transparent"
-              fontSize="lg"
-              fontFamily="Space Grotesk"
-              size="md"
-              _hover={{
-                transform: "scale(1.05)",
-              }}
-            >
-              New Audit
-            </Button>
+          <Link href="/new-audit" passHref>
+            <Linker>
+              <Button
+                variant="solid"
+                bg="transparent"
+                fontSize="lg"
+                fontFamily="Space Grotesk"
+                size="md"
+                _hover={{
+                  transform: "scale(1.05)",
+                }}
+              >
+                New Audit
+              </Button>
+            </Linker>
           </Link>
-          <ConnectButton chainStatus={"icon"} />
+          {!isDisconnected && exists && (
+            <Link href={`/users/${address}`} passHref>
+              <Linker>
+                <Button
+                  variant="solid"
+                  bg="transparent"
+                  fontSize="lg"
+                  fontFamily="Space Grotesk"
+                  size="md"
+                  _hover={{
+                    transform: "scale(1.05)",
+                  }}
+                >
+                  Profile
+                </Button>
+              </Linker>
+            </Link>
+          )}
+          <ConnectButton chainStatus={"icon"} showBalance={false} />
         </Flex>
       </Flex>
     </>

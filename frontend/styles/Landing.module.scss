@@ -4,3 +4,28 @@
   -webkit-text-fill-color: transparent;
   font-family: "Azeret Light" !important;
 }
+
+.button {
+  background: transparent !important;
+  color: whitesmoke !important;
+  padding: 10px 20px !important;
+  border-radius: 15px !important;
+  color: #f7d0d0 !important;
+  margin: 0px 20px;
+  letter-spacing: 0.5px;
+  font-family: "Space Grotesk";
+  transition: width 1s ease-in-out !important;
+  width: 7vw !important;
+}
+
+.button:hover {
+  width: 8vw !important;
+}
+
+.arrow {
+  transition: width 1s ease-in-out !important;
+}
+
+.arrow:hover {
+  width: 100px !important;
+}

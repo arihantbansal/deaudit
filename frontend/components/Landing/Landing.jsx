@@ -10,6 +10,8 @@ import {
 import Lottie from "react-lottie";
 import styles from "../../styles/Landing.module.scss";
 import blockchain from "../../public/assets/blockchain.json";
+import Head from "next/head";
+import { BsArrowRight } from "react-icons/bs";
 
 const Landing = () => {
   const defaultOptions = {
@@ -30,6 +32,10 @@ const Landing = () => {
       className="home"
       mt="20"
     >
+      <Head>
+        <title>DeAudit</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
       <Flex
         flexDirection="column"
         w="53vw"
@@ -57,60 +63,24 @@ const Landing = () => {
           Digital marketplace for requesting, creating <br /> and applying for
           auditing proposals.
         </Text>
-        <HStack spacing="4" my="6" w="30vw">
-          <Link href="/audits" textDecor="none">
+        <Link href="/users" textDecor="none">
+          <HStack spacing="4" my="6" w="30vw">
             <Button
-              background="red.900"
-              variant="solid"
-              color="red.100"
-              borderColor="red"
-              rounded="3xl"
-              borderStyle="solid"
-              px="20px"
-              py="5"
-              letterSpacing="0.5px"
+              fontSize="2xl"
               size="lg"
-              fontFamily="Space Grotesk"
-              fontSize="lg"
+              className={styles.button}
               _active={{
                 border: "white",
                 bg: "transparent",
                 borderWidth: "1px",
                 borderStyle: "solid",
               }}
-              _hover={{
-                transform: "scale(1.05)",
-              }}
             >
-              Audits
+              All users
             </Button>
-          </Link>
-          <Link href="/users" textDecor="none">
-            <Button
-              background="transparent"
-              color="white"
-              rounded="3xl"
-              border="1px solid #f2b4b4;"
-              px="20px"
-              py="5"
-              letterSpacing="0.5px"
-              size="lg"
-              fontFamily="Space Grotesk"
-              fontSize="lg"
-              _active={{
-                border: "white",
-                bg: "transparent",
-                borderWidth: "1px",
-                borderStyle: "solid",
-              }}
-              _hover={{
-                transform: "scale(1.05)",
-              }}
-            >
-              Users
-            </Button>
-          </Link>
-        </HStack>
+            <BsArrowRight fontSize="3em" className={styles.arrow} />
+          </HStack>
+        </Link>
       </Flex>
       <Box w="55vw">
         <Lottie options={defaultOptions} width={500} />

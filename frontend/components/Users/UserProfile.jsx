@@ -171,7 +171,7 @@ const UserProfile = ({ user, bugs }) => {
 
   useEffect(() => {
     if (address === user.address) {
-      setTitle("Your Profile");
+      setTitle("Profile");
     } else {
       setTitle(cutAddress);
     }
@@ -730,7 +730,7 @@ const UserProfile = ({ user, bugs }) => {
                 marginRight: "0.5em",
               }}
             />
-            Reported bugs in :
+            Reported bugs :
           </Heading>
           <Flex
             w="100%"

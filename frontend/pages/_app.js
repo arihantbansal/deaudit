@@ -7,7 +7,7 @@ import {
 import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { publicProvider } from "wagmi/providers/public";
-import theme, { styles } from "@styles/theme";
+import theme from "@styles/theme";
 import NavBar from "@components/NavBar/NavBar";
 import "@styles/globals.scss";
 import "@styles/colors.scss";
@@ -31,12 +31,12 @@ const { chains, provider } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: "DeAudit",
+  appName: "DEAudit",
   chains,
 });
 
 const appInfo = {
-  appName: "DeAudit",
+  appName: "DEAudit",
 };
 
 const wagmiClient = createClient({
@@ -47,7 +47,7 @@ const wagmiClient = createClient({
 
 const rainbowTheme = midnightTheme();
 rainbowTheme.fonts.body = "Space Grotesk, sans-serif";
-rainbowTheme.colors.accentColor = "red";
+rainbowTheme.colors.accentColor = "maroon";
 
 function MyApp({ Component, pageProps }) {
   return (

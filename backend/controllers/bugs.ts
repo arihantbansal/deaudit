@@ -45,13 +45,13 @@ export const getBugsByUser = async (req, res) => {
 };
 
 export const addBug = async (req, res) => {
-	const {audit_id, reported_by, description} = req.body;
+	const { audit_id, reported_by, description } = req.body;
 
 	const { data, error } = await supabase.from("bugs").insert([
 		{
 			audit_id,
 			reported_by,
-			description
+			description,
 		},
 	]);
 
@@ -66,4 +66,3 @@ export const addBug = async (req, res) => {
 		data: data[0].id,
 	});
 };
-

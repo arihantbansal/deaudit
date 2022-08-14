@@ -160,7 +160,7 @@ const NewAudit = () => {
               </FormLabel>
               <Input
                 required
-                placeholder="Tags"
+                placeholder="Tags (Press enter to add)"
                 id="tags"
                 size="lg"
                 value={tag}
@@ -190,8 +190,8 @@ const NewAudit = () => {
             </HStack>
           </form>
           <Button
-            size="lg"
-            my="8"
+            size="md"
+            my="6"
             type="submit"
             disabled={isDisconnected}
             onClick={(e) => handleSubmit(e)}

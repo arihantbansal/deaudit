@@ -6,17 +6,25 @@ import { useRouter } from "next/router";
 const Users = ({ users }) => {
   const router = useRouter();
   return (
-    <VStack mt="20vh" width="100%">
-      <Heading as="h1" size="xl" mb="20" fontFamily="Geostar">
+    <VStack mt="20vh" width="100%" mb="10">
+      <Heading as="h1" size="xl" mb="10" fontFamily="Geostar">
         Users
       </Heading>
-      <Flex p={50} w="full" alignItems="center" justifyContent="center">
+      <Flex
+        px={50}
+        w="full"
+        alignItems="center"
+        justifyContent="center"
+        flexDir="column"
+      >
         {users.map((user) => (
           <Box
             key={user.id}
             cursor="pointer"
             bg="#120101"
             mx="8"
+            rounded="lg"
+            my="10"
             w="90%"
             display="flex"
             maxW="5xl"
@@ -30,15 +38,14 @@ const Users = ({ users }) => {
               <Box
                 h="full"
                 bgSize="cover"
+                rounded="lg"
                 bgPos="center"
-                bgImage={`url("${user.cover_image}")`}
+                bgImage={`url("${user.profile_image}")`}
               ></Box>
             </Box>
 
             <Box py={12} px={6} w="70%" color="red.100" textAlign="center">
-              <Heading className={styles.userHeader}>
-                Wallet address : {user.address}
-              </Heading>
+              <Heading className={styles.userHeader}>{user.address}</Heading>
               <Heading className={styles.userHeader}>
                 Audits created : {user.audits_requested?.length}
               </Heading>
@@ -47,7 +54,7 @@ const Users = ({ users }) => {
                 {user.bugs_reported ? user.bugs_reported.length : 0}
               </Heading>
               <Heading className={styles.userHeader}>
-                Amount of Audits judged : {user.jury_of?.length}
+                Audits judged : {user.jury_of?.length}
               </Heading>
             </Box>
           </Box>

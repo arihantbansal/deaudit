@@ -10,8 +10,13 @@ export const getAllTags = async (req, res) => {
 		});
 	}
 
-	const result = [...new Set(tags)];
 	return res.status(200).json({
-		data: result[0],
+		data: tags
+			.map((tag) => {
+				return tag.tags;
+			})
+			.reduce((acc, curr) => {
+				return acc.concat(curr);
+			}),
 	});
 };

@@ -19,6 +19,7 @@ import { config } from "@lib/utilities";
 
 const Audits = ({ audits }) => {
   const router = useRouter();
+  const currency = "MATIC";
 
   const [tags, setTags] = useState([]);
 
@@ -39,7 +40,7 @@ const Audits = ({ audits }) => {
       fetch(`${config}/tags`)
         .then((res) => res.json())
         .then((result) => {
-          setTags(result?.data.tags);
+          setTags(result?.data);
         })
         .catch((err) => {
           console.log(err);
@@ -49,7 +50,7 @@ const Audits = ({ audits }) => {
   }, []);
 
   return (
-    <VStack mt="20vh" width="100%" gap="10">
+    <VStack mt="20vh" width="100%" gap="10" mb="10">
       <Heading as="h1" size="xl" fontFamily="Geostar">
         Audits
       </Heading>
@@ -92,6 +93,7 @@ const Audits = ({ audits }) => {
           <Flex
             key={audit.id}
             h="fit-content"
+            my="4"
             bg="#120101"
             border="1px solid #f2b4b4"
             flexDir="row"
@@ -135,10 +137,10 @@ const Audits = ({ audits }) => {
             <Flex
               flexDir="column"
               shadow="lg"
-              justifyContent="space-evenly"
+              justifyContent="space-around"
               alignItems="center"
               gap="4"
-              width="25%"
+              width="30%"
             >
               <Flex
                 flexDir="row"
@@ -147,16 +149,20 @@ const Audits = ({ audits }) => {
                 gap="12"
               >
                 <BsBug size="2em" />
-                <Text fontSize="2xl">{audit.bugs_reported?.length}</Text>
+                <Text fontSize="2xl">
+                  {audit.bugs_reported ? audit.bugs_reported.length : 0}
+                </Text>
               </Flex>
               <Flex
                 flexDir="row"
-                justifyContent="space-around"
+                justifyContent="space-evenly"
                 alignItems="center"
                 gap="2"
               >
                 <RiMoneyDollarCircleLine size="2.4em" />
-                <Text fontSize="xl">{audit.initial_pool_size} ETH</Text>
+                <Text fontSize="xl">
+                  {audit.initial_pool_size} {currency}
+                </Text>
               </Flex>
               <Flex
                 flexDir="row"
@@ -165,7 +171,9 @@ const Audits = ({ audits }) => {
                 gap="12"
               >
                 <GiInjustice size="2em" />
-                <Text fontSize="2xl">{audit.jury_members?.length}</Text>
+                <Text fontSize="2xl">
+                  {audit.jury_members ? audit.jury_members.length : 0}
+                </Text>
               </Flex>
             </Flex>
           </Flex>

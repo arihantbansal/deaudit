@@ -9,7 +9,6 @@ const Home = () => {
       "--line-color",
       "rgba(65, 3, 3, 0.351)"
     );
-    document.documentElement.style.setProperty("--button-color", "#fed7d7");
   }, []);
 
   return (
