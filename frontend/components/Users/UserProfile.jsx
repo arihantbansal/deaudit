@@ -234,22 +234,22 @@ const UserProfile = ({ user, bugs }) => {
             borderRadius="10px"
             letterSpacing="0.5px"
             bg="transparent"
-            color="purple.200"
+            color="purple.50"
             onClick={profileModal.onOpen}
             _hover={{
-              color: "purple.300",
+              color: "purple.100",
             }}
           >
             <FiSettings />
           </Button>
         ) : null}
         <Heading
-          color="purple.100"
+          color="purple.50"
           mt="4"
           mb="4"
-          fontSize="2em"
-          letterSpacing="0.5px"
-          fontFamily="Space Grotesk"
+          fontSize="2.2em"
+          letterSpacing="2px"
+          fontFamily="Aeonik Light"
           _selection={{
             color: "purple.800",
             background: "white",
@@ -259,7 +259,7 @@ const UserProfile = ({ user, bugs }) => {
         </Heading>
 
         <Text
-          color="purple.100"
+          color="purple.50"
           my="4"
           fontSize="1.7em"
           fontFamily="Azeret Thin"
@@ -301,8 +301,8 @@ const UserProfile = ({ user, bugs }) => {
               <Checkbox
                 size="md"
                 colorScheme="purple"
-                borderColor="purple.100"
-                fontFamily="Geostar Fill"
+                borderColor="purple.50"
+                fontFamily="Laser"
                 mb="3"
                 fontSize="3xl"
                 isChecked={userState.on_jury}
@@ -335,7 +335,7 @@ const UserProfile = ({ user, bugs }) => {
                 }}
                 mb="2"
                 fontSize="1em"
-                color="purple.100"
+                color="purple.50"
                 boxShadow="none"
                 _focus={{
                   borderColor: "purple.50",
@@ -360,7 +360,7 @@ const UserProfile = ({ user, bugs }) => {
                 id="github"
                 variant="outline"
                 colorScheme="purple"
-                borderColor="purple.100"
+                borderColor="purple.50"
                 fontFamily="Space Grotesk"
                 fontSize="lg"
                 _focus={{
@@ -388,7 +388,7 @@ const UserProfile = ({ user, bugs }) => {
                 size="md"
                 id="twitter"
                 colorScheme="purple"
-                borderColor="purple.100"
+                borderColor="purple.50"
                 fontFamily="Space Grotesk"
                 variant="outline"
                 fontSize="lg"
@@ -418,7 +418,7 @@ const UserProfile = ({ user, bugs }) => {
                 size="md"
                 id="linkedin"
                 colorScheme="purple"
-                borderColor="purple.100"
+                borderColor="purple.50"
                 fontFamily="Space Grotesk"
                 variant="outline"
                 mb="2"
@@ -454,7 +454,7 @@ const UserProfile = ({ user, bugs }) => {
                 type="file"
                 border="none"
                 boxShadow="none"
-                color="purple.200"
+                color="purple.100"
                 _focus={{
                   borderColor: "purple.50",
                   boxShadow: "none",
@@ -481,7 +481,7 @@ const UserProfile = ({ user, bugs }) => {
                 id="profile"
                 type="file"
                 border="none"
-                color="purple.200"
+                color="purple.100"
                 onChange={(e) => handleProfileImage(e)}
               />
             </ModalBody>
@@ -491,7 +491,7 @@ const UserProfile = ({ user, bugs }) => {
                 size="md"
                 fontFamily="Space Grotesk"
                 border="1px"
-                borderColor="purple.200"
+                borderColor="purple.100"
                 borderRadius="10px"
                 fontSize="1.2em"
                 bg="transparent"
@@ -525,14 +525,14 @@ const UserProfile = ({ user, bugs }) => {
             <ModalBody>
               <ModalHeader
                 fontSize="2xl"
-                color="purple.100"
+                color="purple.50"
                 fontFamily="Space Grotesk"
                 textAlign="center"
               >
                 Updating data...
               </ModalHeader>
               <Center my="2">
-                <Spinner size="xl" color="purple.100" fontSize="3xl" />
+                <Spinner size="xl" color="purple.50" fontSize="3xl" />
               </Center>
             </ModalBody>
           </ModalContent>
@@ -541,7 +541,7 @@ const UserProfile = ({ user, bugs }) => {
         <Text
           fontFamily="Azeret Thin"
           fontSize="1.5em"
-          color="purple.100"
+          color="purple.50"
           mb="2"
         >
           {socialState.bio}
@@ -614,14 +614,14 @@ const UserProfile = ({ user, bugs }) => {
                         <Text
                           fontSize="1.1em"
                           className="address"
-                          color="purple.100"
+                          color="purple.50"
                           display="inline-flex"
                           _selection={{
                             color: "purple.800",
                             background: "white",
                           }}
                           _hover={{
-                            color: "purple.100",
+                            color: "purple.50",
                           }}
                         >
                           {audit}
@@ -685,7 +685,7 @@ const UserProfile = ({ user, bugs }) => {
                       <Linker>
                         <Text
                           fontSize="1.1em"
-                          color="purple.100"
+                          color="purple.50"
                           display="inline-flex"
                           className="address"
                           _selection={{
@@ -750,17 +750,18 @@ const UserProfile = ({ user, bugs }) => {
                   key={index}
                   my="4"
                   mx="4"
-                  w="50vw"
+                  w="65vw"
                   borderWidth="0.5px"
                   borderColor="purple.50"
                   borderStart="solid"
-                  p="6"
+                  px="6"
+                  py="10"
                   borderRadius="15px"
                 >
                   <Link href={`/audits/${bug.audit_id}`} passHref>
                     <Linker
                       fontSize="2xl"
-                      color="purple.100"
+                      color="purple.50"
                       display="inline-flex"
                       className="address"
                       _hover={{

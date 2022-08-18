@@ -9,7 +9,7 @@ const UserProfile = dynamic(() => import("@components/Users/UserProfile"), {
 const User = (props) => {
   const router = useRouter();
   useEffect(() => {
-    document.documentElement.style.setProperty("--line-color", "#2102476c");
+    document.documentElement.style.setProperty("--line-color", "#21024741");
   }, []);
 
   if (props.user)

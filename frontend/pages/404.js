@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 
 const UhOh = () => {
   useEffect(() => {
-    document.documentElement.style.setProperty("--line-color", "#0364526c");
+    document.documentElement.style.setProperty("--line-color", "#03645224");
   }, []);
 
   return <Four0Four />;

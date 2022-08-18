@@ -46,8 +46,9 @@ const wagmiClient = createClient({
 });
 
 const rainbowTheme = midnightTheme();
-rainbowTheme.fonts.body = "Space Grotesk, sans-serif";
-rainbowTheme.colors.accentColor = "maroon";
+rainbowTheme.fonts.body = "Aeonik Light";
+rainbowTheme.colors.accentColorForeground = "black";
+rainbowTheme.colors.accentColor = "white";
 
 function MyApp({ Component, pageProps }) {
   return (

@@ -7,7 +7,7 @@ const Users = ({ users }) => {
   const router = useRouter();
   return (
     <VStack mt="20vh" width="100%" mb="10">
-      <Heading as="h1" size="xl" mb="10" fontFamily="Geostar">
+      <Heading as="h1" size="xl" mb="10" fontFamily="Laser">
         Users
       </Heading>
       <Flex
@@ -21,15 +21,12 @@ const Users = ({ users }) => {
           <Box
             key={user.id}
             cursor="pointer"
-            bg="#120101"
             mx="8"
-            rounded="lg"
             my="10"
             w="90%"
             display="flex"
             maxW="5xl"
-            shadow="lg"
-            border="0.1px solid #f2b4b4"
+            className={styles.container}
             onClick={() => {
               router.push(`/users/${user.address}`);
             }}
@@ -38,13 +35,13 @@ const Users = ({ users }) => {
               <Box
                 h="full"
                 bgSize="cover"
-                rounded="lg"
+                rounded="sm"
                 bgPos="center"
                 bgImage={`url("${user.profile_image}")`}
               ></Box>
             </Box>
 
-            <Box py={12} px={6} w="70%" color="red.100" textAlign="center">
+            <Box py={12} px={6} w="70%" color="black.100" textAlign="center">
               <Heading className={styles.userHeader}>{user.address}</Heading>
               <Heading className={styles.userHeader}>
                 Audits created : {user.audits_requested?.length}

@@ -51,7 +51,7 @@ const Audits = ({ audits }) => {
 
   return (
     <VStack mt="20vh" width="100%" gap="10" mb="10">
-      <Heading as="h1" size="xl" fontFamily="Geostar">
+      <Heading as="h1" size="xl" fontFamily="Laser">
         Audits
       </Heading>
 
@@ -75,7 +75,8 @@ const Audits = ({ audits }) => {
             border={selected.includes(tag) ? "none" : "0.2px solid #fff"}
             fontFamily="Space Grotesk"
             cursor="pointer"
-            colorScheme={selected.includes(tag) ? "red" : "white"}
+            rounded="sm"
+            colorScheme={selected.includes(tag) ? "black" : "white"}
             userSelect="none"
             onClick={() => handleTagFilter(tag)}
           >
@@ -93,15 +94,14 @@ const Audits = ({ audits }) => {
           <Flex
             key={audit.id}
             h="fit-content"
-            my="4"
-            bg="#120101"
-            border="1px solid #f2b4b4"
+            my="10"
+            className={styles.container}
             flexDir="row"
             alignItems="center"
-            rounded="lg"
+            rounded="sm"
             justifyContent="space-around"
             w="100%"
-            color="red.100"
+            color="black.100"
             cursor="pointer"
             onClick={() => {
               router.push(`/audits/${audit.contract_address}`);
@@ -109,28 +109,31 @@ const Audits = ({ audits }) => {
           >
             <Flex flexDir="column" shadow="lg" h="fit-content" p="10" w="80%">
               <Heading className={styles.auditHeader}>
-                Contract Name : {audit.name}
-              </Heading>
-              <Heading className={styles.auditHeader}>
                 Contract Address : {audit.contract_address}
               </Heading>
               <Heading className={styles.auditHeader}>
                 Audit creator : {audit.created_by}
               </Heading>
+              <Heading className={styles.auditHeader}>
+                Chain : {audit.chain}
+              </Heading>
               {
                 <HStack spacing={4} mt="4" fontFamily="Space Grotesk">
-                  {audit.tags?.length !== 0
-                    ? audit.tags?.map((tag, index) => (
-                        <Tag
-                          size="lg"
-                          key={index}
-                          variant="outline"
-                          colorScheme="red"
-                        >
-                          {tag}
-                        </Tag>
-                      ))
-                    : null}
+                  {audit.tags?.length !== 0 ? (
+                    audit.tags?.map((tag, index) => (
+                      <Tag
+                        size="lg"
+                        key={index}
+                        variant="outline"
+                        rounded="sm"
+                        colorScheme="whiteAlpha"
+                      >
+                        {tag}
+                      </Tag>
+                    ))
+                  ) : (
+                    <Text color="white">No tags found</Text>
+                  )}
                 </HStack>
               }
             </Flex>
@@ -158,6 +161,7 @@ const Audits = ({ audits }) => {
                 justifyContent="space-evenly"
                 alignItems="center"
                 gap="2"
+                ml="4"
               >
                 <RiMoneyDollarCircleLine size="2.4em" />
                 <Text fontSize="xl">

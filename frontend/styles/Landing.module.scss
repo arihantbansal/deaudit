@@ -1,8 +1,18 @@
 .heading {
-  background: -webkit-linear-gradient(top, #db9292, #dc0606);
+  background: -webkit-linear-gradient(top, #f5f1f1, #0b0101);
   background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-family: "Azeret Light" !important;
+  -webkit-text-fill-color: transparentize($color: #f5f1f1, $amount: 0.7);
+}
+
+.logo {
+  background: -webkit-linear-gradient(top, #8e8b8b, #0b0101);
+  background-clip: text;
+  -webkit-text-fill-color: transparentize($color: #eadddd, $amount: 0.2);
+}
+
+.heading::selection {
+  background: -webkit-linear-gradient(top, #070707, #f4f3f3);
+  -webkit-text-fill-color: transparentize($color: #1a1212, $amount: 0.9);
 }
 
 .button {
@@ -10,22 +20,19 @@
   color: whitesmoke !important;
   padding: 10px 20px !important;
   border-radius: 15px !important;
-  color: #f7d0d0 !important;
-  margin: 0px 20px;
+  color: #f4ebeb !important;
+  -webkit-text-fill-color: transparentize($color: #f5f1f1, $amount: 0.4);
+  margin: 0px 100px !important;
   letter-spacing: 0.5px;
   font-family: "Space Grotesk";
   transition: width 1s ease-in-out !important;
-  width: 7vw !important;
+  width: 15vw !important;
 }
 
 .button:hover {
-  width: 8vw !important;
+  width: 20vw !important;
 }
 
 .arrow {
   transition: width 1s ease-in-out !important;
-}
-
-.arrow:hover {
-  width: 100px !important;
 }

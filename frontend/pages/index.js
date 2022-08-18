@@ -11,13 +11,7 @@ const Home = () => {
     );
   }, []);
 
-  return (
-    <Flex flexDir="column" className={styles.container}>
-      <Flex h="100vh" w="100%" flexDir="column" className={styles.child}>
-        <Landing />
-      </Flex>
-    </Flex>
-  );
+  return <Landing />;
 };
 
 export default Home;

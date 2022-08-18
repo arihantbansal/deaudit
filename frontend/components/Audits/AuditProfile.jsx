@@ -107,13 +107,11 @@ const AuditProfile = ({ audit, bugs }) => {
         m="auto"
         textAlign="center"
       >
-        <Heading className="head">{audit.name}</Heading>
-
         <Heading
           color="white"
           my="6"
           flexDir="row"
-          fontSize="1.5em"
+          fontSize="1.8em"
           className="head"
           display="inline-block"
           _selection={{
@@ -123,7 +121,7 @@ const AuditProfile = ({ audit, bugs }) => {
         >
           Contract :
           <Linker
-            color="red.200"
+            color="red.100"
             display="inline-flex"
             fontSize="1.1em"
             mx="4"
@@ -146,7 +144,7 @@ const AuditProfile = ({ audit, bugs }) => {
         <Heading
           color="white"
           my="4"
-          fontSize="1.5em"
+          fontSize="1.6em"
           className="head"
           _selection={{
             color: "red.800",
@@ -157,7 +155,7 @@ const AuditProfile = ({ audit, bugs }) => {
           <Link href={`/users/${audit.created_by}`} passHref>
             <Linker>
               <Text
-                color="red.200"
+                color="red.100"
                 display="inline-flex"
                 mx="4"
                 className="audit"
@@ -175,34 +173,15 @@ const AuditProfile = ({ audit, bugs }) => {
           </Link>
         </Heading>
 
-        <Button
-          size="lg"
-          mx="auto"
-          my="6"
-          fontFamily="Space Grotesk"
-          border="1px"
-          borderColor="red.200"
-          borderRadius="10px"
-          fontSize="1.3em"
-          bg="transparent"
-          color="red.100"
-          onClick={onOpen}
-          _hover={{
-            transform: "scale(1.05)",
-          }}
-          leftIcon={<BsBug />}
-        >
-          Report a Bug
-        </Button>
         <Center m="4">
           <HStack gap="2">
             {audit.tags?.map((tag, index) => (
               <Tag
                 key={index}
                 size="lg"
+                transform="scale(1.2)"
                 variant="outline"
-                border="none"
-                fontFamily="Space Grotesk"
+                fontFamily="Aeonik Light"
                 cursor="pointer"
                 colorScheme="red"
                 userSelect="none"
@@ -212,6 +191,27 @@ const AuditProfile = ({ audit, bugs }) => {
             ))}
           </HStack>
         </Center>
+
+        <Button
+          size="lg"
+          mx="auto"
+          my="6"
+          fontFamily="Space Grotesk"
+          border="1px"
+          borderColor="red.100"
+          borderRadius="10px"
+          fontSize="1.3em"
+          bg="transparent"
+          color="red.50"
+          onClick={onOpen}
+          _hover={{
+            transform: "scale(1.05)",
+          }}
+          leftIcon={<BsBug />}
+        >
+          Report a Bug
+        </Button>
+
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
           <ModalOverlay />
           <ModalContent bgColor="#0F0301">
@@ -224,18 +224,18 @@ const AuditProfile = ({ audit, bugs }) => {
                 placeholder="Description"
                 size="lg"
                 border="1px"
-                borderColor="red.200"
+                borderColor="red.100"
                 borderRadius="10px"
                 fontFamily="Space Grotesk"
                 rows="6"
                 cols="50"
                 fontSize="1.2em"
-                color="red.100"
+                color="red.50"
                 value={bugDescription}
                 onChange={(e) => setBugDescription(e.target.value)}
                 boxShadow="none"
                 _focus={{
-                  borderColor: "red.200",
+                  borderColor: "red.100",
                   boxShadow: "none",
                 }}
               />
@@ -246,7 +246,7 @@ const AuditProfile = ({ audit, bugs }) => {
                 size="md"
                 fontFamily="Space Grotesk"
                 border="1px"
-                borderColor="red.200"
+                borderColor="red.100"
                 borderRadius="10px"
                 fontSize="1em"
                 bg="transparent"
@@ -314,7 +314,7 @@ const AuditProfile = ({ audit, bugs }) => {
                       <Linker>
                         <Text
                           fontSize="1.1em"
-                          color="red.200"
+                          color="red.100"
                           className="address"
                           display="inline-flex"
                           _selection={{
@@ -471,18 +471,19 @@ const AuditProfile = ({ audit, bugs }) => {
                   key={index}
                   my="4"
                   mx="4"
-                  w="50vw"
+                  w="60vw"
                   h="36"
                   borderWidth="1px"
                   borderColor="red.50"
                   borderStart="solid"
-                  p="6"
+                  px="6"
+                  py="8"
                   borderRadius="15px"
                 >
                   <Link href={`/users/${bug.reported_by}`} passHref>
                     <Linker
                       fontSize="xl"
-                      color="red.200"
+                      color="red.100"
                       display="inline-flex"
                       className="address"
                       _hover={{

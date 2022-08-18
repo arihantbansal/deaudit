@@ -44,15 +44,15 @@ const Four0Four = () => {
               my="6"
               fontFamily="Space Grotesk"
               border="1px"
-              borderColor="teal.200"
+              borderColor="teal.50"
               borderRadius="10px"
               letterSpacing="0.5px"
               fontSize="1.3em"
               bg="transparent"
-              color="teal.200"
+              color="teal.50"
               _hover={{
-                color: "teal.400",
-                borderColor: "teal.400",
+                color: "teal.100",
+                borderColor: "teal.100",
               }}
             >
               Back Home

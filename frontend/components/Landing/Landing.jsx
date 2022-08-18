@@ -6,65 +6,68 @@ import {
   Link,
   Text,
   HStack,
+  Image,
+  Divider,
+  Center,
 } from "@chakra-ui/react";
-import Lottie from "react-lottie";
 import styles from "../../styles/Landing.module.scss";
-import blockchain from "../../public/assets/blockchain.json";
 import Head from "next/head";
 import { BsArrowRight } from "react-icons/bs";
 
 const Landing = () => {
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: blockchain,
-    rendererSettings: {
-      preserveAspectRatio: "xMidYMid slice",
-    },
-  };
-
   return (
     <Flex
       w="100vw"
-      h="85vh"
-      flexDirection="row"
+      flexDirection="column"
       alignItems="center"
       className="home"
-      mt="20"
+      position="absolute"
+      top="10vh"
     >
       <Head>
-        <title>DeAudit</title>
+        <title>DEAudit</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Flex
         flexDirection="column"
-        w="53vw"
-        ml="20"
+        w="80vw"
+        mx="20"
+        mt="10vh"
+        h="80vh"
         justifyContent="space-evenly"
-        alignItems="left"
       >
         <Heading
-          fontSize="6xl"
+          fontSize="7xl"
           letterSpacing="1px"
           display="flex"
           className={styles.heading}
           my="6"
+          fontFamily="Laser"
         >
           The Decentralized Audit Marketplace.
         </Heading>
-        <Text
-          fontSize="lg"
-          fontFamily="Azeret Regular"
-          fontWeight="normal"
-          lineHeight="1.5"
-          my="2"
-        >
-          Digital marketplace for requesting <br /> betting on and applying for{" "}
-          <br />
-          auditing proposals.
-        </Text>
+        <HStack spacing={10}>
+          <Text
+            fontSize="2xl"
+            fontFamily="Space Grotesk"
+            color="gray.200"
+            my="10"
+            w="55vw"
+            _selection={{
+              color: "gray.900",
+              bg: "gray.100",
+            }}
+          >
+            A digital marketplace for requesting of, betting on and judging
+            smart contracts&apos; auditing.
+            <br />
+            Irrespetive of who you are.
+          </Text>
+          <Image src="/assets/wrench 512.png" w="10vw" alt="" />
+        </HStack>
+
         <Link href="/users" textDecor="none">
-          <HStack my="6" w="30vw">
+          <HStack my="3" w="100vw">
             <Button
               fontSize="2xl"
               size="lg"
@@ -73,14 +76,37 @@ const Landing = () => {
                 bg: "transparent",
               }}
             >
-              Users
+              See our users
             </Button>
             <BsArrowRight fontSize="3em" className={styles.arrow} />
           </HStack>
         </Link>
       </Flex>
-      <Box w="55vw">
-        <Lottie options={defaultOptions} width={500} />
+      <Flex
+        w="90vw"
+        flexDir="row"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Image src="/assets/bug.svg" alt="bug" w="60%" userSelect="none" />
+        <Heading
+          fontSize="5xl"
+          letterSpacing="1px"
+          className={styles.heading}
+          fontFamily="Laser"
+          w="70%"
+        >
+          My face when bug in mainnet deployed contract
+        </Heading>
+      </Flex>
+      <Box fontFamily="Aeonik Light" mt="6" letterSpacing="1px" w="100%">
+        <Divider />
+        <Center>
+          <Text fontSize="lg" color="gray.100" my="3">
+            Copyright &copy; {new Date().getFullYear()} by DEAudit. &nbsp;All
+            Rights Reserved.
+          </Text>
+        </Center>
       </Box>
     </Flex>
   );

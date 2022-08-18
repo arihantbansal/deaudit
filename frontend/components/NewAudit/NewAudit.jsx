@@ -121,7 +121,7 @@ const NewAudit = () => {
         <Heading
           as="h1"
           size="xl"
-          fontFamily="Geostar"
+          fontFamily="Laser"
           textAlign="center"
           letterSpacing="1px"
         >

@@ -5,11 +5,11 @@ import Link from "next/link";
 import { useAccount } from "wagmi";
 import { useCallback, useEffect, useState } from "react";
 import { config } from "@lib/utilities";
+import styles from "../../styles/Landing.module.scss";
 
 const NavBar = () => {
   const { address, isConnecting, isDisconnected } = useAccount();
   const [exists, setExists] = useState(false);
-
 
   const fetchUser = useCallback(() => {
     address &&
@@ -21,11 +21,11 @@ const NavBar = () => {
         .catch((err) => {
           setExists(false);
         });
-  } , [address]);
+  }, [address]);
 
   useEffect(() => {
     fetchUser();
-  }, [address,fetchUser]);
+  }, [address, fetchUser]);
 
   return (
     <>
@@ -47,12 +47,11 @@ const NavBar = () => {
         <Link href="/" passHref color="white">
           <a>
             <Heading
-              fontSize="2.2em"
               p="3"
               ml="10"
-              fontFamily="Geostar Fill"
+              fontFamily="Porqge"
               letterSpacing="2px"
-              color="white"
+              className={styles.logo}
             >
               DEAUDIT
             </Heading>
@@ -65,12 +64,8 @@ const NavBar = () => {
               <Button
                 variant="solid"
                 bg="transparent"
-                fontFamily="Space Grotesk"
                 size="md"
-                fontSize="lg"
-                _hover={{
-                  transform: "scale(1.05)",
-                }}
+                className="stack"
               >
                 Audits
               </Button>
@@ -81,12 +76,8 @@ const NavBar = () => {
               <Button
                 variant="solid"
                 bg="transparent"
-                fontSize="lg"
-                fontFamily="Space Grotesk"
+                className="stack"
                 size="md"
-                _hover={{
-                  transform: "scale(1.05)",
-                }}
               >
                 New Audit
               </Button>
@@ -98,12 +89,8 @@ const NavBar = () => {
                 <Button
                   variant="solid"
                   bg="transparent"
-                  fontSize="lg"
-                  fontFamily="Space Grotesk"
+                  className="stack"
                   size="md"
-                  _hover={{
-                    transform: "scale(1.05)",
-                  }}
                 >
                   Profile
                 </Button>

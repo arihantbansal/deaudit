@@ -4,6 +4,12 @@ body {
   margin: 0;
 }
 
+[data-rk] ._12cbo8i6,
+[data-rk] ._12cbo8i6::after {
+  font-size: 0.9em !important;
+  letter-spacing: 1px;
+  font-family: "Laser" !important;
+}
 a {
   color: inherit;
   text-decoration: none;
@@ -11,6 +17,29 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+.stack {
+  font-size: 1.02em !important;
+  font-family: "Aeonik Light" !important;
+  letter-spacing: 1px !important;
+  background-color: #ca4246;
+
+  background-image: linear-gradient(45deg, #ed9598 33%, #92d2ee 66%) !important;
+
+  background-size: 100%;
+  background-repeat: repeat;
+  -webkit-background-clip: text !important;
+  background-clip: border-box;
+  -webkit-text-fill-color: transparent;
+
+  animation: rainbow-text-simple-animation-rev 0.75s ease forwards !important;
+  font-family: "Laser" !important;
+}
+
+.stack:hover {
+  transform: scale(1.05);
+  animation: rainbow-text-simple-animation 0.5s ease-in forwards !important;
 }
 
 input:-webkit-autofill,
@@ -33,16 +62,18 @@ input:focus {
 }
 
 .modal-head {
-  font-family: "Azeret Thin" !important;
+  font-family: "Aeonik Light" !important;
+  letter-spacing: 1px;
 }
 
 .address {
-  font-family: "Space Grotesk" !important;
-  font-size: 1em !important;
+  font-family: "Aeonik Light" !important;
+  letter-spacing: 2px !important;
+  font-size: 1.2em !important;
 }
 
 .head {
-  font-family: "Geostar Fill" !important;
+  font-family: "Laser" !important;
   letter-spacing: 2px;
 }
 
@@ -70,4 +101,30 @@ input:focus {
 
 input:focus {
   box-shadow: none !important;
+}
+
+@keyframes rainbow-text-simple-animation-rev {
+  0% {
+    background-size: 650%;
+  }
+  40% {
+    background-size: 650%;
+  }
+  100% {
+    background-size: 100%;
+  }
+}
+
+/* Move the background and make it larger. */
+/* Animation shown when hovering over the text. */
+@keyframes rainbow-text-simple-animation {
+  0% {
+    background-size: 100%;
+  }
+  80% {
+    background-size: 650%;
+  }
+  100% {
+    background-size: 650%;
+  }
 }

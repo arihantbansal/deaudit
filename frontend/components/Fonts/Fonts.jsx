@@ -4,40 +4,40 @@ const Fonts = () => (
   <Global
     styles={`
     @font-face {
-        font-family: 'Eirian';
+        font-family: 'Laser';
+        font-style: normal;
+        font-weight: bold;
+        src: url('/fonts/Laser.otf') format('opentype');
+    }
+    @font-face {
+        font-family: 'Aeonik Regular';
         font-style: normal;
         font-weight: normal;
-        src: url('/fonts/Eirian.ttf') format('truetype');
+        src: url('/fonts/Aeonik-Regular.otf') format('opentype');
     }
     @font-face {
-        font-family: 'Geostar';
-        font-style: normal;
-        font-weight: bold;
-        src: url('/fonts/Geostar.ttf') format('truetype');
-    }
-    @font-face {
-        font-family: 'Geostar Fill';
-        font-style: normal;
-        font-weight: bold;
-        src: url('/fonts/Geostar-Fill.ttf') format('truetype');
-    }
-    @font-face {
-        font-family: 'Atures';
-        font-style: normal;
-        font-weight: bold;
-        src: url('/fonts/Atures.ttf') format('truetype');
-    }
-    @font-face {
-        font-family: 'Space Mono';
-        font-style: normal;
-        font-weight: bold;
-        src: url('/fonts/Space-Mono.ttf') format('truetype');
-    }
-    @font-face {
-        font-family: 'Monosphere';
+        font-family: 'Aeonik Light';
         font-style: normal;
         font-weight: normal;
-        src: url('/fonts/Monosphere.ttf') format('truetype');
+        src: url('/fonts/Aeonik-Light.otf') format('opentype');
+    }
+    @font-face {
+        font-family: 'Porqge';
+        font-style: normal;
+        font-weight: normal;
+        src: url('/fonts/Porqge.ttf') format('truetype');
+    }
+    @font-face {
+        font-family: 'Ultramono';
+        font-style: normal;
+        font-weight: normal;
+        src: url('/fonts/Ultramonos.ttf') format('truetype');
+    }
+    @font-face {
+        font-family: 'Laser';
+        font-style: normal;
+        font-weight: bold;
+        src: url('/fonts/Laser.ttf') format('truetype');
     }
     @font-face {
         font-family: 'Azeret Thin';
@@ -57,13 +57,6 @@ const Fonts = () => (
         font-weight: normal;
         src: url('/fonts/Azeret-Mono-Regular.otf') format('opentype');
     }
-    @font-face {
-        font-family: 'Azeret Bold';
-        font-style: normal;
-        font-weight: bold;
-        src: url('/fonts/Azeret-Mono-Bold.otf') format('opentype');
-    }
-
 
     `}
   />
