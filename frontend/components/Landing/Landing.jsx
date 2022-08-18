@@ -10,11 +10,21 @@ import {
   Divider,
   Center,
 } from "@chakra-ui/react";
+import { ethers } from "ethers";
 import styles from "../../styles/Landing.module.scss";
 import Head from "next/head";
 import { BsArrowRight } from "react-icons/bs";
+// import contractAbi from "../../lib/contractAbi.json";
+const CONTRACT_ADDRESS = "";
 
 const Landing = () => {
+  if (typeof window !== "undefined") {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner();
+    // const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
+    // console.log(contract);
+  }
+
   return (
     <Flex
       w="100vw"
@@ -23,25 +33,26 @@ const Landing = () => {
       className="home"
       position="absolute"
       top="10vh"
+      overflowX="none"
     >
       <Head>
-        <title>DEAudit</title>
+        <title>DeAudit</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Flex
         flexDirection="column"
-        w="80vw"
-        mx="20"
+        w="80%"
         mt="10vh"
         h="80vh"
         justifyContent="space-evenly"
+        overflowX="none"
       >
         <Heading
           fontSize="7xl"
           letterSpacing="1px"
           display="flex"
+          filter="brightness(180%)"
           className={styles.heading}
-          my="6"
           fontFamily="Laser"
         >
           The Decentralized Audit Marketplace.
@@ -51,23 +62,24 @@ const Landing = () => {
             fontSize="2xl"
             fontFamily="Space Grotesk"
             color="gray.200"
-            my="10"
-            w="55vw"
+            lineHeight="1.7"
+            m="16"
+            mr="32"
+            w="35vw"
             _selection={{
               color: "gray.900",
               bg: "gray.100",
             }}
           >
-            A digital marketplace for requesting of, betting on and judging
-            smart contracts&apos; auditing.
-            <br />
+            A digital marketplace for requesting, betting and judging
+            contract audits.<br />
             Irrespetive of who you are.
           </Text>
-          <Image src="/assets/wrench 512.png" w="10vw" alt="" />
+          <Image src="/assets/wrench 512.png" w="10vw" alt="Wrench" />
         </HStack>
 
         <Link href="/users" textDecor="none">
-          <HStack my="3" w="100vw">
+          <HStack my="3" w="100%">
             <Button
               fontSize="2xl"
               size="lg"
@@ -87,6 +99,7 @@ const Landing = () => {
         flexDir="row"
         justifyContent="space-between"
         alignItems="center"
+        overflowX="none"
       >
         <Image src="/assets/bug.svg" alt="bug" w="60%" userSelect="none" />
         <Heading
@@ -95,6 +108,7 @@ const Landing = () => {
           className={styles.heading}
           fontFamily="Laser"
           w="70%"
+          filter="brightness(180%)"
         >
           My face when bug in mainnet deployed contract
         </Heading>
@@ -103,7 +117,7 @@ const Landing = () => {
         <Divider />
         <Center>
           <Text fontSize="lg" color="gray.100" my="3">
-            Copyright &copy; {new Date().getFullYear()} by DEAudit. &nbsp;All
+            Copyright &copy; {new Date().getFullYear()} by DeAudit. &nbsp;All
             Rights Reserved.
           </Text>
         </Center>

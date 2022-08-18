@@ -1,12 +1,13 @@
 .heading {
-  background: -webkit-linear-gradient(top, #f5f1f1, #0b0101);
+  background: -webkit-linear-gradient(top, #eaeaea, #010101);
   background-clip: text;
-  -webkit-text-fill-color: transparentize($color: #f5f1f1, $amount: 0.7);
+  -webkit-text-fill-color: transparentize($color: #c8c8c8, $amount: 0.8);
 }
 
 .logo {
-  background: -webkit-linear-gradient(top, #8e8b8b, #0b0101);
+  background: -webkit-linear-gradient(top, #ccc9c9, #010101);
   background-clip: text;
+  filter: brightness(200%);
   -webkit-text-fill-color: transparentize($color: #eadddd, $amount: 0.2);
 }
 

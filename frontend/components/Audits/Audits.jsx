@@ -161,7 +161,7 @@ const Audits = ({ audits }) => {
                 justifyContent="space-evenly"
                 alignItems="center"
                 gap="2"
-                ml="4"
+                ml="6"
               >
                 <RiMoneyDollarCircleLine size="2.4em" />
                 <Text fontSize="xl">

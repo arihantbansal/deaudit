@@ -43,6 +43,7 @@ const NavBar = () => {
         justifyContent="space-between"
         flexDir="row"
         fontSize="1.2em"
+        boxShadow="1px 1px 20px rgba(150, 150, 150, 0.4)"
       >
         <Link href="/" passHref color="white">
           <a>
