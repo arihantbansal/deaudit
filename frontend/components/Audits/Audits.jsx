@@ -15,11 +15,10 @@ import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import styles from "@styles/Listing.module.scss";
 import { useRouter } from "next/router";
 import { GiInjustice } from "react-icons/gi";
-import { config } from "@lib/utilities";
+import { config, currency } from "@lib/utilities";
 
 const Audits = ({ audits }) => {
   const router = useRouter();
-  const currency = "MATIC";
 
   const [tags, setTags] = useState([]);
 
@@ -66,7 +65,7 @@ const Audits = ({ audits }) => {
         }}
       />
       <Text className={styles.text}>Filter by tags :</Text>
-      <HStack gap="2">
+      <HStack gap="8">
         {tags?.map((tag, index) => (
           <Tag
             key={index}

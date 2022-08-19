@@ -1,14 +1,17 @@
-import AuditProfile from "@components/Audits/AuditProfile";
 import { config } from "@lib/utilities";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import dynamic from "next/dynamic";
+const AuditProfile = dynamic(() => import("@components/Audits/AuditProfile"), {
+  ssr: false,
+});
 
 const Audit = (props) => {
   const router = useRouter();
   useEffect(() => {
     document.documentElement.style.setProperty(
       "--line-color",
-      "rgba(65, 3, 3, 0.351)"
+      "rgba(40, 3, 3, 0.351)"
     );
   }, []);
 

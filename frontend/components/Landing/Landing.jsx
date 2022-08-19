@@ -10,20 +10,11 @@ import {
   Divider,
   Center,
 } from "@chakra-ui/react";
-import { ethers } from "ethers";
-import styles from "../../styles/Landing.module.scss";
+import styles from "@styles/Landing.module.scss";
 import Head from "next/head";
 import { BsArrowRight } from "react-icons/bs";
-// import contractAbi from "../../lib/contractAbi.json";
-const CONTRACT_ADDRESS = "";
 
 const Landing = () => {
-  if (typeof window !== "undefined") {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const signer = provider.getSigner();
-    // const contract = new ethers.Contract(CONTRACT_ADDRESS, contractAbi.abi, signer);
-    // console.log(contract);
-  }
 
   return (
     <Flex
@@ -71,8 +62,9 @@ const Landing = () => {
               bg: "gray.100",
             }}
           >
-            A digital marketplace for requesting, betting and judging
-            contract audits.<br />
+            A digital marketplace for requesting, betting and judging contract
+            audits.
+            <br />
             Irrespetive of who you are.
           </Text>
           <Image src="/assets/wrench 512.png" w="10vw" alt="Wrench" />

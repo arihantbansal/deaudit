@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useAccount } from "wagmi";
 import { useCallback, useEffect, useState } from "react";
 import { config } from "@lib/utilities";
-import styles from "../../styles/Landing.module.scss";
+import styles from "@styles/Landing.module.scss";
 
 const NavBar = () => {
   const { address, isConnecting, isDisconnected } = useAccount();

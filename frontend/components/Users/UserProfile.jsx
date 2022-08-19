@@ -24,6 +24,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import Head from "next/head";
+import styles from "@styles/Listing.module.scss";
 import { FiTwitter, FiGithub, FiSettings, FiLinkedin } from "react-icons/fi";
 import { Link as Linker } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
@@ -198,7 +199,8 @@ const UserProfile = ({ user, bugs }) => {
         </Head>
         <Flex
           w="100%"
-          h="85vh"
+          mt="12vh"
+          h="75vh"
           bgImage={`url(${socialState.coverImage})`}
           bgSize="cover"
           bgPos="center"
@@ -715,7 +717,6 @@ const UserProfile = ({ user, bugs }) => {
           justifyContent="center"
           alignItems="center"
           filter="brightness(900%)"
-          blendMode="color-dodge"
         >
           <Heading
             color="white"
@@ -740,7 +741,7 @@ const UserProfile = ({ user, bugs }) => {
             alignItems="center"
             overflowX="hidden"
             textAlign="center"
-            my="4"
+            my="8"
             fontSize="2xl"
             fontFamily="Space Grotesk"
           >
@@ -756,7 +757,7 @@ const UserProfile = ({ user, bugs }) => {
                   borderStart="solid"
                   px="6"
                   py="10"
-                  borderRadius="15px"
+                  className={styles.container}
                 >
                   <Link href={`/audits/${bug.audit_id}`} passHref>
                     <Linker

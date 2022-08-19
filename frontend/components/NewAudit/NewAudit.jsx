@@ -14,10 +14,18 @@ import {
 } from "@chakra-ui/react";
 import Router from "next/router";
 import React, { useState } from "react";
-import styles from "../../styles/NewAudit.module.scss";
-import { config, pascalCase } from "@lib/utilities";
-import { useAccount, allChains } from "wagmi";
+import styles from "@styles/NewAudit.module.scss";
+import { config, CONTRACT_ADDRESS, pascalCase } from "@lib/utilities";
+import {
+  useAccount,
+  allChains,
+  usePrepareContractWrite,
+  useContractWrite,
+  useContractRead,
+} from "wagmi";
 import Head from "next/head";
+import contractAbi from "@lib/contractAbi.json";
+import { ethers } from "ethers";
 
 const NewAudit = () => {
   const chains = allChains.filter(
@@ -30,8 +38,7 @@ const NewAudit = () => {
   const [tag, setTag] = useState("");
   const [chain, setChain] = useState(chains[0].name);
 
-  console.log(chain);
-  const [poolSize, setPoolSize] = useState(0);
+  const [poolSize, setPoolSize] = useState("0");
   const { address, _, isDisconnected } = useAccount();
 
   const handleDelete = (id) => {
@@ -48,6 +55,19 @@ const NewAudit = () => {
       setTag("");
     }
   };
+
+  // Posting an Audit
+  // const { configForAuditPost } = usePrepareContractWrite({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   functionName: "register",
+  //   args: [contractAddress],
+  //   overrides: {
+  //     value: ethers.utils.parseEther(poolSize.toString())
+  //   },
+  // });
+
+  // const { auditPostData, isLoadingAudit, isSuccessAudit, auditSubmit } = useContractWrite(configForAuditPost);
 
   const handleSubmit = (e) => {
     fetch(`${config}/users`, {
@@ -105,6 +125,8 @@ const NewAudit = () => {
       .catch((err) => {
         console.log(err);
       });
+
+    // auditSubmit?.();
   };
 
   return (

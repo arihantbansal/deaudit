@@ -37,7 +37,7 @@ const Fonts = () => (
         font-family: 'Laser';
         font-style: normal;
         font-weight: bold;
-        src: url('/fonts/Laser.ttf') format('truetype');
+        src: url('/fonts/Laser.otf') format('opentype');
     }
     @font-face {
         font-family: 'Azeret Thin';

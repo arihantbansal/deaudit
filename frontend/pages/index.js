@@ -1,7 +1,5 @@
-import { Flex } from "@chakra-ui/react";
 import Landing from "@components/Landing/Landing";
 import { useEffect } from "react";
-import styles from "../styles/Main.module.scss";
 
 const Home = () => {
   useEffect(() => {

@@ -17,18 +17,72 @@ import {
   HStack,
   Tag,
   Center,
+  Checkbox,
+  Input,
+  FormControl,
 } from "@chakra-ui/react";
-import { Link as Linker } from "@chakra-ui/react";
-import { config, ellipseAddress } from "@lib/utilities";
-import Head from "next/head";
 import React, { useState } from "react";
-import { BsBug } from "react-icons/bs";
+import Head from "next/head";
+import Link from "next/link";
+import styles from "@styles/Listing.module.scss";
+import { Link as Linker } from "@chakra-ui/react";
+import {
+  config,
+  CONTRACT_ADDRESS,
+  currency,
+  ellipseAddress,
+} from "@lib/utilities";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import { GiInjustice } from "react-icons/gi";
-import Link from "next/link";
-import { allChains, useAccount } from "wagmi";
+import {
+  allChains,
+  useAccount,
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+} from "wagmi";
+import contractAbi from "@lib/contractAbi.json";
+import { BsBug } from "react-icons/bs";
+import { ethers } from "ethers";
 
 const AuditProfile = ({ audit, bugs }) => {
+  const [bugMoney, setBugMoney] = useState("0");
+  const [noBugMoney, setNoBugMoney] = useState("0");
+
+  // Getting audit data
+  // const { auditData } = useContractRead({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   functionName: "getAudit",
+  //   args: [audit.contract_address],
+  // });
+
+  // // Posting a bug
+  // const { configForBugPost } = usePrepareContractWrite({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   functionName: "reportBug",
+  //   args: [audit.contract_address],
+  //   overrides: {
+  //     value: ethers.utils.parseEther(bugMoney.toString())
+  //   },
+  // });
+
+  // const { bugPostData, isLoadingPost, isSuccessPost, bugSubmit } = useContractWrite(configForBugPost);
+
+  // Funding no bug pool
+  // const { configForNoBug } = usePrepareContractWrite({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   functionName: "fundNoBugs",
+  //   args: [audit.contract_address],
+  //   overrides: {
+  //     value: ethers.utils.parseEther(noBugMoney.toString())
+  //   },
+  // });
+
+  // const { noBugPoolData , isLoadingPool, isSuccessPool, noBugPoolSubmit } = useContractWrite(configForNoBug);
+
   const title = `Audit ${ellipseAddress(audit.contract_address)}`;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [bugDescription, setBugDescription] = useState("");
@@ -174,16 +228,16 @@ const AuditProfile = ({ audit, bugs }) => {
         </Heading>
 
         <Center m="4">
-          <HStack gap="2">
+          <HStack gap="6">
             {audit.tags?.map((tag, index) => (
               <Tag
                 key={index}
                 size="lg"
-                transform="scale(1.2)"
+                transform="scale(1.1)"
                 variant="outline"
                 fontFamily="Aeonik Light"
                 cursor="pointer"
-                colorScheme="red"
+                colorScheme="whiteAlpha"
                 userSelect="none"
               >
                 {tag}
@@ -196,7 +250,8 @@ const AuditProfile = ({ audit, bugs }) => {
           size="lg"
           mx="auto"
           my="6"
-          fontFamily="Space Grotesk"
+          fontFamily="Aeonik Light"
+          letterSpacing="1.5px"
           border="1px"
           borderColor="red.100"
           borderRadius="10px"
@@ -205,7 +260,7 @@ const AuditProfile = ({ audit, bugs }) => {
           color="red.50"
           onClick={onOpen}
           _hover={{
-            transform: "scale(1.05)",
+            bg: "transparent",
           }}
           leftIcon={<BsBug />}
         >
@@ -214,33 +269,47 @@ const AuditProfile = ({ audit, bugs }) => {
 
         <Modal isOpen={isOpen} onClose={onClose} isCentered>
           <ModalOverlay />
-          <ModalContent bgColor="#0F0301">
+          <ModalContent bgColor="#060100">
             <ModalCloseButton />
             <ModalHeader className="modal-head">Report Bug</ModalHeader>
             <ModalBody>
-              <Textarea
-                required
-                spellCheck="false"
-                placeholder="Description"
-                size="lg"
-                border="1px"
-                borderColor="red.100"
-                borderRadius="10px"
+              <FormControl isRequired>
+                <Textarea
+                  required
+                  spellCheck="false"
+                  placeholder="Description"
+                  size="lg"
+                  rows="6"
+                  cols="50"
+                  value={bugDescription}
+                  onChange={(e) => setBugDescription(e.target.value)}
+                  className={styles.auditInputs}
+                />
+              </FormControl>
+              <Flex
+                justify="center"
+                gap="4"
+                align="center"
+                my="6"
+                flexDirection="row"
                 fontFamily="Space Grotesk"
-                rows="6"
-                cols="50"
-                fontSize="1.2em"
-                color="red.50"
-                value={bugDescription}
-                onChange={(e) => setBugDescription(e.target.value)}
-                boxShadow="none"
-                _focus={{
-                  borderColor: "red.100",
-                  boxShadow: "none",
-                }}
-              />
-            </ModalBody>
+                float="right"
+              >
+                <FormControl isRequired>
+                  <Input
+                    required
+                    placeholder="Amount"
+                    size="lg"
+                    value={bugMoney}
+                    w="120px"
+                    onChange={(e) => setBugMoney(e.target.value)}
+                    className={styles.auditInputs}
+                  />
+                </FormControl>
 
+                <Text fontSize="xl"> {currency}</Text>
+              </Flex>
+            </ModalBody>
             <ModalFooter>
               <Button
                 size="md"
@@ -251,9 +320,10 @@ const AuditProfile = ({ audit, bugs }) => {
                 fontSize="1em"
                 bg="transparent"
                 color="gray.200"
-                onClick={() => {
+                onClick={async () => {
                   if (bugDescription.length > 0) {
-                    handleBugSubmit();
+                    await handleBugSubmit();
+                    await bugSubmit();
                     onClose();
                   }
                 }}
@@ -307,31 +377,34 @@ const AuditProfile = ({ audit, bugs }) => {
             textAlign="center"
           >
             <Heading color="white" my="4" fontSize="2xl">
-              {audit.jury_members?.map((juryMember, index) => {
-                return (
-                  <Box key={index} py="2" mx="4">
-                    <Link href={`/users/${juryMember}`} passHref>
-                      <Linker>
-                        <Text
-                          fontSize="1.1em"
-                          color="red.100"
-                          className="address"
-                          display="inline-flex"
-                          _selection={{
-                            color: "red.800",
-                            background: "white",
-                          }}
-                          _hover={{
-                            color: "red.50",
-                          }}
-                        >
-                          {juryMember}
-                        </Text>
-                      </Linker>
-                    </Link>
-                  </Box>
-                );
-              })}
+              {
+                //TODO fetch audit.jury
+                audit.jury_members?.map((juryMember, index) => {
+                  return (
+                    <Box key={index} py="2" mx="4">
+                      <Link href={`/users/${juryMember}`} passHref>
+                        <Linker>
+                          <Text
+                            fontSize="1.1em"
+                            color="red.100"
+                            className="address"
+                            display="inline-flex"
+                            _selection={{
+                              color: "red.800",
+                              background: "white",
+                            }}
+                            _hover={{
+                              color: "red.50",
+                            }}
+                          >
+                            {juryMember}
+                          </Text>
+                        </Linker>
+                      </Link>
+                    </Box>
+                  );
+                })
+              }
             </Heading>
           </Flex>
         </Flex>
@@ -431,7 +504,6 @@ const AuditProfile = ({ audit, bugs }) => {
           justifyContent="center"
           alignItems="center"
           filter="brightness(900%)"
-          blendMode="color-dodge"
         >
           <Heading
             color="white"
@@ -461,7 +533,7 @@ const AuditProfile = ({ audit, bugs }) => {
             justifyContent="center"
             alignItems="center"
             textAlign="center"
-            my="4"
+            my="8"
             fontSize="2xl"
             fontFamily="Space Grotesk"
           >
@@ -472,17 +544,15 @@ const AuditProfile = ({ audit, bugs }) => {
                   my="4"
                   mx="4"
                   w="60vw"
-                  h="36"
-                  borderWidth="1px"
-                  borderColor="red.50"
-                  borderStart="solid"
+                  h="fit-content"
                   px="6"
-                  py="8"
-                  borderRadius="15px"
+                  py="10"
+                  gap="2"
+                  className={styles.container}
                 >
                   <Link href={`/users/${bug.reported_by}`} passHref>
                     <Linker
-                      fontSize="xl"
+                      fontSize="lg"
                       color="red.100"
                       display="inline-flex"
                       className="address"
@@ -506,12 +576,30 @@ const AuditProfile = ({ audit, bugs }) => {
                     m="auto"
                     _selected={true}
                     _selection={{
-                      backgroundColor: "purple.700",
+                      backgroundColor: "purple.100",
                       color: "black",
                     }}
+                    fontFamily="Azeret Thin"
                   >
                     Description : {bug.description}
                   </Text>
+                  <Box fontFamily="Azeret Thin">
+                    {address && audit.jury_members.indexOf(address) > -1 ? (
+                      // TODO fetch audit[bug.reported_by].verdict
+                      // TODO juryVerdict(audit.contract_address,address,verdict)
+                      <Checkbox
+                        size="lg"
+                        colorScheme="red"
+                        border="red"
+                        color="red"
+                        mb="3"
+                      >
+                        Verify as bug
+                      </Checkbox>
+                    ) : (
+                      <Text fontSize="xl">You are not a jury member.</Text>
+                    )}
+                  </Box>
                 </VStack>
               );
             })}
