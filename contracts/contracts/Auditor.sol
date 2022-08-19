@@ -7,7 +7,7 @@ contract Auditor {
 		address creator;
 		address contractAddress;
 		address[] jury;
-		uint256 timestamp;
+		uint256 createdTime;
 		uint256 totalYesPool;
 		uint256 totalNoPool;
 		mapping(address => uint256) yesPool;
@@ -16,11 +16,11 @@ contract Auditor {
 	}
 
 	struct Bug {
-		uint256 timestamp;
+		uint256 createdTime;
 		bool verdict;
 	}
 
-	Audit[] audits;
+	mapping(address => Audit) audits;
 	address payable public owner; // public payable address for fees
 
 	event AuditRequested(
@@ -75,18 +75,18 @@ contract Auditor {
 	}
 
 	function createAudit(address contractAddress) external equallyFunded {
+		
 		Audit newAudit = Audit({
 			creator: msg.sender,
 			contractAddress: contractAddress,
-			timestamp: block.timestamp,
+			createdTime: block.timestamp,
 			totalYesPool: msg.value / 2,
 			totalNoPool: msg.value / 2,
 			jury: []
 		});
 		newAudit.yesPool[msg.sender] = newAudit.totalYesPool;
 		newAudit.noPool[msg.sender] = newAudit.totalNoPool;
-		audits.push(newAudit);
-
+		audits[contractAddress] = newAudit;
 		emit AuditRequested(msg.sender, contractAddress, block.timestamp);
 	}
 
@@ -103,7 +103,7 @@ contract Auditor {
 
 	function reportBug(address contractAddress) external {
 		Bug newBug = Bug({
-			timestamp: block.timestamp,
+			createdTime: block.timestamp,
 			verdict: false
 		});
 
@@ -152,6 +152,16 @@ contract Auditor {
 			yesPool -= (yesPool * 5) / 100; // review for gas
 
 		}
+	}
+
+	function getAudit(address contractAddress) public view returns (address creator,
+		address contractAddress,
+		address[] memory jury,
+		uint256 createdTime,
+		uint256 totalYesPool,
+		uint256 totalNoPool) {
+			Audit auditFromAddress = audits[contractAddress];
+			return (auditFromAddress.contractAddress, auditFromAddress.jury, auditFromAddress.createdTime, auditFromAddress.totalYesPool, auditFromAddress.totalNoPool);
 	}
 
 	function transferOwnership(address payable _owner) external onlyOwner {
