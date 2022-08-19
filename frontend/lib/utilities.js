@@ -13,3 +13,7 @@ export function pascalCase(str) {
 }
 
 export const config = "http://localhost:3001";
+
+export const CONTRACT_ADDRESS = "0xA6f2DdBd8478801D59c61fc67666A80473dEAbBc";
+
+export const currency = "MATIC";

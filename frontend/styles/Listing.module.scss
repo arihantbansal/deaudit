@@ -1,5 +1,7 @@
 $border-color: #f6e8e8;
 $placeholder-color: #7e7e7e;
+$red-100: #fed7d7;
+$red-50: #fff5f5;
 
 .container {
   border: 1px solid #ffffff !important;
@@ -53,4 +55,18 @@ $placeholder-color: #7e7e7e;
   &::placeholder {
     color: $placeholder-color !important;
   }
+}
+
+.auditInputs {
+  border-radius: 10px !important;
+  font-family: "Space Grotesk" !important;
+  box-shadow: none !important;
+  border: 1px solid $red-50 !important;
+  color: $red-50 !important;
+  font-size: 1.2em !important;
+}
+
+.auditInputs:focus {
+  box-shadow: none !important;
+  border: 1px solid $red-100 !important;
 }
