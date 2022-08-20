@@ -20,7 +20,7 @@ contract Auditor is VRFConsumerBaseV2 {
 		uint256 totalNoPool;
 		mapping(address => uint256) yesPool;
 		mapping(address => uint256) noPool;
-		mapping(address => Bug[]) creatorToBugs;
+		mapping(address => Bug[]) reporterToBugs;
 	}
 
 	struct Bug {
@@ -152,7 +152,7 @@ contract Auditor is VRFConsumerBaseV2 {
 			createdTime: block.timestamp,
 		});
 
-		audits[contractAddress].creatorToBugs[msg.sender].push(newBug);
+		audits[contractAddress].reporterToBugs[msg.sender].push(newBug);
 		audits[contractAddress].bugReporters.push(msg.sender);
 
 		emit NewBugReported(
@@ -181,7 +181,7 @@ contract Auditor is VRFConsumerBaseV2 {
 			uint256 bet = audits[contractAddress].yesPool[reporter];
 			uint256 reporterReward = ((bet * 100) / yesPool) * (yesPool + noPool);
 
-			for (address voter in audits[contractAddress].yesPool) {
+			for (address voter in audits[contractAddress].yesPoolFunders) {
 				if (voter != reporter) {
 					// uint256 voterReward = 
 					// review voter reward logic
