@@ -6,7 +6,9 @@ contract Auditor {
 	struct Audit {
 		address creator;
 		address contractAddress;
-		address[] jury;
+		address[5] jury;
+		address[] yesPoolFunders;
+		address[] noPoolFunders;
 		uint256 createdTime;
 		uint256 totalYesPool;
 		uint256 totalNoPool;
@@ -17,9 +19,11 @@ contract Auditor {
 
 	struct Bug {
 		uint256 createdTime;
+		mapping(address => uint256) vote;
 		bool verdict;
 	}
-
+	
+	address[] eligibleJuryMembers;
 	mapping(address => Audit) audits;
 	address payable public owner; // public payable address for fees
 
@@ -59,6 +63,10 @@ contract Auditor {
 		address indexed reporter,
 		uint256 timestamp
 	);
+	event JuryMemberAdded(
+		address indexed memberAddress,
+		uint256 timestamp
+	);
 
 	modifier onlyOwner() {
 		require(msg.sender == owner, "Only accessible by owner!");
@@ -75,7 +83,6 @@ contract Auditor {
 	}
 
 	function createAudit(address contractAddress) external equallyFunded {
-		
 		Audit newAudit = Audit({
 			creator: msg.sender,
 			contractAddress: contractAddress,
@@ -84,9 +91,13 @@ contract Auditor {
 			totalNoPool: msg.value / 2,
 			jury: []
 		});
+		
 		newAudit.yesPool[msg.sender] = newAudit.totalYesPool;
+		newAudit.yesPoolFunders.push(msg.sender);
 		newAudit.noPool[msg.sender] = newAudit.totalNoPool;
+		newAudit.noPoolFunders.push(msg.sender);
 		audits[contractAddress] = newAudit;
+
 		emit AuditRequested(msg.sender, contractAddress, block.timestamp);
 	}
 
@@ -162,6 +173,12 @@ contract Auditor {
 		uint256 totalNoPool) {
 			Audit auditFromAddress = audits[contractAddress];
 			return (auditFromAddress.contractAddress, auditFromAddress.jury, auditFromAddress.createdTime, auditFromAddress.totalYesPool, auditFromAddress.totalNoPool);
+	}
+
+	function addEligibleJuryMember(address memberAddress) public onlyOwner {
+		eligibleJuryMembers.push(memberAddress);
+
+		emit JuryMemberAdded(memberAddress, block.timestamp);
 	}
 
 	function transferOwnership(address payable _owner) external onlyOwner {

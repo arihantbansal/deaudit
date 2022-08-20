@@ -5,7 +5,7 @@
   "scripts": {
     "compile": "npx hardhat compile",
     "test": "npx hardhat test",
-    "prettier": "prettier --write \"contracts/**/*.sol\""
+    "prettier": "prettier --config .prettierrc --write \"contracts/**/*.sol\""
   },
   "keywords": [
     "polygon",
@@ -28,7 +28,7 @@
     "solhint-plugin-prettier": "^0.0.5"
   },
   "dependencies": {
-    "@chainlink/contracts": "^0.4.1",
+    "@chainlink/contracts": "^0.4.2",
     "@openzeppelin/contracts": "^4.6.0",
     "dotenv": "^16.0.1"
   }
