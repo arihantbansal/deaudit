@@ -11,6 +11,7 @@ const userRouter = express.Router();
 //@route	GET /users
 //@desc		GET users
 userRouter.get("/", getAllUsers);
+
 //@route	POST /users/
 //@desc		Add user
 userRouter.post("/", addUser);

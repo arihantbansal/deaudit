@@ -8,7 +8,7 @@
 		"start": "npm run build && node build/index.js",
 		"dev": "nodemon",
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"lint": "eslint . --ext .ts && prettier --config .prettierrc \"./src/**/*.ts\" --write"
+		"lint": "eslint . --fix --ext  .ts && prettier --config .prettierrc \"./**/*.ts\" --write"
 	},
 	"keywords": [],
 	"author": "arihantbansal",
