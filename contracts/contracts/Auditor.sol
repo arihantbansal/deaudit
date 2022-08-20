@@ -101,7 +101,7 @@ contract Auditor {
 		emit AuditRequested(msg.sender, contractAddress, block.timestamp);
 	}
 
-	function fundNoBugs(address contractAddress) external {
+	function fundNoBugs(address contractAddress) external { //will have to add streaming payments
 		audits[contractAddress].totalNoPool += msg.value;
 		audits[contractAddress].noPool[msg.sender] = msg.value;
 
@@ -138,29 +138,44 @@ contract Auditor {
 
 	function juryVerdict(address contractAddress, address reporter, bool verdict) {
 		audits[contractAddress].bugs[reporter].verdict = verdict;
+		uint256 noPool = audits[contractAddress].totalNoPool;
+		uint256 yesPool = audits[contractAddress].totalYesPool;
+		uint totalPayout = noPool + yesPool;
 		if (verdict) {
-			uint256 noPool = audits[contractAddress].totalNoPool;
-			uint256 yesPool = audits[contractAddress].totalYesPool;
-
-			uint256 bet = audits[contractAddress].yesPool[reporter];
-			uint256 reporterReward = ((bet * 100) / yesPool) * (yesPool + noPool);
-
-			for (address voter in audits[contractAddress].yesPool) {
-				if (voter != reporter) {
-					// uint256 voterReward = 
-					// review voter reward logic
-				}
-			}
-
-			yesPool += noPool;
-			audits[contractAddress].totalNoPool = 0;
-			uint256 juryReward = (yesPool * 5) / 100;
-
+			uint totalPayout = noPool + yesPool;
+			audits[contractAddress].totalYesPool+=noPool;
+			audits[contractAddress].totalNoPool=0;
+			//transferring to jury
+			uint256 juryReward = (totalPayout * 5) / 100;
 			address[] jury = audits[contractAddress].jury;
 			for (uint256 i = 0; i < jury.length; i++) {
-				jury.transfer(juryReward / 5); // review for reentrancy
+				jury.transfer(juryReward / 5); 
 			}
-			yesPool -= (yesPool * 5) / 100; // review for gas
+			audits[contractAddress].totalYesPool=audits[contractAddress].totalYesPool*0.95;
+			uint256 x = audits[contractAddress].totalYesPool;
+			for (address voter in audits[contractAddress].yesPoolFunders) {
+				voter.transfer(audits[contractAddress].yesPool[voter]*x/yesPool);
+				audits[contractAddress].totalYesPool-=(audits[contractAddress].yesPool[voter]*x/yesPool);
+			}
+    
+		}
+		else{
+             if(audits[contractAddress].totalNoPool>19*(audits[contractAddress].totalYesPool){ //totalNoPool has to be greater than 95% of sum of both pools for liquidation
+				audits[contractAddress].totalNoPool+=yesPool;
+				audits[contractAddress].totalYesPool=0;
+				//transferring to jury
+				uint256 juryReward = (totalPayout * 5) / 100;
+				address[] jury = audits[contractAddress].jury;
+				for (uint256 i = 0; i < jury.length; i++) {
+					jury.transfer(juryReward / 5); 
+				}
+				audits[contractAddress].totalNoPool=audits[contractAddress].totalNoPool*0.95;
+				uint256 x = audits[contractAddress].totalNoPool;
+				for (address voter in audits[contractAddress].noPoolFunders) {
+					voter.transfer(audits[contractAddress].noPool[voter]*x/noPool);
+					audits[contractAddress].totalNoPool-=(audits[contractAddress].yesPool[voter]*x/noPool);
+				}
+
 
 		}
 	}
