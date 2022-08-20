@@ -107,13 +107,10 @@ contract Auditor is VRFConsumerBaseV2 {
 		);
 	}
 
-	function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords)
+	function fulfillRandomWords(uint256, uint256[] memory randomWords)
 		internal
 		override
-		returns (uint256[] memory)
-	{
-		return randomWords;
-	}
+	{}
 
 	function createAudit(address contractAddress) external equallyFunded {
 		uint256[] memory randomMembers = requestRandomWords();
@@ -125,14 +122,14 @@ contract Auditor is VRFConsumerBaseV2 {
 			];
 		}
 
-		Audit memory newAudit = Audit({
-			creator: msg.sender,
-			contractAddress: contractAddress,
-			createdTime: block.timestamp,
-			totalYesPool: msg.value / 2,
-			totalNoPool: msg.value / 2,
-			jury: juryMembers
-		});
+		Audit storage newAudit = audits.push();
+
+		newAudit.creator = msg.sender;
+		newAudit.contractAddress = contractAddress;
+		newAudit.createdTime = block.timestamp;
+		newAudit.totalYesPool = msg.value / 2;
+		newAudit.totalNoPool = msg.value / 2;
+		newAudit.jury = juryMembers;
 
 		newAudit.yesPool[msg.sender] = newAudit.totalYesPool;
 		newAudit.yesPoolFunders.push(msg.sender);
@@ -196,9 +193,11 @@ contract Auditor is VRFConsumerBaseV2 {
 			audits[contractAddress].totalYesPool += noPool;
 			audits[contractAddress].totalNoPool = 0;
 
+			// Paying out jury
 			for (uint256 i = 0; i < jury.length; i++) {
 				jury[i].transfer(juryReward / 5);
 			}
+
 			audits[contractAddress].totalYesPool =
 				audits[contractAddress].totalYesPool *
 				0.95;
@@ -218,13 +217,15 @@ contract Auditor is VRFConsumerBaseV2 {
 				audits[contractAddress].totalNoPool >
 				19 * (audits[contractAddress].totalYesPool)
 			) {
-				//totalNoPool has to be greater than 95% of sum of both pools for liquidation
+				// totalNoPool has to be greater than 95% of sum of both pools for liquidation
 				audits[contractAddress].totalNoPool += yesPool;
 				audits[contractAddress].totalYesPool = 0;
-				//transferring to jury
+
+				// Paying out jury
 				for (uint256 i = 0; i < jury.length; i++) {
 					jury.transfer(juryReward / 5);
 				}
+
 				audits[contractAddress].totalNoPool =
 					audits[contractAddress].totalNoPool *
 					0.95;
