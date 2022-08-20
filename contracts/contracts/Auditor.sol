@@ -173,7 +173,9 @@ contract Auditor is VRFConsumerBaseV2 {
 		);
 	}
 
-	function juryVote(address contractAddress, bool vote) external {}
+	function juryVote(address contractAddress, bool vote) external {
+		// todo: complete vote
+	}
 
 	function juryVerdict(
 		address contractAddress,
@@ -181,6 +183,7 @@ contract Auditor is VRFConsumerBaseV2 {
 		bool verdict
 	) public {
 		// audits[contractAddress].reporterToBugs[reporter][bugIndex].verdict = verdict;
+		// todo: verdict fix
 
 		uint256 noPool = audits[contractAddress].totalNoPool;
 		uint256 yesPool = audits[contractAddress].totalYesPool;
