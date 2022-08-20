@@ -5,7 +5,6 @@ pragma solidity ^0.8.9;
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 
-
 /// @title A contract for decentralized audit marketplace
 contract Auditor is VRFConsumerBaseV2 {
 	struct Audit {
@@ -27,20 +26,20 @@ contract Auditor is VRFConsumerBaseV2 {
 		uint256 createdTime;
 		uint256 verdict;
 	}
-	
+
 	address[] public eligibleJuryMembers;
 	mapping(address => Audit) public audits;
 	address payable public owner; // public payable address for fees
-
 
 	// global variables for Chainlink VRF
 	VRFCoordinatorV2Interface COORDINATOR;
 	uint64 vrfSubscriptionId;
 	address vrfCoordinator = 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed;
-	bytes32 keyHash = 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
-  uint32 callbackGasLimit = 100000;
-  uint16 requestConfirmations = 3;
-  uint32 numMembers = 5;
+	bytes32 keyHash =
+		0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
+	uint32 callbackGasLimit = 100000;
+	uint16 requestConfirmations = 3;
+	uint32 numMembers = 5;
 
 	// custom events
 	event AuditRequested(
@@ -79,10 +78,7 @@ contract Auditor is VRFConsumerBaseV2 {
 		address indexed reporter,
 		uint256 timestamp
 	);
-	event JuryMemberAdded(
-		address indexed memberAddress,
-		uint256 timestamp
-	);
+	event JuryMemberAdded(address indexed memberAddress, uint256 timestamp);
 
 	// custom modifiers
 	modifier onlyOwner() {
@@ -103,15 +99,18 @@ contract Auditor is VRFConsumerBaseV2 {
 
 	function requestRandomWords() internal {
 		requestId = COORDINATOR.requestRandomWords(
-      keyHash,
-      vrfSubscriptionId,
-      requestConfirmations,
-      callbackGasLimit,
-      numMembers
-    );
+			keyHash,
+			vrfSubscriptionId,
+			requestConfirmations,
+			callbackGasLimit,
+			numMembers
+		);
 	}
 
-	function fulfillRandomWords(uint256 /* requestId */, uint256[] memory randomWords) internal override returns (uint256[] memory) {
+	function fulfillRandomWords(
+		uint256, /* requestId */
+		uint256[] memory randomWords
+	) internal override returns (uint256[] memory) {
 		return randomWords;
 	}
 
@@ -120,7 +119,9 @@ contract Auditor is VRFConsumerBaseV2 {
 		address[] juryMembers;
 
 		for (uint8 i = 0; i < 5; i++) {
-			juryMembers.push(eligibleJuryMembers[randomMembers[i] % eligibleJuryMembers.length]);
+			juryMembers.push(
+				eligibleJuryMembers[randomMembers[i] % eligibleJuryMembers.length]
+			);
 		}
 
 		Audit newAudit = Audit({
@@ -129,9 +130,9 @@ contract Auditor is VRFConsumerBaseV2 {
 			createdTime: block.timestamp,
 			totalYesPool: msg.value / 2,
 			totalNoPool: msg.value / 2,
-			jury: juryMembers,
+			jury: juryMembers
 		});
-		
+
 		newAudit.yesPool[msg.sender] = newAudit.totalYesPool;
 		newAudit.yesPoolFunders.push(msg.sender);
 		newAudit.noPool[msg.sender] = newAudit.totalNoPool;
@@ -142,7 +143,8 @@ contract Auditor is VRFConsumerBaseV2 {
 		emit AuditRequested(msg.sender, contractAddress, block.timestamp);
 	}
 
-	function fundNoBugs(address contractAddress) external { //will have to add streaming payments
+	function fundNoBugs(address contractAddress) external {
+		//will have to add streaming payments
 		audits[contractAddress].totalNoPool += msg.value;
 		audits[contractAddress].noPool[msg.sender] = msg.value;
 		audits[contractAddress].noPoolFunders.push(msg.sender);
@@ -155,18 +157,12 @@ contract Auditor is VRFConsumerBaseV2 {
 	}
 
 	function reportBug(address contractAddress) external {
-		Bug newBug = Bug({
-			createdTime: block.timestamp,
-		});
+		Bug newBug = Bug({ createdTime: block.timestamp });
 
 		audits[contractAddress].reporterToBugs[msg.sender].push(newBug);
 		audits[contractAddress].bugReporters.push(msg.sender);
 
-		emit NewBugReported(
-			contractAddress,
-			msg.sender,
-			block.timestamp,
-		);
+		emit NewBugReported(contractAddress, msg.sender, block.timestamp);
 
 		audits[contractAddress].totalYesPool += msg.value;
 		audits[contractAddress].yesPool[msg.sender] = msg.value;
@@ -179,59 +175,92 @@ contract Auditor is VRFConsumerBaseV2 {
 		);
 	}
 
-	function juryVote(address contractAddress, bool vote) external {
-		
-	}
+	function juryVote(address contractAddress, bool vote) external {}
 
-	function juryVerdict(address contractAddress, address reporter, bool verdict) {
+	function juryVerdict(
+		address contractAddress,
+		address reporter,
+		bool verdict
+	) public {
 		audits[contractAddress].bugs[reporter].verdict = verdict;
+
 		uint256 noPool = audits[contractAddress].totalNoPool;
 		uint256 yesPool = audits[contractAddress].totalYesPool;
-		uint totalPayout = noPool + yesPool;
+		uint256 totalPayout = noPool + yesPool;
+
+		uint256 juryReward = (totalPayout * 5) / 100;
+
 		if (verdict) {
-			audits[contractAddress].totalYesPool+=noPool;
-			audits[contractAddress].totalNoPool=0;
+			audits[contractAddress].totalYesPool += noPool;
+			audits[contractAddress].totalNoPool = 0;
 			address[] jury = audits[contractAddress].jury;
 			for (uint256 i = 0; i < jury.length; i++) {
-				jury.transfer(juryReward / 5); 
+				jury[i].transfer(juryReward / 5);
 			}
-			audits[contractAddress].totalYesPool=audits[contractAddress].totalYesPool*0.95;
+			audits[contractAddress].totalYesPool =
+				audits[contractAddress].totalYesPool *
+				0.95;
 			uint256 x = audits[contractAddress].totalYesPool;
-			for (address voter in audits[contractAddress].yesPoolFunders) {
-				voter.transfer(audits[contractAddress].yesPool[voter]*x/yesPool);
-				audits[contractAddress].totalYesPool-=(audits[contractAddress].yesPool[voter]*x/yesPool);
+			for (
+				uint256 index = 0;
+				index < audits[contractAddress].yesPoolFunders.length;
+				index++
+			) {
+				address voter = audits[contractAddress].yesPoolFunders[index];
+				voter.transfer((audits[contractAddress].yesPool[voter] * x) / yesPool);
+				audits[contractAddress].totalYesPool -= ((audits[contractAddress]
+					.yesPool[voter] * x) / yesPool);
 			}
-    
-		}
-		else{
-		     if(audits[contractAddress].totalNoPool>19*(audits[contractAddress].totalYesPool){ //totalNoPool has to be greater than 95% of sum of both pools for liquidation
-					audits[contractAddress].totalNoPool+=yesPool;
-					audits[contractAddress].totalYesPool=0;
-					//transferring to jury
-					uint256 juryReward = (totalPayout * 5) / 100;
-					address[] jury = audits[contractAddress].jury;
-					for (uint256 i = 0; i < jury.length; i++) {
-						jury.transfer(juryReward / 5); 
-					}
-					audits[contractAddress].totalNoPool=audits[contractAddress].totalNoPool*0.95;
-					uint256 x = audits[contractAddress].totalNoPool;
-					for (address voter in audits[contractAddress].noPoolFunders) {
-						voter.transfer(audits[contractAddress].noPool[voter]*x/noPool);
-						audits[contractAddress].totalNoPool-=(audits[contractAddress].yesPool[voter]*x/noPool);
-					}
-
-
+		} else {
+			if (
+				audits[contractAddress].totalNoPool >
+				19 * (audits[contractAddress].totalYesPool)
+			) {
+				//totalNoPool has to be greater than 95% of sum of both pools for liquidation
+				audits[contractAddress].totalNoPool += yesPool;
+				audits[contractAddress].totalYesPool = 0;
+				//transferring to jury
+				address[] jury = audits[contractAddress].jury;
+				for (uint256 i = 0; i < jury.length; i++) {
+					jury.transfer(juryReward / 5);
+				}
+				audits[contractAddress].totalNoPool =
+					audits[contractAddress].totalNoPool *
+					0.95;
+				uint256 x = audits[contractAddress].totalNoPool;
+				for (
+					uint256 index = 0;
+					index < audits[contractAddress].noPoolFunders.length;
+					index++
+				) {
+					address voter = audits[contractAddress].noPoolFunders[index];
+					voter.transfer((audits[contractAddress].noPool[voter] * x) / noPool);
+					audits[contractAddress].totalNoPool -= ((audits[contractAddress]
+						.yesPool[voter] * x) / noPool);
+				}
+			}
 		}
 	}
 
-	function getAudit(address contractAddress) public view returns (address creator,
-		address contractAddress,
-		address[] memory jury,
-		uint256 createdTime,
-		uint256 totalYesPool,
-		uint256 totalNoPool) {
-			Audit auditFromAddress = audits[contractAddress];
-			return (auditFromAddress.contractAddress, auditFromAddress.jury, auditFromAddress.createdTime, auditFromAddress.totalYesPool, auditFromAddress.totalNoPool);
+	function getAudit(address contractAddress)
+		public
+		view
+		returns (
+			address creator,
+			address[] memory jury,
+			uint256 createdTime,
+			uint256 totalYesPool,
+			uint256 totalNoPool
+		)
+	{
+		Audit auditFromAddress = audits[contractAddress];
+		return (
+			auditFromAddress.creator,
+			auditFromAddress.jury,
+			auditFromAddress.createdTime,
+			auditFromAddress.totalYesPool,
+			auditFromAddress.totalNoPool
+		);
 	}
 
 	function addEligibleJuryMember(address memberAddress) public onlyOwner {
