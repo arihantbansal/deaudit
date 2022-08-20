@@ -122,29 +122,26 @@ contract Auditor is VRFConsumerBaseV2 {
 		}
 	}
 
-	function createAudit(address contractAddress) external equallyFunded {
+	function createAudit(address contractAddress) external payable equallyFunded {
 		requestRandomWords(contractAddress);
-		
-		Audit storage newAudit = audits.push();
+
+		Audit storage newAudit = audits[contractAddress];
 
 		newAudit.creator = msg.sender;
 		newAudit.contractAddress = contractAddress;
 		newAudit.createdTime = block.timestamp;
 		newAudit.totalYesPool = msg.value / 2;
 		newAudit.totalNoPool = msg.value / 2;
-		newAudit.jury = [];
 
 		newAudit.yesPool[msg.sender] = newAudit.totalYesPool;
 		newAudit.yesPoolFunders.push(msg.sender);
 		newAudit.noPool[msg.sender] = newAudit.totalNoPool;
 		newAudit.noPoolFunders.push(msg.sender);
 
-		audits[contractAddress] = newAudit;
-
 		emit AuditRequested(msg.sender, contractAddress, block.timestamp);
 	}
 
-	function fundNoBugs(address contractAddress) external {
+	function fundNoBugs(address contractAddress) external payable {
 		//will have to add streaming payments
 		audits[contractAddress].totalNoPool += msg.value;
 		audits[contractAddress].noPool[msg.sender] = msg.value;
@@ -157,8 +154,8 @@ contract Auditor is VRFConsumerBaseV2 {
 		);
 	}
 
-	function reportBug(address contractAddress) external {
-		Bug memory newBug = Bug({ createdTime: block.timestamp });
+	function reportBug(address contractAddress) external payable {
+		Bug memory newBug = Bug({ createdTime: block.timestamp, verdict: 0 });
 
 		audits[contractAddress].reporterToBugs[msg.sender].push(newBug);
 		audits[contractAddress].bugReporters.push(msg.sender);
@@ -183,34 +180,35 @@ contract Auditor is VRFConsumerBaseV2 {
 		address reporter,
 		bool verdict
 	) public {
-		audits[contractAddress].bugs[reporter].verdict = verdict;
+		// audits[contractAddress].reporterToBugs[reporter][bugIndex].verdict = verdict;
 
 		uint256 noPool = audits[contractAddress].totalNoPool;
 		uint256 yesPool = audits[contractAddress].totalYesPool;
 		uint256 totalPayout = noPool + yesPool;
 
 		uint256 juryReward = (totalPayout * 5) / 100;
-		address[] memory jury = audits[contractAddress].jury;
 
 		if (verdict) {
 			audits[contractAddress].totalYesPool += noPool;
 			audits[contractAddress].totalNoPool = 0;
 
 			// Paying out jury
-			for (uint256 i = 0; i < jury.length; i++) {
-				jury[i].transfer(juryReward / 5);
+			for (uint256 i = 0; i < audits[contractAddress].jury.length; i++) {
+				payable(audits[contractAddress].jury[i]).transfer(juryReward / 5);
 			}
 
 			audits[contractAddress].totalYesPool =
-				audits[contractAddress].totalYesPool *
-				0.95;
+				(audits[contractAddress].totalYesPool * 19) /
+				20;
 			uint256 x = audits[contractAddress].totalYesPool;
 			for (
 				uint256 index = 0;
 				index < audits[contractAddress].yesPoolFunders.length;
 				index++
 			) {
-				address voter = audits[contractAddress].yesPoolFunders[index];
+				address payable voter = payable(
+					audits[contractAddress].yesPoolFunders[index]
+				);
 				voter.transfer((audits[contractAddress].yesPool[voter] * x) / yesPool);
 				audits[contractAddress].totalYesPool -= ((audits[contractAddress]
 					.yesPool[voter] * x) / yesPool);
@@ -225,20 +223,22 @@ contract Auditor is VRFConsumerBaseV2 {
 				audits[contractAddress].totalYesPool = 0;
 
 				// Paying out jury
-				for (uint256 i = 0; i < jury.length; i++) {
-					jury.transfer(juryReward / 5);
+				for (uint256 i = 0; i < audits[contractAddress].jury.length; i++) {
+					payable(audits[contractAddress].jury[i]).transfer(juryReward / 5);
 				}
 
 				audits[contractAddress].totalNoPool =
-					audits[contractAddress].totalNoPool *
-					0.95;
+					(audits[contractAddress].totalNoPool * 19) /
+					20;
 				uint256 x = audits[contractAddress].totalNoPool;
 				for (
 					uint256 index = 0;
 					index < audits[contractAddress].noPoolFunders.length;
 					index++
 				) {
-					address voter = audits[contractAddress].noPoolFunders[index];
+					address payable voter = payable(
+						audits[contractAddress].noPoolFunders[index]
+					);
 					voter.transfer((audits[contractAddress].noPool[voter] * x) / noPool);
 					audits[contractAddress].totalNoPool -= ((audits[contractAddress]
 						.yesPool[voter] * x) / noPool);
@@ -252,19 +252,18 @@ contract Auditor is VRFConsumerBaseV2 {
 		view
 		returns (
 			address creator,
-			address[] memory jury,
+			address[5] memory jury,
 			uint256 createdTime,
 			uint256 totalYesPool,
 			uint256 totalNoPool
 		)
 	{
-		Audit memory auditFromAddress = audits[contractAddress];
 		return (
-			auditFromAddress.creator,
-			auditFromAddress.jury,
-			auditFromAddress.createdTime,
-			auditFromAddress.totalYesPool,
-			auditFromAddress.totalNoPool
+			audits[contractAddress].creator,
+			audits[contractAddress].jury,
+			audits[contractAddress].createdTime,
+			audits[contractAddress].totalYesPool,
+			audits[contractAddress].totalNoPool
 		);
 	}
 
