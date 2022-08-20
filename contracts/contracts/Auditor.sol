@@ -28,8 +28,8 @@ contract Auditor is VRFConsumerBaseV2 {
 		uint256 verdict;
 	}
 	
-	address[] eligibleJuryMembers;
-	mapping(address => Audit) audits;
+	address[] public eligibleJuryMembers;
+	mapping(address => Audit) public audits;
 	address payable public owner; // public payable address for fees
 
 
@@ -41,6 +41,7 @@ contract Auditor is VRFConsumerBaseV2 {
   uint32 callbackGasLimit = 100000;
   uint16 requestConfirmations = 3;
   uint32 numMembers = 5;
+	uint256[] public randomMembers;
 
 	// custom events
 	event AuditRequested(
@@ -111,18 +112,25 @@ contract Auditor is VRFConsumerBaseV2 {
     );
 	}
 
-	function fulfillRandomWords(uint256 /* requestId */, uint256[] memory randomMembers) internal override {
-		
+	function fulfillRandomWords(uint256 /* requestId */, uint256[] memory randomWords) internal override {
+		// todo: figure out how to get audit address here
+		randomMembers = randomWords;
 	}
 
 	function createAudit(address contractAddress) external equallyFunded {
+		address[] juryMembers;
+
+		for (uint8 i = 0; i < 5; i++) {
+			juryMembers.push(eligibleJuryMembers[randomMembers[i] % eligibleJuryMembers.length]);
+		}
+
 		Audit newAudit = Audit({
 			creator: msg.sender,
 			contractAddress: contractAddress,
 			createdTime: block.timestamp,
 			totalYesPool: msg.value / 2,
 			totalNoPool: msg.value / 2,
-			jury: []
+			jury: juryMembers,
 		});
 		
 		newAudit.yesPool[msg.sender] = newAudit.totalYesPool;
@@ -170,6 +178,10 @@ contract Auditor is VRFConsumerBaseV2 {
 			msg.sender,
 			audits[contractAddress].totalYesPool
 		);
+	}
+
+	function juryVote(address contractAddress, bool vote) external {
+		
 	}
 
 	function juryVerdict(address contractAddress, address reporter, bool verdict) {
