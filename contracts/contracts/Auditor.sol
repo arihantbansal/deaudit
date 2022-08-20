@@ -40,6 +40,7 @@ contract Auditor is VRFConsumerBaseV2 {
 	uint32 callbackGasLimit = 100000;
 	uint16 requestConfirmations = 3;
 	uint32 numMembers = 5;
+	mapping(uint256 => address) requestToAudit;
 
 	// custom events
 	event AuditRequested(
@@ -97,7 +98,7 @@ contract Auditor is VRFConsumerBaseV2 {
 		vrfSubscriptionId = subscriptionId;
 	}
 
-	function requestRandomWords() internal {
+	function requestRandomWords(address contractAddress) internal {
 		uint256 requestId = COORDINATOR.requestRandomWords(
 			keyHash,
 			vrfSubscriptionId,
@@ -105,23 +106,25 @@ contract Auditor is VRFConsumerBaseV2 {
 			callbackGasLimit,
 			numMembers
 		);
+		requestToAudit[requestId] = contractAddress;
 	}
 
-	function fulfillRandomWords(uint256, uint256[] memory randomWords)
+	function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords)
 		internal
 		override
-	{}
-
-	function createAudit(address contractAddress) external equallyFunded {
-		uint256[] memory randomMembers = requestRandomWords();
-		address[] memory juryMembers = new address[](5);
+	{
+		address contractAddress = requestToAudit[requestId];
 
 		for (uint8 i = 0; i < 5; i++) {
-			juryMembers[i] = eligibleJuryMembers[
-				randomMembers[i] % eligibleJuryMembers.length
+			audits[contractAddress].jury[i] = eligibleJuryMembers[
+				randomWords[i] % eligibleJuryMembers.length
 			];
 		}
+	}
 
+	function createAudit(address contractAddress) external equallyFunded {
+		requestRandomWords(contractAddress);
+		
 		Audit storage newAudit = audits.push();
 
 		newAudit.creator = msg.sender;
@@ -129,7 +132,7 @@ contract Auditor is VRFConsumerBaseV2 {
 		newAudit.createdTime = block.timestamp;
 		newAudit.totalYesPool = msg.value / 2;
 		newAudit.totalNoPool = msg.value / 2;
-		newAudit.jury = juryMembers;
+		newAudit.jury = [];
 
 		newAudit.yesPool[msg.sender] = newAudit.totalYesPool;
 		newAudit.yesPoolFunders.push(msg.sender);
