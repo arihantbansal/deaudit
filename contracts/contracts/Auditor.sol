@@ -98,7 +98,7 @@ contract Auditor is VRFConsumerBaseV2 {
 	}
 
 	function requestRandomWords() internal {
-		requestId = COORDINATOR.requestRandomWords(
+		uint256 requestId = COORDINATOR.requestRandomWords(
 			keyHash,
 			vrfSubscriptionId,
 			requestConfirmations,
@@ -107,24 +107,25 @@ contract Auditor is VRFConsumerBaseV2 {
 		);
 	}
 
-	function fulfillRandomWords(
-		uint256, /* requestId */
-		uint256[] memory randomWords
-	) internal override returns (uint256[] memory) {
+	function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords)
+		internal
+		override
+		returns (uint256[] memory)
+	{
 		return randomWords;
 	}
 
 	function createAudit(address contractAddress) external equallyFunded {
-		uint256[] randomMembers = requestRandomWords();
-		address[] juryMembers;
+		uint256[] memory randomMembers = requestRandomWords();
+		address[] memory juryMembers = new address[](5);
 
 		for (uint8 i = 0; i < 5; i++) {
-			juryMembers.push(
-				eligibleJuryMembers[randomMembers[i] % eligibleJuryMembers.length]
-			);
+			juryMembers[i] = eligibleJuryMembers[
+				randomMembers[i] % eligibleJuryMembers.length
+			];
 		}
 
-		Audit newAudit = Audit({
+		Audit memory newAudit = Audit({
 			creator: msg.sender,
 			contractAddress: contractAddress,
 			createdTime: block.timestamp,
@@ -157,7 +158,7 @@ contract Auditor is VRFConsumerBaseV2 {
 	}
 
 	function reportBug(address contractAddress) external {
-		Bug newBug = Bug({ createdTime: block.timestamp });
+		Bug memory newBug = Bug({ createdTime: block.timestamp });
 
 		audits[contractAddress].reporterToBugs[msg.sender].push(newBug);
 		audits[contractAddress].bugReporters.push(msg.sender);
@@ -189,11 +190,12 @@ contract Auditor is VRFConsumerBaseV2 {
 		uint256 totalPayout = noPool + yesPool;
 
 		uint256 juryReward = (totalPayout * 5) / 100;
+		address[] memory jury = audits[contractAddress].jury;
 
 		if (verdict) {
 			audits[contractAddress].totalYesPool += noPool;
 			audits[contractAddress].totalNoPool = 0;
-			address[] jury = audits[contractAddress].jury;
+
 			for (uint256 i = 0; i < jury.length; i++) {
 				jury[i].transfer(juryReward / 5);
 			}
@@ -220,7 +222,6 @@ contract Auditor is VRFConsumerBaseV2 {
 				audits[contractAddress].totalNoPool += yesPool;
 				audits[contractAddress].totalYesPool = 0;
 				//transferring to jury
-				address[] jury = audits[contractAddress].jury;
 				for (uint256 i = 0; i < jury.length; i++) {
 					jury.transfer(juryReward / 5);
 				}
@@ -253,7 +254,7 @@ contract Auditor is VRFConsumerBaseV2 {
 			uint256 totalNoPool
 		)
 	{
-		Audit auditFromAddress = audits[contractAddress];
+		Audit memory auditFromAddress = audits[contractAddress];
 		return (
 			auditFromAddress.creator,
 			auditFromAddress.jury,
