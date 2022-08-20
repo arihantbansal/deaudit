@@ -24,7 +24,7 @@ a {
   font-family: "Aeonik Light" !important;
   letter-spacing: 1px !important;
 
-  background-image: linear-gradient(45deg, #ed9598 33%, #92d2ee 66%) !important;
+  background-image: linear-gradient(45deg, #f8b8ba 33%, #89f4c7 66%) !important;
 
   background-size: 100%;
   background-repeat: repeat;
@@ -33,11 +33,11 @@ a {
   -webkit-text-fill-color: transparent;
   animation: rainbow-text-simple-animation-rev 0.75s ease forwards !important;
   font-family: "Laser" !important;
-}
 
-.stack:hover {
-  transform: scale(1.05);
-  animation: rainbow-text-simple-animation 0.75s ease-in forwards !important;
+  &:hover {
+    transform: scale(1.05);
+    animation: rainbow-text-simple-animation 0.75s ease-in forwards !important;
+  }
 }
 
 input:-webkit-autofill,
@@ -83,6 +83,7 @@ input:focus {
 .web3modal-modal-lightbox {
   z-index: 100 !important;
 }
+
 *[data-hover] {
   -webkit-text-decoration: none !important;
   text-decoration: none !important;

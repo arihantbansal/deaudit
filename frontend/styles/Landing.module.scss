@@ -1,19 +1,53 @@
-.heading {
-  background: -webkit-linear-gradient(top, #eaeaea, #010101);
-  background-clip: text;
+$laser: "Laser" !important;
+$pyro: "Porqge" !important;
+
+@mixin header($filter, $font) {
+  background-clip: text !important;
   -webkit-text-fill-color: transparentize($color: #c8c8c8, $amount: 0.8);
+  font-family: $font;
+  filter: brightness($filter) !important;
+  letter-spacing: 1px !important;
+
+  &::selection {
+    background: -webkit-linear-gradient(top, #070707, #f4f3f3);
+    -webkit-text-fill-color: transparentize($color: #1a1212, $amount: 0.9);
+  }
+}
+.heading {
+  @include header(180%, $laser);
+  background: -webkit-linear-gradient(top, #c4f0cf, #1a0303);
+}
+
+.bugheader {
+  @include header(150%, $laser);
+  background: -webkit-linear-gradient(bottom, #b80b0b, #fbe7e7);
+}
+
+.fixheader {
+  @include header(150%, $laser);
+  background: -webkit-linear-gradient(top, #50e390, #b5e9b5);
 }
 
 .logo {
-  background: -webkit-linear-gradient(top, #ccc9c9, #010101);
-  background-clip: text;
-  filter: brightness(200%);
+  @include header(400%, pyro);
   -webkit-text-fill-color: transparentize($color: #eadddd, $amount: 0.2);
 }
 
-.heading::selection {
-  background: -webkit-linear-gradient(top, #070707, #f4f3f3);
-  -webkit-text-fill-color: transparentize($color: #1a1212, $amount: 0.9);
+.hero {
+  width: 100% !important;
+  height: 100vh !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.heroSub {
+  width: 90vw !important;
+  flex-direction: row !important;
+  justify-content: space-around !important;
+  align-items: center !important;
+  overflow-x: none !important;
+  height: 90vh !important;
 }
 
 .button {
@@ -28,10 +62,9 @@
   font-family: "Space Grotesk";
   transition: width 1s ease-in-out !important;
   width: 15vw !important;
-}
-
-.button:hover {
-  width: 20vw !important;
+  &:hover {
+    width: 20vw !important;
+  }
 }
 
 .arrow {

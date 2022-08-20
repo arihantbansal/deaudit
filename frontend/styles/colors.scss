@@ -65,19 +65,3 @@ $numberOfLines: 350;
     }
   }
 }
-
-.connect-button {
-  font-family: "Space Grotesk" !important;
-  border-radius: 30px !important;
-  background: transparent !important;
-  border-width: 1px;
-  border-style: solid;
-  border-color: $buttonColor;
-  color: white;
-  width: fit-content;
-  padding: 25px;
-}
-
-.connect-button:hover {
-  color: $buttonColor;
-}
