@@ -37,6 +37,7 @@ import { GiInjustice } from "react-icons/gi";
 import {
   allChains,
   useAccount,
+  useContractEvent,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
@@ -49,15 +50,19 @@ const AuditProfile = ({ audit, bugs }) => {
   const [bugMoney, setBugMoney] = useState("0");
   const [noBugMoney, setNoBugMoney] = useState("0");
 
-  // Getting audit data
-  // const { auditData } = useContractRead({
+  /*
+  @desc : fetching audit data using address
+  */
+  // const { auditData, auditError, auditLoading } = useContractRead({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   functionName: "getAudit",
   //   args: [audit.contract_address],
   // });
 
-  // // Posting a bug
+  /*
+  @desc : posting a bug, receiving the emitted event for NewBugReported and AuditYesPoolUpdated
+  */
   // const { configForBugPost } = usePrepareContractWrite({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
@@ -70,7 +75,23 @@ const AuditProfile = ({ audit, bugs }) => {
 
   // const { bugPostData, isLoadingPost, isSuccessPost, bugSubmit } = useContractWrite(configForBugPost);
 
-  // Funding no bug pool
+  // useContractEvent({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   eventName: 'NewBugReported',
+  //   listener: (event) => console.log(event),
+  // })
+
+  // useContractEvent({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   eventName: 'AuditYesPoolUpdated',
+  //   listener: (event) => console.log(event),
+  // })
+
+  /*
+  @desc : Funding no bug pool, receiving the emitted event for AuditNoPoolUpdated
+  */
   // const { configForNoBug } = usePrepareContractWrite({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
@@ -82,6 +103,13 @@ const AuditProfile = ({ audit, bugs }) => {
   // });
 
   // const { noBugPoolData , isLoadingPool, isSuccessPool, noBugPoolSubmit } = useContractWrite(configForNoBug);
+
+  // useContractEvent({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   eventName: 'AuditNoPoolUpdated',
+  //   listener: (event) => console.log(event),
+  // })
 
   const title = `Audit ${ellipseAddress(audit.contract_address)}`;
   const { isOpen, onOpen, onClose } = useDisclosure();

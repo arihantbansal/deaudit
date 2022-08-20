@@ -27,14 +27,21 @@ import Head from "next/head";
 import styles from "@styles/Listing.module.scss";
 import { FiTwitter, FiGithub, FiSettings, FiLinkedin } from "react-icons/fi";
 import { Link as Linker } from "@chakra-ui/react";
-import { useAccount } from "wagmi";
+import {
+  useAccount,
+  useContractEvent,
+  useContractWrite,
+  usePrepareContractWrite,
+} from "wagmi";
 import { BsBug } from "react-icons/bs";
 import { AiOutlineAudit } from "react-icons/ai";
 import { GiInjustice } from "react-icons/gi";
 import { useEnsName } from "wagmi";
-import { config, ellipseAddress } from "@lib/utilities";
+import { config, CONTRACT_ADDRESS, ellipseAddress } from "@lib/utilities";
 import { Web3Storage } from "web3.storage";
 import Link from "next/link";
+import contractAbi from "@lib/contractAbi.json";
+import { ethers } from "ethers";
 
 // Construct with token and endpoint
 const client = new Web3Storage({
@@ -170,6 +177,25 @@ const UserProfile = ({ user, bugs }) => {
     loadingModal.onClose();
   };
 
+  /*
+  @desc : Add user to jury pool
+  */
+  //  const { configForJury, error } = usePrepareContractWrite({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   functionName: "addEligibleJuryMember",
+  //   args: address === user.address ? [address] : "",
+  // });
+
+  // const { juryData , isLoadingJury, isSuccessJury, juryPoolSubmit } = useContractWrite(error ? null : configForJury);
+
+  // useContractEvent({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   eventName: 'JuryMemberAdded',
+  //   listener: (event) => console.log(event),
+  // })
+
   useEffect(() => {
     if (address === user.address) {
       setTitle("Profile");
@@ -200,7 +226,7 @@ const UserProfile = ({ user, bugs }) => {
         <Flex
           w="100%"
           mt="12vh"
-          h="75vh"
+          h="73vh"
           bgImage={`url(${socialState.coverImage})`}
           bgSize="cover"
           bgPos="center"

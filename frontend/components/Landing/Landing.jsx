@@ -15,7 +15,6 @@ import Head from "next/head";
 import { BsArrowRight } from "react-icons/bs";
 
 const Landing = () => {
-
   return (
     <Flex
       w="100vw"
@@ -33,19 +32,12 @@ const Landing = () => {
       <Flex
         flexDirection="column"
         w="80%"
-        mt="10vh"
-        h="80vh"
+        mt="5vh"
+        h="87vh"
         justifyContent="space-evenly"
         overflowX="none"
       >
-        <Heading
-          fontSize="7xl"
-          letterSpacing="1px"
-          display="flex"
-          filter="brightness(180%)"
-          className={styles.heading}
-          fontFamily="Laser"
-        >
+        <Heading fontSize="7xl" className={styles.heading}>
           The Decentralized Audit Marketplace.
         </Heading>
         <HStack spacing={10}>
@@ -67,7 +59,7 @@ const Landing = () => {
             <br />
             Irrespetive of who you are.
           </Text>
-          <Image src="/assets/wrench 512.png" w="10vw" alt="Wrench" />
+          <Image src="/assets/wrench-512.png" w="10vw" alt="Wrench" />
         </HStack>
 
         <Link href="/users" textDecor="none">
@@ -86,34 +78,67 @@ const Landing = () => {
           </HStack>
         </Link>
       </Flex>
+
       <Flex
-        w="90vw"
-        flexDir="row"
-        justifyContent="space-between"
+        flexDirection="column"
+        mt="15vh"
+        w="100%"
+        h="90vh"
+        justifyContent="center"
         alignItems="center"
-        overflowX="none"
       >
-        <Image src="/assets/bug.svg" alt="bug" w="60%" userSelect="none" />
-        <Heading
-          fontSize="5xl"
-          letterSpacing="1px"
-          className={styles.heading}
-          fontFamily="Laser"
-          w="70%"
-          filter="brightness(180%)"
-        >
-          My face when bug in mainnet deployed contract
+        <Heading fontSize="7xl" className={styles.heading} fontFamily="Porqge">
+          BUGS? SCARY.
         </Heading>
+        <Flex className={styles.heroSub}>
+          <Image src="/assets/bug.svg" alt="bug" w="60%" userSelect="none" />
+          <Heading
+            fontSize="5xl"
+            className={styles.bugheader}
+            w="70%"
+            textAlign="right"
+          >
+            My face when bug in mainnet deployed contract
+          </Heading>
+        </Flex>
       </Flex>
-      <Box fontFamily="Aeonik Light" mt="6" letterSpacing="1px" w="100%">
-        <Divider />
-        <Center>
-          <Text fontSize="lg" color="gray.100" my="3">
-            Copyright &copy; {new Date().getFullYear()} by DeAudit. &nbsp;All
-            Rights Reserved.
-          </Text>
-        </Center>
-      </Box>
+
+      <Flex className={styles.hero} mt="4vh">
+        <Heading fontSize="7xl" my="5vh" className={styles.heading}>
+          AUDITING? SCARIER.
+        </Heading>
+        <Flex className={styles.heroSub}>
+          <Heading fontSize="6xl" className={styles.bugheader}>
+            My returns while auditing going on
+          </Heading>
+          <Image src="/assets/worth.svg" alt="bug" w="40%" userSelect="none" />
+        </Flex>
+      </Flex>
+
+      <Flex className={styles.hero}>
+        <Heading fontSize="7xl" mt="10vh" className={styles.heading}>
+          SAY NO MORE.
+        </Heading>
+        <Flex className={styles.heroSub}>
+          <Image src="/assets/fix.svg" alt="bug" w="50%" userSelect="none" />
+          <Heading
+            fontSize="6xl"
+            className={styles.fixheader}
+            textAlign="right"
+          >
+            RAPID and DECENTRALIZED AUDITING.
+          </Heading>
+        </Flex>
+        <Box fontFamily="Aeonik Light" mt="6" letterSpacing="1px" w="100%">
+          <Divider />
+          <Center>
+            <Text fontSize="lg" color="gray.100" my="3">
+              Copyright &copy; {new Date().getFullYear()} by DeAudit. &nbsp;All
+              Rights Reserved.
+            </Text>
+          </Center>
+        </Box>
+      </Flex>
     </Flex>
   );
 };

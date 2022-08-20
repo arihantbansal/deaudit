@@ -22,6 +22,7 @@ import {
   usePrepareContractWrite,
   useContractWrite,
   useContractRead,
+  useContractEvent,
 } from "wagmi";
 import Head from "next/head";
 import contractAbi from "@lib/contractAbi.json";
@@ -56,7 +57,9 @@ const NewAudit = () => {
     }
   };
 
-  // Posting an Audit
+  /* 
+  @desc : creating a new audit, receiving the emitted event AuditRequested
+  */
   // const { configForAuditPost } = usePrepareContractWrite({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
@@ -68,6 +71,13 @@ const NewAudit = () => {
   // });
 
   // const { auditPostData, isLoadingAudit, isSuccessAudit, auditSubmit } = useContractWrite(configForAuditPost);
+
+  // useContractEvent({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   eventName: 'AuditRequested',
+  //   listener: (event) => console.log(event),
+  // })
 
   const handleSubmit = (e) => {
     fetch(`${config}/users`, {
