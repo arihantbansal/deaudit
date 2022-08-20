@@ -41,7 +41,6 @@ contract Auditor is VRFConsumerBaseV2 {
   uint32 callbackGasLimit = 100000;
   uint16 requestConfirmations = 3;
   uint32 numMembers = 5;
-	uint256[] public randomMembers;
 
 	// custom events
 	event AuditRequested(
@@ -102,7 +101,7 @@ contract Auditor is VRFConsumerBaseV2 {
 		vrfSubscriptionId = subscriptionId;
 	}
 
-	function requestRandomWords() external {
+	function requestRandomWords() internal {
 		requestId = COORDINATOR.requestRandomWords(
       keyHash,
       vrfSubscriptionId,
@@ -112,12 +111,12 @@ contract Auditor is VRFConsumerBaseV2 {
     );
 	}
 
-	function fulfillRandomWords(uint256 /* requestId */, uint256[] memory randomWords) internal override {
-		// todo: figure out how to get audit address here
-		randomMembers = randomWords;
+	function fulfillRandomWords(uint256 /* requestId */, uint256[] memory randomWords) internal override returns (uint256[] memory) {
+		return randomWords;
 	}
 
 	function createAudit(address contractAddress) external equallyFunded {
+		uint256[] randomMembers = requestRandomWords();
 		address[] juryMembers;
 
 		for (uint8 i = 0; i < 5; i++) {
