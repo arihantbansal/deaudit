@@ -48,16 +48,14 @@ const Landing = () => {
             lineHeight="1.7"
             m="16"
             mr="32"
-            w="35vw"
+            w="40vw"
             _selection={{
               color: "gray.900",
               bg: "gray.100",
             }}
           >
-            A digital marketplace for requesting, betting and judging contract
-            audits.
-            <br />
-            Irrespetive of who you are.
+            A digital marketplace for requesting, betting and judging smart
+            contract audits.
           </Text>
           <Image src="/assets/wrench-512.png" w="10vw" alt="Wrench" />
         </HStack>
@@ -93,7 +91,7 @@ const Landing = () => {
         <Flex className={styles.heroSub}>
           <Image src="/assets/bug.svg" alt="bug" w="60%" userSelect="none" />
           <Heading
-            fontSize="5xl"
+            fontSize="6xl"
             className={styles.bugheader}
             w="70%"
             textAlign="right"
@@ -108,26 +106,38 @@ const Landing = () => {
           AUDITING? SCARIER.
         </Heading>
         <Flex className={styles.heroSub}>
-          <Heading fontSize="6xl" className={styles.bugheader}>
-            My returns while auditing going on
+          <Heading fontSize="6xl" w="50%" className={styles.bugheader}>
+            My portfolio after applying for audit
           </Heading>
           <Image src="/assets/worth.svg" alt="bug" w="40%" userSelect="none" />
         </Flex>
       </Flex>
 
       <Flex className={styles.hero}>
-        <Heading fontSize="7xl" mt="10vh" className={styles.heading}>
-          SAY NO MORE.
+        <Heading fontSize="7xl" mt="15vh" className={styles.heading}>
+          THINK YOU&apos;RE GOOD?
         </Heading>
         <Flex className={styles.heroSub}>
-          <Image src="/assets/fix.svg" alt="bug" w="50%" userSelect="none" />
+          <Image src="/assets/chance.svg" alt="bug" w="49%" userSelect="none" />
           <Heading
             fontSize="6xl"
             className={styles.fixheader}
             textAlign="right"
           >
-            RAPID and DECENTRALIZED AUDITING.
+            APPLY AS A SECURITY AUDITOR.
           </Heading>
+        </Flex>
+      </Flex>
+
+      <Flex className={styles.hero} mt="10vh">
+        <Heading fontSize="7xl" mt="20vh" className={styles.heading}>
+          SAY NO MORE.
+        </Heading>
+        <Flex className={styles.heroSub}>
+          <Heading fontSize="6xl" className={styles.network} textAlign="left">
+            RAPID AND DECENTRALIZED AUDITING.
+          </Heading>
+          <Image src="/assets/globe.svg" alt="bug" w="55%" userSelect="none" />
         </Flex>
         <Box fontFamily="Aeonik Light" mt="6" letterSpacing="1px" w="100%">
           <Divider />

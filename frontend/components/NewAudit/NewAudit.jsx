@@ -21,7 +21,6 @@ import {
   allChains,
   usePrepareContractWrite,
   useContractWrite,
-  useContractRead,
   useContractEvent,
 } from "wagmi";
 import Head from "next/head";
@@ -60,7 +59,7 @@ const NewAudit = () => {
   /* 
   @desc : creating a new audit, receiving the emitted event AuditRequested
   */
-  // const { configForAuditPost } = usePrepareContractWrite({
+  // const { config : configForAuditPost } = usePrepareContractWrite({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   functionName: "register",
@@ -70,12 +69,12 @@ const NewAudit = () => {
   //   },
   // });
 
-  // const { auditPostData, isLoadingAudit, isSuccessAudit, auditSubmit } = useContractWrite(configForAuditPost);
+  // const { write : auditSubmit } = useContractWrite(configForAuditPost);
 
   // useContractEvent({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
-  //   eventName: 'proposalCreated',
+  //   eventName: 'createAudit',
   //   listener: (event) => {
   //       console.log(event)
   //       Router.push(`/audits/${event[1]}`);

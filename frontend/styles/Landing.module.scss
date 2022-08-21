@@ -13,10 +13,9 @@ $pyro: "Porqge" !important;
     -webkit-text-fill-color: transparentize($color: #1a1212, $amount: 0.9);
   }
 }
-
 .heading {
   @include header(180%, $laser);
-  background: -webkit-linear-gradient(top, #c4f0ee, #1a0303);
+  background: -webkit-linear-gradient(top, #e8f4eb, #140101);
 }
 
 .bugheader {
@@ -27,6 +26,11 @@ $pyro: "Porqge" !important;
 .fixheader {
   @include header(150%, $laser);
   background: -webkit-linear-gradient(top, #50e390, #b5e9b5);
+}
+
+.network {
+  @include header(150%, $laser);
+  background: -webkit-linear-gradient(top, #ca6bea, #ead7eb);
 }
 
 .logo {

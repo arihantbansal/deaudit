@@ -8,7 +8,6 @@ import {
   ModalContent,
   ModalBody,
   Text,
-  VStack,
   useDisclosure,
   ModalHeader,
   ModalCloseButton,
@@ -17,11 +16,11 @@ import {
   HStack,
   Tag,
   Center,
-  Checkbox,
-  Input,
   FormControl,
+  Input,
+  VStack,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import styles from "@styles/Listing.module.scss";
@@ -45,25 +44,31 @@ import {
 import contractAbi from "@lib/contractAbi.json";
 import { BsBug } from "react-icons/bs";
 import { ethers } from "ethers";
+import AuditBug from "./AuditBug";
 
 const AuditProfile = ({ audit, bugs }) => {
   const [bugMoney, setBugMoney] = useState("0");
   const [noBugMoney, setNoBugMoney] = useState("0");
 
+  const [pool, setPool] = useState({
+    NoBug: 0,
+    Yesbug: 0,
+  });
+
   /*
   @desc : fetching audit data using address
   */
-  // const { auditData, auditError, auditLoading } = useContractRead({
+  // const auditResult = useContractRead({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   functionName: "getAudit",
-  //   args: [audit.contract_address],
+  //   args: [audit.contract_address]
   // });
 
   /*
   @desc : posting a bug, receiving the emitted event for NewBugReported and AuditYesPoolUpdated
   */
-  // const { configForBugPost } = usePrepareContractWrite({
+  // const { config :configForBugPost } = usePrepareContractWrite({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   functionName: "reportBug",
@@ -73,7 +78,7 @@ const AuditProfile = ({ audit, bugs }) => {
   //   },
   // });
 
-  // const { bugPostData, isLoadingPost, isSuccessPost, bugSubmit } = useContractWrite(configForBugPost);
+  // const { write: bugSubmit } = useContractWrite(configForBugPost);
 
   // useContractEvent({
   //   addressOrName: CONTRACT_ADDRESS,
@@ -86,13 +91,19 @@ const AuditProfile = ({ audit, bugs }) => {
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   eventName: 'AuditYesPoolUpdated',
-  //   listener: (event) => alert(`${event[1]} added ${parseInt(event[2]?._hex, 16)} to the YesBug pool.`)
+  //   listener: (event) => {
+  //     alert(`${event[1]} added ${parseInt(event[2]?._hex, 16)} to the YesBug pool.`);
+  //     setPool({
+  //       ...pool,
+  //       Yesbug: parseInt(event[2]?._hex, 16)
+  //     });
+  //   }
   // })
 
   /*
   @desc : Funding no bug pool, receiving the emitted event for AuditNoPoolUpdated
   */
-  // const { configForNoBug } = usePrepareContractWrite({
+  // const { config : configForNoBug } = usePrepareContractWrite({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   functionName: "fundNoBugs",
@@ -102,29 +113,42 @@ const AuditProfile = ({ audit, bugs }) => {
   //   },
   // });
 
-  // const { noBugPoolData , isLoadingPool, isSuccessPool, noBugPoolSubmit } = useContractWrite(configForNoBug);
+  // const { write : noBugPoolSubmit } = useContractWrite(configForNoBug);
 
-  useContractEvent({
-    addressOrName: CONTRACT_ADDRESS,
-    contractInterface: contractAbi,
-    eventName: "AuditNoPoolUpdated",
-    listener: event =>
-      alert(
-        `${event[1]} added ${parseInt(event[2]?._hex, 16)} to the NoBug pool.`
-      ),
-  });
-
-  const title = `Audit ${ellipseAddress(audit.contract_address)}`;
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [bugDescription, setBugDescription] = useState("");
-  const auditURL =
-    allChains.find(c => c.name === audit.chain).blockExplorers.default.url +
-    "/" +
-    audit.contract_address;
-  const { address, isConnecting, isDisconnected } = useAccount();
-  const bugsArray = bugs.map(bug => bug.id);
+  // useContractEvent({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   eventName: "AuditNoPoolUpdated",
+  //   listener: event => {
+  //     alert(
+  //       `${event[1]} added ${parseInt(event[2]?._hex, 16)} to the NoBug pool.`
+  //     ),
+  //       setPool({
+  //         ...pool,
+  //         NoBug: parseInt(event[2]?._hex, 16)
+  //       });
+  //     }
+  // });
 
   const handleBugSubmit = async () => {
+    // Create user if not exists
+    fetch(`${config}/users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        address: address,
+      }),
+    })
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+    // Create bug if not exists and get ID
     const response = await fetch(`${config}/bugs`, {
       method: "POST",
       headers: {
@@ -139,6 +163,7 @@ const AuditProfile = ({ audit, bugs }) => {
     const data = await response.json();
     const num = data.data;
 
+    // update audit with the bug using the ID from above
     fetch(`${config}/audits/${audit.contract_address}`, {
       method: "PUT",
       headers: {
@@ -155,6 +180,7 @@ const AuditProfile = ({ audit, bugs }) => {
         console.log(err);
       });
 
+    // update user with the bug using the ID from above
     fetch(`${config}/users/${address}`, {
       method: "PUT",
       headers: {
@@ -173,6 +199,16 @@ const AuditProfile = ({ audit, bugs }) => {
 
     setBugDescription("");
   };
+
+  const title = `Audit ${ellipseAddress(audit.contract_address)}`;
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [bugDescription, setBugDescription] = useState("");
+  const auditURL =
+    allChains.find(c => c.name === audit.chain).blockExplorers.default.url +
+    "/" +
+    audit.contract_address;
+  const { address, isConnecting, isDisconnected } = useAccount();
+  const bugsArray = bugs.map(bug => bug.id);
 
   return (
     <Flex flexDir="column">
@@ -354,7 +390,7 @@ const AuditProfile = ({ audit, bugs }) => {
                 onClick={async () => {
                   if (bugDescription.length > 0) {
                     await handleBugSubmit();
-                    await bugSubmit();
+                    // await bugSubmit();
                     onClose();
                   }
                 }}
@@ -408,9 +444,7 @@ const AuditProfile = ({ audit, bugs }) => {
             textAlign="center"
           >
             <Heading color="white" my="4" fontSize="2xl">
-              {
-                //TODO fetch audit.jury
-                audit.jury_members?.map((juryMember, index) => {
+              {/* { auditResult?.data?[1]?.map((juryMember, index) => {
                   return (
                     <Box key={index} py="2" mx="4">
                       <Link href={`/users/${juryMember}`} passHref>
@@ -435,7 +469,11 @@ const AuditProfile = ({ audit, bugs }) => {
                     </Box>
                   );
                 })
-              }
+              : 
+                <Heading color="white" my="4" fontSize="2xl" fontFamily="Laser">
+                  Fetching...
+                </Heading>
+              } */}
             </Heading>
           </Flex>
         </Flex>
@@ -474,7 +512,7 @@ const AuditProfile = ({ audit, bugs }) => {
             alignItems="center"
             textAlign="center"
           >
-            {/* {Object.keys(audit.poolSizes).map((poolSize, index) => {
+            {/* {Object.keys(pool).map((currentPool, index) => {
               return (
                 <VStack key={index} my="4" gap="4">
                   <Heading
@@ -486,37 +524,53 @@ const AuditProfile = ({ audit, bugs }) => {
                       background: "white",
                     }}
                   >
-                    {poolSize}
+                    {currentPool}
                   </Heading>
                   <Heading
                     color="white"
                     fontSize="xl"
-                    fontFamily="Major Mono Display"
+                    fontFamily="Laser"
                     _selection={{
                       color: "red.800",
                       background: "white",
                     }}
                   >
-                    {audit.poolSizes[poolSize]}
+                    parseInt(event[2]?._hex,
+                    { currentPool === "NoBug" ? parseInt(auditResult?.data[4]?._hex,16) : parseInt(auditResult?.data[3]?._hex,16)  }
+                    {currency}
                   </Heading>
+
+                  <Input
+                    required
+                    size="md"
+                    value={currentPool === "NoBug" ? noBugMoney : bugMoney}
+                    w="60px"
+                    onChange={e => {
+                      if (currentPool === "NoBug")
+                        setNoBugMoney(e.target.value);
+                      else setBugMoney(e.target.value);
+                    }}
+                    className={styles.auditInputs}
+                  />
+
                   <Button
-                    fontFamily="Space Grotesk"
-                    bg="gray.200"
+                    fontFamily="Aeonik Light"
+                    letterSpacing="1px"
+                    bg="transparent"
                     variant="solid"
                     borderRadius="10px"
                     borderWidth="1px"
                     borderStyle="solid"
                     borderColor="#fecaca"
-                    color="red.800"
+                    color="red.100"
                     size="lg"
                     fontSize="xl"
                     h="fit-content"
                     paddingX="6"
                     paddingY="2"
-                    _hover={{
-                      bg: "transparent",
-                      color: "#fecaca",
-                      border: "1px solid #fecaca",
+                    onClick={() => {
+                      // if(currentPool === "NoBug") noBugPoolSubmit();
+                      // else bugSubmit();
                     }}
                   >
                     Bet
@@ -569,70 +623,7 @@ const AuditProfile = ({ audit, bugs }) => {
             fontFamily="Space Grotesk"
           >
             {bugs?.map((bug, index) => {
-              return (
-                <VStack
-                  key={index}
-                  my="4"
-                  mx="4"
-                  w="60vw"
-                  h="fit-content"
-                  px="6"
-                  py="10"
-                  gap="2"
-                  className={styles.container}
-                >
-                  <Link href={`/users/${bug.reported_by}`} passHref>
-                    <Linker
-                      fontSize="lg"
-                      color="red.100"
-                      display="inline-flex"
-                      className="address"
-                      _hover={{
-                        color: "red.50",
-                      }}
-                      _selected={true}
-                      _selection={{
-                        backgroundColor: "purple.700",
-                        color: "black",
-                      }}
-                    >
-                      By : {bug.reported_by}
-                    </Linker>
-                  </Link>
-                  <Text
-                    fontSize="xl"
-                    color="red.50"
-                    mt="2"
-                    textAlign="center"
-                    m="auto"
-                    _selected={true}
-                    _selection={{
-                      backgroundColor: "purple.100",
-                      color: "black",
-                    }}
-                    fontFamily="Azeret Thin"
-                  >
-                    Description : {bug.description}
-                  </Text>
-                  <Box fontFamily="Azeret Thin">
-                    {address && audit.jury_members.indexOf(address) > -1 ? (
-                      // TODO fetch audit[bug.reported_by].verdict
-                      // TODO juryVerdict(audit.contract_address,address,verdict)
-                      <Checkbox
-                        size="lg"
-                        colorScheme="red"
-                        border="red"
-                        color="red"
-                        mb="3"
-                      >
-                        Verify as bug
-                      </Checkbox>
-                    ) : (
-                      <Text fontSize="xl">You are not a jury member.</Text>
-                    )}
-                  </Box>
-                </VStack>
-              );
+              return <AuditBug key={index} bug={bug} audit={audit} />;
             })}
           </Flex>
         </Flex>

@@ -180,14 +180,14 @@ const UserProfile = ({ user, bugs }) => {
   /*
   @desc : Add user to jury pool
   */
-  //  const { configForJury, error } = usePrepareContractWrite({
+  //  const { config : configForJury, error } = usePrepareContractWrite({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   functionName: "addEligibleJuryMember",
   //   args: address === user.address ? [address] : "",
   // });
 
-  // const { juryData , isLoadingJury, isSuccessJury, juryPoolSubmit } = useContractWrite(error ? null : configForJury);
+  // const { write : juryPoolSubmit } = useContractWrite(configForJury);
 
   // useContractEvent({
   //   addressOrName: CONTRACT_ADDRESS,

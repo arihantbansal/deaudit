@@ -50,9 +50,6 @@ const Users = ({ users }) => {
                 Bugs Reported :{" "}
                 {user.bugs_reported ? user.bugs_reported.length : 0}
               </Heading>
-              <Heading className={styles.userHeader}>
-                Audits judged : {user.jury_of?.length}
-              </Heading>
             </Box>
           </Box>
         ))}

@@ -106,7 +106,14 @@ const Audits = ({ audits }) => {
               router.push(`/audits/${audit.contract_address}`);
             }}
           >
-            <Flex flexDir="column" shadow="lg" h="fit-content" p="10" w="80%">
+            <Flex
+              flexDir="column"
+              shadow="lg"
+              h="fit-content"
+              px="8"
+              py="10"
+              w="90%"
+            >
               <Heading className={styles.auditHeader}>
                 Contract Address : {audit.contract_address}
               </Heading>
@@ -165,17 +172,6 @@ const Audits = ({ audits }) => {
                 <RiMoneyDollarCircleLine size="2.4em" />
                 <Text fontSize="xl">
                   {audit.initial_pool_size} {currency}
-                </Text>
-              </Flex>
-              <Flex
-                flexDir="row"
-                justifyContent="space-evenly"
-                alignItems="center"
-                gap="12"
-              >
-                <GiInjustice size="2em" />
-                <Text fontSize="2xl">
-                  {audit.jury_members ? audit.jury_members.length : 0}
                 </Text>
               </Flex>
             </Flex>
