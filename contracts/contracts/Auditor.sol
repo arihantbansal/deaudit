@@ -318,12 +318,33 @@ contract Auditor is VRFConsumerBaseV2 {
 		);
 	}
 
-	function getNumberOfBugsByReporter(address contractAddress, address reporter) external view returns (uint256) {
+	function getNumberOfBugsByReporter(address contractAddress, address reporter)
+		external
+		view
+		returns (uint256)
+	{
 		return audits[contractAddress].reporterToBugs[reporter].length;
 	}
 
-	function getBugByIndex(address contractAddress, address reporter, uint256 index) external view returns (uint256, bool[5], uint256) {
-		return (audits[contractAddress].reporterToBugs[reporter][index].createdTime, audits[contractAddress].reporterToBugs[reporter][index].juryMemberHasVoted, audits[contractAddress].reporterToBugs[reporter][index].verdict);
+	function getBugByIndex(
+		address contractAddress,
+		address reporter,
+		uint256 index
+	)
+		external
+		view
+		returns (
+			uint256,
+			bool[5],
+			uint256
+		)
+	{
+		return (
+			audits[contractAddress].reporterToBugs[reporter][index].createdTime,
+			audits[contractAddress]
+			.reporterToBugs[reporter][index].juryMemberHasVoted,
+			audits[contractAddress].reporterToBugs[reporter][index].verdict
+		);
 	}
 
 	function addEligibleJuryMember(address memberAddress) public onlyOwner {
