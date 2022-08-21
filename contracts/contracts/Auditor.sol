@@ -16,6 +16,7 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 		address[] noPoolFunders;
 		address[] bugReporters;
 		uint256 createdTime;
+		uint256 lastStreamTime;
 		uint256 totalYesPool;
 		uint256 totalNoPool;
 		mapping(address => uint256) yesPool;
@@ -30,6 +31,7 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 	}
 
 	address[] public eligibleJuryMembers;
+	address[] public contractsAudited;
 	mapping(address => Audit) public audits;
 	address payable public owner; // public payable address for fees
 
@@ -42,7 +44,8 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 	uint16 requestConfirmations = 3;
 	uint32 numMembers = 5; // 5 jury members needed per audit
 	mapping(uint256 => address) requestToAudit;
-	uint256 public immutable interval;
+	uint256 public immutable interval = 1 days;
+	uint256 public immutable timeToDrainFunds = 30 days;
 
 	// custom events
 	event AuditRequested(address indexed creator, address indexed contractAddress, uint256 timestamp);
@@ -126,10 +129,12 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 		requestRandomWords(contractAddress);
 
 		Audit storage newAudit = audits[contractAddress];
+		contractsAudited.push(contractAddress);
 
 		newAudit.creator = msg.sender;
 		newAudit.contractAddress = contractAddress;
 		newAudit.createdTime = block.timestamp;
+		newAudit.lastStreamTime = block.timestamp;
 		newAudit.totalYesPool = msg.value / 2;
 		newAudit.totalNoPool = msg.value / 2;
 
@@ -261,6 +266,51 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 		emit AuditCompleted(audits[contractAddress].creator, contractAddress, block.timestamp, verdict);
 	}
 
+	function addEligibleJuryMember(address memberAddress) public onlyOwner {
+		eligibleJuryMembers.push(memberAddress);
+
+		emit JuryMemberAdded(memberAddress, block.timestamp);
+	}
+
+	function getContractsToBeStreamed() public view returns (address[] memory) {
+		address[] memory toStream;
+
+		for (uint256 i = 0; i < contractsAudited.length; i++) {
+			if (audits[contractsAudited[i]].lastStreamTime - block.timestamp > interval) {
+				toStream.push(contractsAudited[i]);
+			}
+		}
+
+		return toStream;
+	}
+
+	function streamPools(address[] memory needStreaming) internal {
+		for (uint256 i = 0; i < needStreaming.length; i++) {
+			if ((block.timestamp - audits[needStreaming[i]].lastStreamTime) / (1 days) < 1) {
+				continue;
+			}
+			uint256 totalYesPoolValue = audits[needStreaming[i]].totalYesPool;
+			uint256 daysRemaining = (block.timestamp - audits[needStreaming[i]].createdTime) / (1 days);
+			audits[needStreaming[i]].totalYesPool -= totalYesPoolValue / daysRemaining;
+			audits[needStreaming[i]].totalNoPool += totalYesPoolValue / daysRemaining;
+			audits[needStreaming[i]].lastStreamTime = block.timestamp;
+		}
+	}
+
+	function checkUpkeep(
+		bytes calldata /* checkData */ // checkData is unused
+	) external view override returns (bool upkeepNeeded, bytes memory performData) {
+		address[] memory needStreaming = getContractsToBeStreamed();
+		upkeepNeeded = needStreaming.length > 0;
+		performData = abi.encode(needStreaming);
+		return (upkeepNeeded, performData);
+	}
+
+	function performUpkeep(bytes calldata performData) external override {
+		address[] memory needStreaming = abi.decode(performData, (address[]));
+		streamPools(needStreaming);
+	}
+
 	function getAuditData(address contractAddress)
 		external
 		view
@@ -307,36 +357,6 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 			audits[contractAddress].reporterToBugs[reporter][index].juryMemberHasVoted,
 			audits[contractAddress].reporterToBugs[reporter][index].verdict
 		);
-	}
-
-	function addEligibleJuryMember(address memberAddress) public onlyOwner {
-		eligibleJuryMembers.push(memberAddress);
-
-		emit JuryMemberAdded(memberAddress, block.timestamp);
-	}
-
-	function checkUpkeep(
-		bytes calldata /* checkData */ // checkData is unused
-	)
-		external
-		view
-		override
-		returns (
-			bool upkeepNeeded,
-			bytes memory /* performData */
-		)
-	{
-		upkeepNeeded = (block.timestamp - lastTimeStamp) > interval;
-	}
-
-	function performUpkeep(
-		bytes calldata /* performData */
-	) external override {
-		// We highly recommend revalidating the upkeep in the performUpkeep function
-		if ((block.timestamp - lastTimeStamp) > interval) {
-			lastTimeStamp = block.timestamp;
-			counter = counter + 1;
-		}
 	}
 
 	function transferOwnership(address payable newOwner) external onlyOwner {
