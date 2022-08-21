@@ -6,8 +6,7 @@ $aeonik: "Aeonik Light" !important;
 $laser: "Laser" !important;
 $grotesk: "Space Grotesk" !important;
 
-@mixin headers($font, $spacing, $size, $mt, $mb) {
-  font-family: $font !important;
+@mixin headers($spacing, $size, $mt, $mb) {
   letter-spacing: $spacing !important;
   font-size: $size !important;
   margin-top: $mt !important;
@@ -28,15 +27,18 @@ $grotesk: "Space Grotesk" !important;
 }
 
 .auditHeader {
-  @include headers($aeonik, 1.4px, 1.2em, 8px, 8px);
+  @include headers(1px, 1.19em, 8px, 8px);
+  font-family: $aeonik;
 }
 
 .userHeader {
-  @include headers($aeonik, 1px, 1.25em, 14px, 14px);
+  @include headers(1px, 1.35em, 14px, 14px);
+  font-family: $aeonik;
 }
 
 .text {
-  @include headers($aeonik, 1px, 1.25em, 5px);
+  @include headers(1px, 1.25em, 5px, 5px);
+  font-family: $aeonik;
   margin-left: 5px;
   margin-right: 5px;
 }

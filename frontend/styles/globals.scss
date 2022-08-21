@@ -1,13 +1,3 @@
-$aeonik: "Aeonik Light" !important;
-$laser: "Laser" !important;
-$grotesk: "Space Grotesk" !important;
-
-@mixin font-spacer($font, $spacing, $size) {
-  font-family: $font !important;
-  letter-spacing: $spacing !important;
-  font-size: $size !important;
-}
-
 html,
 body {
   padding: 0;
@@ -31,6 +21,7 @@ a {
 
 .stack {
   font-size: 1.02em !important;
+  font-family: "Aeonik Light" !important;
   letter-spacing: 1px !important;
 
   background-image: linear-gradient(45deg, #f8b8ba 33%, #89f4c7 66%) !important;
@@ -41,7 +32,7 @@ a {
   background-clip: border-box;
   -webkit-text-fill-color: transparent;
   animation: rainbow-text-simple-animation-rev 0.75s ease forwards !important;
-  font-family: $laser;
+  font-family: "Laser" !important;
 
   &:hover {
     transform: scale(1.05);
@@ -56,34 +47,37 @@ input:-webkit-autofill:active {
   transition: all 0s 50000s;
 }
 
-input {
-  &:focus {
-    box-shadow: none !important;
-    outline: none;
-  }
-}
-
 .link {
   cursor: pointer !important;
-  &:hover {
-    cursor: pointer !important;
-  }
+}
+
+.link:hover {
+  cursor: pointer !important;
+}
+
+input:focus {
+  outline: none;
 }
 
 .modal-head {
-  @include font-spacer($aeonik, 1px, 1.2em);
+  font-family: "Aeonik Light" !important;
+  letter-spacing: 1px;
 }
 
 .address {
-  @include font-spacer($aeonik, 2px, 1em);
+  font-family: "Aeonik Light" !important;
+  letter-spacing: 2px !important;
+  font-size: 1em !important;
 }
 
 .head {
-  @include font-spacer($laser, 2px, 1em);
+  font-family: "Laser" !important;
+  letter-spacing: 2px;
 }
 
 .audit {
-  @include font-spacer($grotesk, 0px, 1.2em);
+  font-family: "Space Grotesk" !important;
+  font-size: 1.2em !important;
 }
 
 .web3modal-modal-lightbox {
@@ -104,6 +98,10 @@ input {
   box-shadow: none !important;
 }
 
+input:focus {
+  box-shadow: none !important;
+}
+
 @keyframes rainbow-text-simple-animation-rev {
   0% {
     background-size: 650%;
@@ -116,6 +114,8 @@ input {
   }
 }
 
+/* Move the background and make it larger. */
+/* Animation shown when hovering over the text. */
 @keyframes rainbow-text-simple-animation {
   0% {
     background-size: 100%;
