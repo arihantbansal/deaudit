@@ -18,14 +18,14 @@ const AuditBug = ({ bug, audit }) => {
   const { address } = useAccount();
 
   //   // get jury
-  //   const { jurydata, isError, isLoading } = useContractRead({
+  //   const jurydata = useContractRead({
   //     addressOrName: CONTRACT_ADDRESS,
   //     contractInterface: contractAbi,
-  //     functionName: "getJury",
+  //     functionName: "getEligibleMembers",
   //   });
 
   //   // get voting config
-  //   const { configForVote } = usePrepareContractWrite({
+  //   const { config : configForVote } = usePrepareContractWrite({
   //     addressOrName: CONTRACT_ADDRESS,
   //     contractInterface: contractAbi,
   //     functionName: "juryVote",
@@ -33,8 +33,7 @@ const AuditBug = ({ bug, audit }) => {
   //   });
 
   //   // vote
-  //   const { votedata, isLoadingVote, isSuccess, writeVote } =
-  //     useContractWrite(configForVote);
+  // const { write : writeVote } = useContractWrite(configForVote);
 
   useEffect(() => {
     const init = async () => {
@@ -95,28 +94,26 @@ const AuditBug = ({ bug, audit }) => {
       >
         Description : {bug.description}
       </Text>
-      <Flex fontFamily="Azeret Thin" flexDir="column">
-        <Checkbox
-          size="lg"
-          colorScheme="red"
-          border="red"
-          //   disabled={!address || juryData.findIndex(address) == -1}
-          disabled={true}
-          onChange={() => setVoteState(!voteState)}
-          color="red"
-          checked={voteState}
-          mb="3"
-        >
-          Verify as bug
-        </Checkbox>
+      <Flex flexDir="column" gap="4">
         <Button
-          fontFamily="Aeonik Light"
-          //   disabled={!writeVote}
-          //   onClick={() =>
-          //     writeVote?.()
-          //   }
+          fontFamily="Laser"
+          // disabled={!address || juryData?.data?.findIndex(address) == -1}
+          onClick={() => {
+            setVoteState(true);
+            writeVote?.();
+          }}
         >
-          Submit Vote
+          Approve
+        </Button>
+        <Button
+          fontFamily="Laser"
+          // disabled={!address || juryData?.data?.findIndex(address) == -1}
+          onClick={() => {
+            setVoteState(false);
+            writeVote?.();
+          }}
+        >
+          Disapprove
         </Button>
       </Flex>
     </VStack>

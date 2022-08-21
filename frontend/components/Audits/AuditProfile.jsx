@@ -20,7 +20,7 @@ import {
   Input,
   VStack,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import styles from "@styles/Listing.module.scss";
@@ -51,14 +51,14 @@ const AuditProfile = ({ audit, bugs }) => {
   const [noBugMoney, setNoBugMoney] = useState("0");
 
   const [pool, setPool] = useState({
-    noBug: 0,
+    NoBug: 0,
     Yesbug: 0,
   });
 
   /*
   @desc : fetching audit data using address
   */
-  // const { auditData, auditError, auditLoading } = useContractRead({
+  // const auditResult = useContractRead({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   functionName: "getAudit",
@@ -68,7 +68,7 @@ const AuditProfile = ({ audit, bugs }) => {
   /*
   @desc : posting a bug, receiving the emitted event for NewBugReported and AuditYesPoolUpdated
   */
-  // const { configForBugPost } = usePrepareContractWrite({
+  // const { config :configForBugPost } = usePrepareContractWrite({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   functionName: "reportBug",
@@ -78,7 +78,7 @@ const AuditProfile = ({ audit, bugs }) => {
   //   },
   // });
 
-  // const { bugPostData, isLoadingPost, isSuccessPost, bugSubmit } = useContractWrite(configForBugPost);
+  // const { write: bugSubmit } = useContractWrite(configForBugPost);
 
   // useContractEvent({
   //   addressOrName: CONTRACT_ADDRESS,
@@ -91,13 +91,19 @@ const AuditProfile = ({ audit, bugs }) => {
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   eventName: 'AuditYesPoolUpdated',
-  //   listener: (event) => alert(`${event[1]} added ${parseInt(event[2]?._hex, 16)} to the YesBug pool.`)
+  //   listener: (event) => {
+  //     alert(`${event[1]} added ${parseInt(event[2]?._hex, 16)} to the YesBug pool.`);
+  //     setPool({
+  //       ...pool,
+  //       Yesbug: parseInt(event[2]?._hex, 16)
+  //     });
+  //   }
   // })
 
   /*
   @desc : Funding no bug pool, receiving the emitted event for AuditNoPoolUpdated
   */
-  // const { configForNoBug } = usePrepareContractWrite({
+  // const { config : configForNoBug } = usePrepareContractWrite({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   functionName: "fundNoBugs",
@@ -107,16 +113,21 @@ const AuditProfile = ({ audit, bugs }) => {
   //   },
   // });
 
-  // const { noBugPoolData , isLoadingPool, isSuccessPool, noBugPoolSubmit } = useContractWrite(configForNoBug);
+  // const { write : noBugPoolSubmit } = useContractWrite(configForNoBug);
 
   // useContractEvent({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   eventName: "AuditNoPoolUpdated",
-  //   listener: event =>
+  //   listener: event => {
   //     alert(
   //       `${event[1]} added ${parseInt(event[2]?._hex, 16)} to the NoBug pool.`
   //     ),
+  //       setPool({
+  //         ...pool,
+  //         NoBug: parseInt(event[2]?._hex, 16)
+  //       });
+  //     }
   // });
 
   const handleBugSubmit = async () => {
@@ -433,9 +444,7 @@ const AuditProfile = ({ audit, bugs }) => {
             textAlign="center"
           >
             <Heading color="white" my="4" fontSize="2xl">
-              {
-                //TODO fetch audit.jury
-                audit.jury_members?.map((juryMember, index) => {
+              {/* { auditResult?.data?[1]?.map((juryMember, index) => {
                   return (
                     <Box key={index} py="2" mx="4">
                       <Link href={`/users/${juryMember}`} passHref>
@@ -460,7 +469,11 @@ const AuditProfile = ({ audit, bugs }) => {
                     </Box>
                   );
                 })
-              }
+              : 
+                <Heading color="white" my="4" fontSize="2xl" fontFamily="Laser">
+                  Fetching...
+                </Heading>
+              } */}
             </Heading>
           </Flex>
         </Flex>
@@ -499,7 +512,7 @@ const AuditProfile = ({ audit, bugs }) => {
             alignItems="center"
             textAlign="center"
           >
-            {Object.keys(pool).map((currentPool, index) => {
+            {/* {Object.keys(pool).map((currentPool, index) => {
               return (
                 <VStack key={index} my="4" gap="4">
                   <Heading
@@ -522,16 +535,18 @@ const AuditProfile = ({ audit, bugs }) => {
                       background: "white",
                     }}
                   >
-                    {pool[currentPool]} {currency}
+                    parseInt(event[2]?._hex,
+                    { currentPool === "NoBug" ? parseInt(auditResult?.data[4]?._hex,16) : parseInt(auditResult?.data[3]?._hex,16)  }
+                    {currency}
                   </Heading>
 
                   <Input
                     required
                     size="md"
-                    value={currentPool === "noBug" ? noBugMoney : bugMoney}
+                    value={currentPool === "NoBug" ? noBugMoney : bugMoney}
                     w="60px"
                     onChange={e => {
-                      if (currentPool === "noBug")
+                      if (currentPool === "NoBug")
                         setNoBugMoney(e.target.value);
                       else setBugMoney(e.target.value);
                     }}
@@ -554,7 +569,7 @@ const AuditProfile = ({ audit, bugs }) => {
                     paddingX="6"
                     paddingY="2"
                     onClick={() => {
-                      // if(currentPool === "noBug") noBugPoolSubmit();
+                      // if(currentPool === "NoBug") noBugPoolSubmit();
                       // else bugSubmit();
                     }}
                   >
@@ -562,7 +577,7 @@ const AuditProfile = ({ audit, bugs }) => {
                   </Button>
                 </VStack>
               );
-            })}
+            })} */}
           </Flex>
         </Flex>
 
