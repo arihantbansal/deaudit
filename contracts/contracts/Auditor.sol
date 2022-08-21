@@ -24,6 +24,7 @@ contract Auditor is VRFConsumerBaseV2 {
 
 	struct Bug {
 		uint256 createdTime;
+		bool[5] juryMemberHasVoted;
 		uint256 verdict;
 	}
 
@@ -155,7 +156,9 @@ contract Auditor is VRFConsumerBaseV2 {
 	}
 
 	function reportBug(address contractAddress) external payable {
-		Bug memory newBug = Bug({ createdTime: block.timestamp, verdict: 0 });
+		Bug memory newBug;
+		newBug.createdTime = block.timestamp;
+		newBug.verdict = 0;
 
 		audits[contractAddress].reporterToBugs[msg.sender].push(newBug);
 		audits[contractAddress].bugReporters.push(msg.sender);
@@ -164,7 +167,7 @@ contract Auditor is VRFConsumerBaseV2 {
 
 		audits[contractAddress].totalYesPool += msg.value;
 		audits[contractAddress].yesPool[msg.sender] = msg.value;
-		audits[contractAddress].yesPoolFunders.push(msg.sender); // check if user has not created bug already
+		audits[contractAddress].yesPoolFunders.push(msg.sender);
 
 		emit AuditYesPoolUpdated(
 			contractAddress,
@@ -173,17 +176,29 @@ contract Auditor is VRFConsumerBaseV2 {
 		);
 	}
 
-	function juryVote(address contractAddress, bool vote) external {
-		// todo: complete vote
+	function juryVote(address contractAddress, address bugReporter, uint16 bugIndex, uint8 juryIndex, bool vote) external {
+		require(audits[contractAddress].jury[juryIndex] == msg.sender, "sender does not match given jury member");
+		require(!audits[contractAddress].reporterToBugs[bugReporter][bugIndex].juryMemberHasVoted[juryIndex], "jury member has voted");
+
+		audits[contractAddress].reporterToBugs[bugReporter][bugIndex].verdict += vote ? 1 : 0;
+		audits[contractAddress].reporterToBugs[bugReporter][bugIndex].juryMemberHasVoted[juryIndex] = true;
+
+		uint8 totalVotes = 0;
+		for (uint8 i = 0; i < 5; i++) {
+			totalVotes += audits[contractAddress].reporterToBugs[bugReporter][bugIndex].juryMemberHasVoted[i] ? 1 : 0;
+		}
+
+		bool verdict = audits[contractAddress].reporterToBugs[bugReporter][bugIndex].verdict >= 3;
+
+		if (verdict || totalVotes == 5) {
+			juryVerdict(contractAddress, verdict);
+		}
 	}
 
 	function juryVerdict(
 		address contractAddress,
-		address reporter,
 		bool verdict
-	) public {
-		// audits[contractAddress].reporterToBugs[reporter][bugIndex].verdict = verdict;
-		// todo: verdict fix
+	) internal {
 
 		uint256 noPool = audits[contractAddress].totalNoPool;
 		uint256 yesPool = audits[contractAddress].totalYesPool;
