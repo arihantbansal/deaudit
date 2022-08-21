@@ -273,11 +273,11 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 	}
 
 	function getContractsToBeStreamed() public view returns (address[] memory) {
-		address[] memory toStream;
+		address[] memory toStream = new address[](contractsAudited.length);
 
 		for (uint256 i = 0; i < contractsAudited.length; i++) {
 			if (audits[contractsAudited[i]].lastStreamTime - block.timestamp > interval) {
-				toStream.push(contractsAudited[i]);
+				toStream[i] = contractsAudited[i];
 			}
 		}
 
@@ -286,8 +286,14 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 
 	function streamPools(address[] memory needStreaming) internal {
 		for (uint256 i = 0; i < needStreaming.length; i++) {
+			if (needStreaming[i] == address(0)) {
+				continue;
+			}
 			if ((block.timestamp - audits[needStreaming[i]].lastStreamTime) / (1 days) < 1) {
 				continue;
+			}
+			if ((block.timestamp - audits[needStreaming[i]].createdTime) / (1 days) >= 30) {
+				juryVerdict(needStreaming[i], false);
 			}
 			uint256 totalYesPoolValue = audits[needStreaming[i]].totalYesPool;
 			uint256 daysRemaining = (block.timestamp - audits[needStreaming[i]].createdTime) / (1 days);
