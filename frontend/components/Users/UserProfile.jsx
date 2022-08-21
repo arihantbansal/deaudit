@@ -117,7 +117,7 @@ const UserProfile = ({ user, bugs }) => {
   );
   const [userState, userDispatch] = useReducer(userReducer, initialUserState);
 
-  const handleProfileImage = async (e) => {
+  const handleProfileImage = async e => {
     loadingModal.onOpen();
     const file = e.target.files;
     const rootCid = await client.put(file, {
@@ -134,7 +134,7 @@ const UserProfile = ({ user, bugs }) => {
     loadingModal.onClose();
   };
 
-  const handleCoverImage = async (e) => {
+  const handleCoverImage = async e => {
     loadingModal.onOpen();
     const file = e.target.files;
     const rootCid = await client.put(file, {
@@ -167,10 +167,10 @@ const UserProfile = ({ user, bugs }) => {
         cover_image: socialState.coverImage,
       }),
     })
-      .then((res) => {
+      .then(res => {
         console.log(res);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
 
@@ -193,7 +193,7 @@ const UserProfile = ({ user, bugs }) => {
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   eventName: 'JuryMemberAdded',
-  //   listener: (event) => console.log(event),
+  //   listener: (event) => alert(`${event[0]} has been added to the jury pool.`)
   // })
 
   useEffect(() => {
@@ -358,7 +358,7 @@ const UserProfile = ({ user, bugs }) => {
                 rows="3"
                 cols="40"
                 value={socialState.bio}
-                onChange={(e) => {
+                onChange={e => {
                   socialDispatch({ type: "setBio", payload: e.target.value });
                 }}
                 mb="2"
@@ -396,7 +396,7 @@ const UserProfile = ({ user, bugs }) => {
                   boxShadow: "none",
                 }}
                 value={socialState.github}
-                onChange={(e) => {
+                onChange={e => {
                   socialDispatch({
                     type: "setGithub",
                     payload: e.target.value,
@@ -422,7 +422,7 @@ const UserProfile = ({ user, bugs }) => {
                 fontSize="lg"
                 value={socialState.twitter}
                 boxShadow="none"
-                onChange={(e) => {
+                onChange={e => {
                   socialDispatch({
                     type: "setTwitter",
                     payload: e.target.value,
@@ -453,7 +453,7 @@ const UserProfile = ({ user, bugs }) => {
                 fontSize="lg"
                 value={socialState.linkedin}
                 boxShadow="none"
-                onChange={(e) => {
+                onChange={e => {
                   socialDispatch({
                     type: "setLinkedin",
                     payload: e.target.value,
@@ -491,7 +491,7 @@ const UserProfile = ({ user, bugs }) => {
                   borderColor: "purple.50",
                   boxShadow: "none",
                 }}
-                onChange={(e) => handleCoverImage(e)}
+                onChange={e => handleCoverImage(e)}
               />
               <FormLabel
                 htmlFor="cover"
@@ -510,7 +510,7 @@ const UserProfile = ({ user, bugs }) => {
                 type="file"
                 border="none"
                 color="purple.100"
-                onChange={(e) => handleProfileImage(e)}
+                onChange={e => handleProfileImage(e)}
               />
             </ModalBody>
 

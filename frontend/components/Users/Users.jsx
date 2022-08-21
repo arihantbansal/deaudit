@@ -17,7 +17,7 @@ const Users = ({ users }) => {
         justifyContent="center"
         flexDir="column"
       >
-        {users.map((user) => (
+        {users.map(user => (
           <Box
             key={user.id}
             cursor="pointer"

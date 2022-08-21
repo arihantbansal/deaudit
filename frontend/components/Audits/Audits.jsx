@@ -26,9 +26,9 @@ const Audits = ({ audits }) => {
   const [selected, setSelected] = useState([]);
 
   // Handler
-  const handleTagFilter = (tag) => {
+  const handleTagFilter = tag => {
     if (selected.includes(tag)) {
-      setSelected(selected.filter((t) => t !== tag));
+      setSelected(selected.filter(t => t !== tag));
     } else {
       setSelected([...selected, tag]);
     }
@@ -37,11 +37,11 @@ const Audits = ({ audits }) => {
   useEffect(() => {
     const init = async () => {
       fetch(`${config}/tags`)
-        .then((res) => res.json())
-        .then((result) => {
+        .then(res => res.json())
+        .then(result => {
           setTags(result?.data);
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
     };
@@ -60,7 +60,7 @@ const Audits = ({ audits }) => {
         mb="20"
         className={styles.input}
         placeholder="Search by contract address"
-        onChange={(e) => {
+        onChange={e => {
           console.log(e.target.value);
         }}
       />
@@ -89,7 +89,7 @@ const Audits = ({ audits }) => {
         justifyContent="center"
         flexDir="column"
       >
-        {audits.map((audit) => (
+        {audits.map(audit => (
           <Flex
             key={audit.id}
             h="fit-content"

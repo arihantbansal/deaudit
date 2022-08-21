@@ -14,11 +14,11 @@ const NavBar = () => {
   const fetchUser = useCallback(() => {
     address &&
       fetch(`${config}/users/${address}`)
-        .then((res) => {
+        .then(res => {
           if (res.status === 200) setExists(true);
           else setExists(false);
         })
-        .catch((err) => {
+        .catch(err => {
           setExists(false);
         });
   }, [address]);

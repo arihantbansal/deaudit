@@ -79,14 +79,14 @@ const AuditProfile = ({ audit, bugs }) => {
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   eventName: 'NewBugReported',
-  //   listener: (event) => console.log(event),
+  //   listener: (event) => alert(`${event[1]} reported a new bug.`),
   // })
 
   // useContractEvent({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   eventName: 'AuditYesPoolUpdated',
-  //   listener: (event) => console.log(event),
+  //   listener: (event) => alert(`${event[1]} added ${parseInt(event[2]?._hex, 16)} to the YesBug pool.`)
   // })
 
   /*
@@ -104,22 +104,25 @@ const AuditProfile = ({ audit, bugs }) => {
 
   // const { noBugPoolData , isLoadingPool, isSuccessPool, noBugPoolSubmit } = useContractWrite(configForNoBug);
 
-  // useContractEvent({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   eventName: 'AuditNoPoolUpdated',
-  //   listener: (event) => console.log(event),
-  // })
+  useContractEvent({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    eventName: "AuditNoPoolUpdated",
+    listener: event =>
+      alert(
+        `${event[1]} added ${parseInt(event[2]?._hex, 16)} to the NoBug pool.`
+      ),
+  });
 
   const title = `Audit ${ellipseAddress(audit.contract_address)}`;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [bugDescription, setBugDescription] = useState("");
   const auditURL =
-    allChains.find((c) => c.name === audit.chain).blockExplorers.default.url +
+    allChains.find(c => c.name === audit.chain).blockExplorers.default.url +
     "/" +
     audit.contract_address;
   const { address, isConnecting, isDisconnected } = useAccount();
-  const bugsArray = bugs.map((bug) => bug.id);
+  const bugsArray = bugs.map(bug => bug.id);
 
   const handleBugSubmit = async () => {
     const response = await fetch(`${config}/bugs`, {
@@ -145,10 +148,10 @@ const AuditProfile = ({ audit, bugs }) => {
         bugs_reported: [...bugsArray, num],
       }),
     })
-      .then((res) => {
+      .then(res => {
         console.log(res);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
 
@@ -161,10 +164,10 @@ const AuditProfile = ({ audit, bugs }) => {
         bugs_reported: [num],
       }),
     })
-      .then((res) => {
+      .then(res => {
         console.log(res);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
 
@@ -310,7 +313,7 @@ const AuditProfile = ({ audit, bugs }) => {
                   rows="6"
                   cols="50"
                   value={bugDescription}
-                  onChange={(e) => setBugDescription(e.target.value)}
+                  onChange={e => setBugDescription(e.target.value)}
                   className={styles.auditInputs}
                 />
               </FormControl>
@@ -330,7 +333,7 @@ const AuditProfile = ({ audit, bugs }) => {
                     size="lg"
                     value={bugMoney}
                     w="120px"
-                    onChange={(e) => setBugMoney(e.target.value)}
+                    onChange={e => setBugMoney(e.target.value)}
                     className={styles.auditInputs}
                   />
                 </FormControl>

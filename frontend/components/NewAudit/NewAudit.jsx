@@ -30,7 +30,7 @@ import { ethers } from "ethers";
 
 const NewAudit = () => {
   const chains = allChains.filter(
-    (c) =>
+    c =>
       c?.rpcUrls?.alchemy?.includes("eth") ||
       c?.rpcUrls?.alchemy?.includes("polygon")
   );
@@ -42,15 +42,15 @@ const NewAudit = () => {
   const [poolSize, setPoolSize] = useState("0");
   const { address, _, isDisconnected } = useAccount();
 
-  const handleDelete = (id) => {
-    setTags((prev) => {
+  const handleDelete = id => {
+    setTags(prev => {
       return prev.filter((_, index) => {
         return id !== index;
       });
     });
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = e => {
     if (tag.length > 0 && !tags.includes(tag) && e.key === "Enter") {
       setTags([...tags, pascalCase(tag.substring(0, 15).toLowerCase())]);
       setTag("");
@@ -75,11 +75,17 @@ const NewAudit = () => {
   // useContractEvent({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
-  //   eventName: 'AuditRequested',
-  //   listener: (event) => console.log(event),
+  //   eventName: 'proposalCreated',
+  //   listener: (event) => {
+  //       console.log(event)
+  //       Router.push(`/audits/${event[1]}`);
+  //       setContractAddress("");
+  //       setTags([]);
+  //       setPoolSize(0);
+  //   }
   // })
 
-  const handleSubmit = (e) => {
+  const handleSubmit = e => {
     fetch(`${config}/users`, {
       method: "POST",
       headers: {
@@ -89,16 +95,12 @@ const NewAudit = () => {
         address: address,
       }),
     })
-      .then((res) => {
+      .then(res => {
         console.log(res);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
-
-    setContractAddress("");
-    setTags([]);
-    setPoolSize(0);
 
     fetch(`${config}/audits`, {
       method: "POST",
@@ -113,10 +115,10 @@ const NewAudit = () => {
         chain: chain,
       }),
     })
-      .then((res) => {
+      .then(res => {
         console.log(res);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
 
@@ -129,10 +131,10 @@ const NewAudit = () => {
         audits_requested: [contractAddress],
       }),
     })
-      .then((res) => {
-        if (res.status === 200) Router.push(`/audits/${contractAddress}`);
+      .then(res => {
+        console.log(res);
       })
-      .catch((err) => {
+      .catch(err => {
         console.log(err);
       });
 
@@ -173,7 +175,7 @@ const NewAudit = () => {
                   w="36vw"
                   size="lg"
                   value={contractAddress}
-                  onChange={(e) => setContractAddress(e.target.value)}
+                  onChange={e => setContractAddress(e.target.value)}
                   variant="outline"
                   spellCheck="false"
                   className={styles.input}
@@ -190,7 +192,7 @@ const NewAudit = () => {
                   size="lg"
                   w="12vw"
                   value={poolSize}
-                  onChange={(e) => setPoolSize(e.target.value)}
+                  onChange={e => setPoolSize(e.target.value)}
                   variant="outline"
                   type="number"
                   className={styles.input}
@@ -211,8 +213,8 @@ const NewAudit = () => {
                   mb="6"
                   w="30vw"
                   value={tag}
-                  onChange={(e) => setTag(e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(e)}
+                  onChange={e => setTag(e.target.value)}
+                  onKeyDown={e => handleKeyDown(e)}
                   variant="outline"
                   spellCheck="false"
                   className={styles.input}
@@ -231,12 +233,12 @@ const NewAudit = () => {
                   id="chain"
                   size="lg"
                   value={chain}
-                  onChange={(e) => setChain(e.target.value)}
+                  onChange={e => setChain(e.target.value)}
                   variant="outline"
                   spellCheck="false"
                   className={styles.input}
                 >
-                  {chains.map((c) => (
+                  {chains.map(c => (
                     <option key={c.id} value={c.name}>
                       {c.name}
                     </option>
@@ -269,7 +271,7 @@ const NewAudit = () => {
           my="6"
           type="submit"
           disabled={isDisconnected}
-          onClick={(e) => {
+          onClick={e => {
             if (poolSize > 0 && contractAddress.length > 0 && chain.name > 0)
               handleSubmit(e);
             else alert("Please fill in all the required fields.");
