@@ -30,6 +30,7 @@ import { Link as Linker } from "@chakra-ui/react";
 import {
   useAccount,
   useContractEvent,
+  useContractRead,
   useContractWrite,
   usePrepareContractWrite,
 } from "wagmi";
@@ -50,7 +51,6 @@ const client = new Web3Storage({
 });
 
 const UserProfile = ({ user, bugs }) => {
-  // Modal and page title utilities
   const profileModal = useDisclosure();
   const loadingModal = useDisclosure();
   const { data, isError, isLoading } = useEnsName({ address: user.address });
@@ -58,7 +58,6 @@ const UserProfile = ({ user, bugs }) => {
   let [title, setTitle] = useState("");
   const { address } = useAccount();
 
-  // Handling user text-data
   const initialSocialState = {
     github: user.github_username ? user.github_username : "",
     twitter: user.twitter_username ? user.twitter_username : "",
@@ -177,6 +176,14 @@ const UserProfile = ({ user, bugs }) => {
     loadingModal.onClose();
   };
 
+  // Get judged audits
+  // const judgedAuditsData = useContractRead({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   functionName: "juryMemberToAudits",
+  //   args: [user.address],
+  // });
+
   /*
   @desc : Add user to jury pool
   */
@@ -188,6 +195,13 @@ const UserProfile = ({ user, bugs }) => {
   // });
 
   // const { write : juryPoolSubmit } = useContractWrite(configForJury);
+
+  //   // Get eligible jury pool
+  //   const jurydata = useContractRead({
+  //     addressOrName: CONTRACT_ADDRESS,
+  //     contractInterface: contractAbi,
+  //     functionName: "getEligibleJuryMembers",
+  //   });
 
   // useContractEvent({
   //   addressOrName: CONTRACT_ADDRESS,
@@ -326,23 +340,32 @@ const UserProfile = ({ user, bugs }) => {
             <ModalCloseButton />
             <ModalHeader className="modal-head">Profile Settings</ModalHeader>
             <ModalBody>
-              <Checkbox
+              <Button
                 size="md"
                 colorScheme="purple"
                 borderColor="purple.50"
                 fontFamily="Laser"
                 mb="3"
-                fontSize="3xl"
-                isChecked={userState.on_jury}
-                onChange={() => {
+                color="purple.50"
+                bg="transparent"
+                fontSize="md"
+                _hover={{
+                  color: "purple.100",
+                  borderColor: "purple.100",
+                  borderWidth: "1px",
+                  borderStyle: "solid",
+                }}
+                onClick={() => {
                   userDispatch({
                     type: "setOnJury",
                     payload: !userState.on_jury,
                   });
+                  //TODO juryPoolSubmit?.();
                 }}
               >
                 Apply for Jury
-              </Checkbox>
+              </Button>
+
               <FormLabel htmlFor="bio" fontSize="sm" fontFamily="Space Grotesk">
                 Bio
               </FormLabel>
@@ -570,9 +593,21 @@ const UserProfile = ({ user, bugs }) => {
           fontFamily="Azeret Thin"
           fontSize="1.5em"
           color="purple.50"
-          mb="2"
+          my="3"
         >
           {socialState.bio}
+        </Text>
+
+        <Text
+          fontFamily="Azeret Thin"
+          fontSize="1.5em"
+          color="purple.50"
+          my="3"
+        >
+          isJury :{" "}
+          {
+            //TODO juryData?.data?.findIndex(address) == -1 ? "false" : "true"
+          }
         </Text>
 
         <HStack gap="5" my="4">
@@ -633,8 +668,8 @@ const UserProfile = ({ user, bugs }) => {
             textAlign="center"
             py="2"
           >
-            <Heading my="4" fontSize="2xl">
-              {userState.jury_of?.map((audit, index) => {
+            {/* <Heading my="4" fontSize="2xl">
+              {judgedAuditsData?.data?.map((audit, index) => {
                 return (
                   <Box key={index} py="2" mx="4">
                     <Link href={`/audits/${audit}`} passHref>
@@ -659,7 +694,7 @@ const UserProfile = ({ user, bugs }) => {
                   </Box>
                 );
               })}
-            </Heading>
+            </Heading> */}
           </Flex>
         </Flex>
         <Flex
@@ -775,7 +810,7 @@ const UserProfile = ({ user, bugs }) => {
               return (
                 <VStack
                   key={index}
-                  my="4"
+                  my="10"
                   mx="4"
                   w="65vw"
                   borderWidth="0.5px"
@@ -794,6 +829,7 @@ const UserProfile = ({ user, bugs }) => {
                       _hover={{
                         color: "purple.50",
                       }}
+                      fontWeight="bold"
                       blendMode="unset"
                       _selected={true}
                       _selection={{

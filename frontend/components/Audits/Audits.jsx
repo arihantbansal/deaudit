@@ -24,7 +24,6 @@ const Audits = ({ audits }) => {
 
   // Tags selected by user for filter
   const [selected, setSelected] = useState([]);
-
   // Handler
   const handleTagFilter = tag => {
     if (selected.includes(tag)) {
@@ -64,7 +63,7 @@ const Audits = ({ audits }) => {
           console.log(e.target.value);
         }}
       />
-      <Text className={styles.text}>Filter by tags :</Text>
+      {/* <Text className={styles.text}>Filter by tags :</Text>
       <HStack gap="8">
         {tags?.map((tag, index) => (
           <Tag
@@ -82,7 +81,7 @@ const Audits = ({ audits }) => {
             <TagLabel>{tag}</TagLabel>
           </Tag>
         ))}
-      </HStack>
+      </HStack> */}
       <Flex
         width="75%"
         alignItems="center"
@@ -155,22 +154,23 @@ const Audits = ({ audits }) => {
                 flexDir="row"
                 justifyContent="space-evenly"
                 alignItems="center"
-                gap="12"
+                gap="10"
+                fontFamily="Space Grotesk"
               >
                 <BsBug size="2em" />
-                <Text fontSize="2xl">
-                  {audit.bugs_reported ? audit.bugs_reported.length : 0}
+                <Text fontSize="xl">
+                  {audit.bugs_reported ? audit.bugs_reported.length : 0} ongoing
                 </Text>
               </Flex>
               <Flex
                 flexDir="row"
                 justifyContent="space-evenly"
                 alignItems="center"
-                gap="2"
-                ml="6"
+                gap="10"
+                ml="-4"
               >
                 <RiMoneyDollarCircleLine size="2.4em" />
-                <Text fontSize="xl">
+                <Text fontSize="xl" fontFamily="Space Grotesk">
                   {audit.initial_pool_size} {currency}
                 </Text>
               </Flex>

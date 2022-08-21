@@ -49,6 +49,11 @@ import AuditBug from "./AuditBug";
 const AuditProfile = ({ audit, bugs }) => {
   const [bugMoney, setBugMoney] = useState("0");
   const [noBugMoney, setNoBugMoney] = useState("0");
+  const [auditComplete, setComplete] = useState({
+    complete: false,
+    bugBy: "",
+    verdict: "",
+  });
 
   const [pool, setPool] = useState({
     NoBug: 0,
@@ -68,7 +73,7 @@ const AuditProfile = ({ audit, bugs }) => {
   /*
   @desc : posting a bug, receiving the emitted event for NewBugReported and AuditYesPoolUpdated
   */
-  // const { config :configForBugPost } = usePrepareContractWrite({
+  // const { config : configForBugPost } = usePrepareContractWrite({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   functionName: "reportBug",
@@ -92,7 +97,7 @@ const AuditProfile = ({ audit, bugs }) => {
   //   contractInterface: contractAbi,
   //   eventName: 'AuditYesPoolUpdated',
   //   listener: (event) => {
-  //     alert(`${event[1]} added ${parseInt(event[2]?._hex, 16)} to the YesBug pool.`);
+  //     alert(`YesBug pool now has ${parseInt(event[2]?._hex, 16)} ${currency}.`);
   //     setPool({
   //       ...pool,
   //       Yesbug: parseInt(event[2]?._hex, 16)
@@ -121,7 +126,7 @@ const AuditProfile = ({ audit, bugs }) => {
   //   eventName: "AuditNoPoolUpdated",
   //   listener: event => {
   //     alert(
-  //       `${event[1]} added ${parseInt(event[2]?._hex, 16)} to the NoBug pool.`
+  //       `NoBug pool now has ${parseInt(event[2]?._hex, 16)} ${currency}.`
   //     ),
   //       setPool({
   //         ...pool,
@@ -130,8 +135,26 @@ const AuditProfile = ({ audit, bugs }) => {
   //     }
   // });
 
+  // useContractEvent({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   eventName: "AuditCompleted",
+  //   listener: event => {
+  //     alert(
+  //       `This audit has been completed.`
+  //     ),
+  //       setComplete({
+  //         ...auditComplete,
+  //         complete: true,
+  //         bugBy: event[0],
+  //         verdict: event[3],
+  //       });
+  //     }
+  // });
+
+  const bugsArray = bugs.map(bug => bug.id);
   const handleBugSubmit = async () => {
-    // Create user if not exists
+    // Create user if DNE
     fetch(`${config}/users`, {
       method: "POST",
       headers: {
@@ -208,7 +231,6 @@ const AuditProfile = ({ audit, bugs }) => {
     "/" +
     audit.contract_address;
   const { address, isConnecting, isDisconnected } = useAccount();
-  const bugsArray = bugs.map(bug => bug.id);
 
   return (
     <Flex flexDir="column">
@@ -294,8 +316,38 @@ const AuditProfile = ({ audit, bugs }) => {
           </Link>
         </Heading>
 
-        <Center m="4">
-          <HStack gap="6">
+        <Center m="4" flexDir="column">
+          {auditComplete.complete ? (
+            <Heading
+              color="white"
+              my="4"
+              w="50vw"
+              fontSize="1.6em"
+              className="head"
+              _selection={{
+                color: "red.800",
+                background: "white",
+              }}
+            >
+              The Audit has been completed with a verdict of
+              {auditComplete.verdict} due to a bug reported by{" "}
+              {auditComplete.bugBy}.
+            </Heading>
+          ) : (
+            <Heading
+              color="white"
+              my="4"
+              fontSize="1.6em"
+              className="head"
+              _selection={{
+                color: "red.800",
+                background: "white",
+              }}
+            >
+              The Audit is in progress.
+            </Heading>
+          )}
+          <HStack gap="6" mt="6">
             {audit.tags?.map((tag, index) => (
               <Tag
                 key={index}
@@ -390,7 +442,7 @@ const AuditProfile = ({ audit, bugs }) => {
                 onClick={async () => {
                   if (bugDescription.length > 0) {
                     await handleBugSubmit();
-                    // await bugSubmit();
+                    // bugSubmit?.();
                     onClose();
                   }
                 }}
@@ -444,7 +496,7 @@ const AuditProfile = ({ audit, bugs }) => {
             textAlign="center"
           >
             <Heading color="white" my="4" fontSize="2xl">
-              {/* { auditResult?.data?[1]?.map((juryMember, index) => {
+              {/*TODO { auditResult?.data?[1]?.map((juryMember, index) => {
                   return (
                     <Box key={index} py="2" mx="4">
                       <Link href={`/users/${juryMember}`} passHref>
@@ -512,7 +564,7 @@ const AuditProfile = ({ audit, bugs }) => {
             alignItems="center"
             textAlign="center"
           >
-            {/* {Object.keys(pool).map((currentPool, index) => {
+            {/*TODO {Object.keys(pool).map((currentPool, index) => {
               return (
                 <VStack key={index} my="4" gap="4">
                   <Heading
@@ -569,8 +621,8 @@ const AuditProfile = ({ audit, bugs }) => {
                     paddingX="6"
                     paddingY="2"
                     onClick={() => {
-                      // if(currentPool === "NoBug") noBugPoolSubmit();
-                      // else bugSubmit();
+                      // if(currentPool === "NoBug") noBugPoolSubmit?.();
+                      // else bugSubmit?.();
                     }}
                   >
                     Bet

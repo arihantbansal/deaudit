@@ -6,6 +6,7 @@ import styles from "@styles/Listing.module.scss";
 import { config, CONTRACT_ADDRESS } from "@lib/utilities";
 import {
   useAccount,
+  useContractEvent,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
@@ -17,11 +18,11 @@ const AuditBug = ({ bug, audit }) => {
   const [voteState, setVoteState] = useState(false);
   const { address } = useAccount();
 
-  //   // get jury
+  //   // Get eligible jury pool
   //   const jurydata = useContractRead({
   //     addressOrName: CONTRACT_ADDRESS,
   //     contractInterface: contractAbi,
-  //     functionName: "getEligibleMembers",
+  //     functionName: "getEligibleJuryMembers",
   //   });
 
   //   // get voting config
@@ -34,6 +35,21 @@ const AuditBug = ({ bug, audit }) => {
 
   //   // vote
   // const { write : writeVote } = useContractWrite(configForVote);
+
+  // useContractEvent({
+  //   addressOrName: CONTRACT_ADDRESS,
+  //   contractInterface: contractAbi,
+  //   eventName: "JuryVoteOnBug",
+  //   listener: event => alert(`Jury : ${event[2]} voted on a bug reported by ${event[1]}.`),
+  // });
+
+  // Get eligible jury pool
+  const bugVotedData = useContractRead({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    functionName: "getBugByIndex",
+    args: [audit.contract_address, bug.reported_by, bugId],
+  });
 
   useEffect(() => {
     const init = async () => {
@@ -85,19 +101,21 @@ const AuditBug = ({ bug, audit }) => {
         mt="2"
         textAlign="center"
         m="auto"
-        _selected={true}
-        _selection={{
-          backgroundColor: "purple.100",
-          color: "black",
-        }}
-        fontFamily="Azeret Thin"
+        fontFamily="Space Grotesk"
       >
         Description : {bug.description}
       </Text>
-      <Flex flexDir="column" gap="4">
+      <Text fontSize="xl" fontFamily="Space Grotesk">
+        Approved votes yet : {bugVotedData?.data?.[1].filter(true).length}
+      </Text>
+      <Text fontSize="xl" fontFamily="Space Grotesk">
+        Current Verdict :{" "}
+        {bugVotedData?.data?.[2] === 1 ? "Approved" : "Disapproved"}
+      </Text>
+      <Flex flexDir="row" gap="4">
         <Button
           fontFamily="Laser"
-          // disabled={!address || juryData?.data?.findIndex(address) == -1}
+          //TODO disabled={!address || juryData?.data?.findIndex(address) == -1}
           onClick={() => {
             setVoteState(true);
             writeVote?.();
@@ -107,7 +125,7 @@ const AuditBug = ({ bug, audit }) => {
         </Button>
         <Button
           fontFamily="Laser"
-          // disabled={!address || juryData?.data?.findIndex(address) == -1}
+          //TODO disabled={!address || juryData?.data?.indexOf(address) == -1}
           onClick={() => {
             setVoteState(false);
             writeVote?.();
