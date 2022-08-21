@@ -124,6 +124,11 @@ contract Auditor is VRFConsumerBaseV2 {
 	}
 
 	function createAudit(address contractAddress) external payable equallyFunded {
+		require(
+			audits[contractAddress].createdTime != block.timestamp,
+			"audit exists for given contract"
+		);
+
 		requestRandomWords(contractAddress);
 
 		Audit storage newAudit = audits[contractAddress];
@@ -143,7 +148,7 @@ contract Auditor is VRFConsumerBaseV2 {
 	}
 
 	function fundNoBugs(address contractAddress) external payable {
-		//will have to add streaming payments
+		// will have to add streaming payments
 		audits[contractAddress].totalNoPool += msg.value;
 		audits[contractAddress].noPool[msg.sender] = msg.value;
 		audits[contractAddress].noPoolFunders.push(msg.sender);
@@ -160,13 +165,15 @@ contract Auditor is VRFConsumerBaseV2 {
 		newBug.createdTime = block.timestamp;
 		newBug.verdict = 0;
 
+		if (audits[contractAddress].reporterToBugs[msg.sender].length == 0) {
+			audits[contractAddress].bugReporters.push(msg.sender);
+		}
 		audits[contractAddress].reporterToBugs[msg.sender].push(newBug);
-		audits[contractAddress].bugReporters.push(msg.sender);
 
 		emit NewBugReported(contractAddress, msg.sender, block.timestamp);
 
 		audits[contractAddress].totalYesPool += msg.value;
-		audits[contractAddress].yesPool[msg.sender] = msg.value;
+		audits[contractAddress].yesPool[msg.sender] += msg.value;
 		audits[contractAddress].yesPoolFunders.push(msg.sender);
 
 		emit AuditYesPoolUpdated(
@@ -176,30 +183,45 @@ contract Auditor is VRFConsumerBaseV2 {
 		);
 	}
 
-	function juryVote(address contractAddress, address bugReporter, uint16 bugIndex, uint8 juryIndex, bool vote) external {
-		require(audits[contractAddress].jury[juryIndex] == msg.sender, "sender does not match given jury member");
-		require(!audits[contractAddress].reporterToBugs[bugReporter][bugIndex].juryMemberHasVoted[juryIndex], "jury member has voted");
+	function juryVote(
+		address contractAddress,
+		address bugReporter,
+		uint16 bugIndex,
+		uint8 juryIndex,
+		bool vote
+	) external {
+		require(
+			audits[contractAddress].jury[juryIndex] == msg.sender,
+			"sender does not match given jury member"
+		);
+		require(
+			!audits[contractAddress]
+			.reporterToBugs[bugReporter][bugIndex].juryMemberHasVoted[juryIndex],
+			"jury member has voted"
+		);
 
-		audits[contractAddress].reporterToBugs[bugReporter][bugIndex].verdict += vote ? 1 : 0;
-		audits[contractAddress].reporterToBugs[bugReporter][bugIndex].juryMemberHasVoted[juryIndex] = true;
+		audits[contractAddress]
+		.reporterToBugs[bugReporter][bugIndex].verdict += vote ? 1 : 0;
+		audits[contractAddress]
+		.reporterToBugs[bugReporter][bugIndex].juryMemberHasVoted[juryIndex] = true;
 
 		uint8 totalVotes = 0;
 		for (uint8 i = 0; i < 5; i++) {
-			totalVotes += audits[contractAddress].reporterToBugs[bugReporter][bugIndex].juryMemberHasVoted[i] ? 1 : 0;
+			totalVotes += audits[contractAddress]
+			.reporterToBugs[bugReporter][bugIndex].juryMemberHasVoted[i]
+				? 1
+				: 0;
 		}
 
-		bool verdict = audits[contractAddress].reporterToBugs[bugReporter][bugIndex].verdict >= 3;
+		bool verdict = audits[contractAddress]
+		.reporterToBugs[bugReporter][bugIndex].verdict >= 3;
 
 		if (verdict || totalVotes == 5) {
 			juryVerdict(contractAddress, verdict);
 		}
 	}
 
-	function juryVerdict(
-		address contractAddress,
-		bool verdict
-	) internal {
-
+	function juryVerdict(address contractAddress, bool verdict) internal {
 		uint256 noPool = audits[contractAddress].totalNoPool;
 		uint256 yesPool = audits[contractAddress].totalYesPool;
 		uint256 totalPayout = noPool + yesPool;
@@ -218,18 +240,20 @@ contract Auditor is VRFConsumerBaseV2 {
 			audits[contractAddress].totalYesPool =
 				(audits[contractAddress].totalYesPool * 19) /
 				20;
-			uint256 x = audits[contractAddress].totalYesPool;
+			uint256 totalYesPoolValue = audits[contractAddress].totalYesPool;
 			for (
-				uint256 index = 0;
-				index < audits[contractAddress].yesPoolFunders.length;
-				index++
+				uint256 i = 0;
+				i < audits[contractAddress].yesPoolFunders.length;
+				i++
 			) {
 				address payable voter = payable(
-					audits[contractAddress].yesPoolFunders[index]
+					audits[contractAddress].yesPoolFunders[i]
 				);
-				voter.transfer((audits[contractAddress].yesPool[voter] * x) / yesPool);
+				voter.transfer(
+					(audits[contractAddress].yesPool[voter] * totalYesPoolValue) / yesPool
+				);
 				audits[contractAddress].totalYesPool -= ((audits[contractAddress]
-					.yesPool[voter] * x) / yesPool);
+					.yesPool[voter] * totalYesPoolValue) / yesPool);
 			}
 		} else {
 			if (
@@ -248,18 +272,20 @@ contract Auditor is VRFConsumerBaseV2 {
 				audits[contractAddress].totalNoPool =
 					(audits[contractAddress].totalNoPool * 19) /
 					20;
-				uint256 x = audits[contractAddress].totalNoPool;
+				uint256 totalNoPoolValue = audits[contractAddress].totalNoPool;
 				for (
-					uint256 index = 0;
-					index < audits[contractAddress].noPoolFunders.length;
-					index++
+					uint256 i = 0;
+					i < audits[contractAddress].noPoolFunders.length;
+					i++
 				) {
 					address payable voter = payable(
-						audits[contractAddress].noPoolFunders[index]
+						audits[contractAddress].noPoolFunders[i]
 					);
-					voter.transfer((audits[contractAddress].noPool[voter] * x) / noPool);
+					voter.transfer(
+						(audits[contractAddress].noPool[voter] * totalNoPoolValue) / noPool
+					);
 					audits[contractAddress].totalNoPool -= ((audits[contractAddress]
-						.yesPool[voter] * x) / noPool);
+						.yesPool[voter] * totalNoPoolValue) / noPool);
 				}
 			}
 		}
@@ -291,7 +317,8 @@ contract Auditor is VRFConsumerBaseV2 {
 		emit JuryMemberAdded(memberAddress, block.timestamp);
 	}
 
-	function transferOwnership(address payable _owner) external onlyOwner {
-		owner = _owner;
+	function transferOwnership(address payable newOwner) external onlyOwner {
+		require(newOwner != owner, "new owner cannot be same as old owner");
+		owner = newOwner;
 	}
 }
