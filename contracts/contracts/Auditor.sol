@@ -35,12 +35,12 @@ contract Auditor is VRFConsumerBaseV2 {
 	// global variables for Chainlink VRF
 	VRFCoordinatorV2Interface COORDINATOR;
 	uint64 vrfSubscriptionId;
-	address vrfCoordinator = 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed;
+	address vrfCoordinator = 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed; // coordinator address for Polygon Mumbai
 	bytes32 keyHash =
-		0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
+		0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f; // keyHash for Polygon Mumbai
 	uint32 callbackGasLimit = 100000;
 	uint16 requestConfirmations = 3;
-	uint32 numMembers = 5;
+	uint32 numMembers = 5; // 5 jury members needed per audit
 	mapping(uint256 => address) requestToAudit;
 
 	// custom events
@@ -147,7 +147,7 @@ contract Auditor is VRFConsumerBaseV2 {
 		emit AuditRequested(msg.sender, contractAddress, block.timestamp);
 	}
 
-	function fundNoBugs(address contractAddress) external payable {
+	function fundNoBugsPool(address contractAddress) external payable {
 		// will have to add streaming payments
 		audits[contractAddress].totalNoPool += msg.value;
 		audits[contractAddress].noPool[msg.sender] = msg.value;
@@ -289,10 +289,17 @@ contract Auditor is VRFConsumerBaseV2 {
 				}
 			}
 		}
+
+		emit AuditCompleted(
+			audits[contractAddress].creator,
+			contractAddress,
+			block.timestamp,
+			verdict
+		);
 	}
 
-	function getAudit(address contractAddress)
-		public
+	function getAuditData(address contractAddress)
+		external
 		view
 		returns (
 			address creator,
@@ -309,6 +316,14 @@ contract Auditor is VRFConsumerBaseV2 {
 			audits[contractAddress].totalYesPool,
 			audits[contractAddress].totalNoPool
 		);
+	}
+
+	function getNumberOfBugsByReporter(address contractAddress, address reporter) external view returns (uint256) {
+		return audits[contractAddress].reporterToBugs[reporter].length;
+	}
+
+	function getBugByIndex(address contractAddress, address reporter, uint256 index) external view returns (uint256, bool[5], uint256) {
+		return (audits[contractAddress].reporterToBugs[reporter][index].createdTime, audits[contractAddress].reporterToBugs[reporter][index].juryMemberHasVoted, audits[contractAddress].reporterToBugs[reporter][index].verdict);
 	}
 
 	function addEligibleJuryMember(address memberAddress) public onlyOwner {
