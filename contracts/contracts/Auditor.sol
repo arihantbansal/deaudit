@@ -4,9 +4,10 @@ pragma solidity ^0.8.9;
 
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
+import "@chainlink/contracts/src/v0.8/KeeperCompatible.sol";
 
 /// @title A contract for decentralized audit marketplace
-contract Auditor is VRFConsumerBaseV2 {
+contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 	struct Audit {
 		address creator;
 		address contractAddress;
@@ -41,6 +42,7 @@ contract Auditor is VRFConsumerBaseV2 {
 	uint16 requestConfirmations = 3;
 	uint32 numMembers = 5; // 5 jury members needed per audit
 	mapping(uint256 => address) requestToAudit;
+	uint256 public immutable interval;
 
 	// custom events
 	event AuditRequested(address indexed creator, address indexed contractAddress, uint256 timestamp);
@@ -51,7 +53,7 @@ contract Auditor is VRFConsumerBaseV2 {
 		bool verdict
 	);
 	event AuditCancelled(address indexed creator, address indexed contractAddress, uint256 timestamp);
-	event AuditJuryUpdated(address indexed contractAddress, uint256 timestamp, address[] jury);
+	event AuditJuryUpdated(address indexed contractAddress, uint256 timestamp, address[5] jury);
 	event AuditYesPoolUpdated(
 		address indexed contractAddress,
 		address indexed voter,
@@ -68,6 +70,12 @@ contract Auditor is VRFConsumerBaseV2 {
 		uint256 timestamp
 	);
 	event JuryMemberAdded(address indexed memberAddress, uint256 timestamp);
+	event JuryVoteOnBug(
+		address indexed contractAddress,
+		address indexed reporter,
+		address indexed juryMember,
+		uint256 bugIndex
+	);
 
 	// custom modifiers
 	modifier onlyOwner() {
@@ -105,6 +113,8 @@ contract Auditor is VRFConsumerBaseV2 {
 				randomWords[i] % eligibleJuryMembers.length
 			];
 		}
+
+		emit AuditJuryUpdated(contractAddress, block.timestamp, audits[contractAddress].jury);
 	}
 
 	function createAudit(address contractAddress) external payable equallyFunded {
@@ -179,6 +189,13 @@ contract Auditor is VRFConsumerBaseV2 {
 		audits[contractAddress].reporterToBugs[bugReporter][bugIndex].juryMemberHasVoted[
 			juryIndex
 		] = true;
+
+		emit JuryVoteOnBug(
+			contractAddress,
+			bugReporter,
+			audits[contractAddress].jury[juryIndex],
+			bugIndex
+		);
 
 		uint8 totalVotes = 0;
 		for (uint8 i = 0; i < 5; i++) {
@@ -296,6 +313,30 @@ contract Auditor is VRFConsumerBaseV2 {
 		eligibleJuryMembers.push(memberAddress);
 
 		emit JuryMemberAdded(memberAddress, block.timestamp);
+	}
+
+	function checkUpkeep(
+		bytes calldata /* checkData */ // checkData is unused
+	)
+		external
+		view
+		override
+		returns (
+			bool upkeepNeeded,
+			bytes memory /* performData */
+		)
+	{
+		upkeepNeeded = (block.timestamp - lastTimeStamp) > interval;
+	}
+
+	function performUpkeep(
+		bytes calldata /* performData */
+	) external override {
+		// We highly recommend revalidating the upkeep in the performUpkeep function
+		if ((block.timestamp - lastTimeStamp) > interval) {
+			lastTimeStamp = block.timestamp;
+			counter = counter + 1;
+		}
 	}
 
 	function transferOwnership(address payable newOwner) external onlyOwner {
