@@ -33,6 +33,7 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 	address[] public eligibleJuryMembers;
 	address[] public contractsAudited;
 	mapping(address => Audit) public audits;
+	mapping(address => address[]) public juryMemberToAudits;
 	address payable public owner; // public payable address for fees
 
 	// global variables for Chainlink VRF
@@ -44,6 +45,8 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 	uint16 requestConfirmations = 3;
 	uint32 numMembers = 5; // 5 jury members needed per audit
 	mapping(uint256 => address) requestToAudit;
+
+	// global variables for Chainlink Keepers
 	uint256 public immutable interval = 1 days;
 	uint256 public immutable timeToDrainFunds = 30 days;
 
@@ -115,6 +118,7 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 			audits[contractAddress].jury[i] = eligibleJuryMembers[
 				randomWords[i] % eligibleJuryMembers.length
 			];
+			juryMemberToAudits[audits[contractAddress].jury[i]].push(contractAddress);
 		}
 
 		emit AuditJuryUpdated(contractAddress, block.timestamp, audits[contractAddress].jury);
@@ -363,6 +367,10 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 			audits[contractAddress].reporterToBugs[reporter][index].juryMemberHasVoted,
 			audits[contractAddress].reporterToBugs[reporter][index].verdict
 		);
+	}
+
+	function getEligibleJuryMembers() external view returns (address[] memory) {
+		return eligibleJuryMembers;
 	}
 
 	function transferOwnership(address payable newOwner) external onlyOwner {
