@@ -3,7 +3,7 @@ import { config } from "@lib/utilities";
 import Head from "next/head";
 import React from "react";
 
-const users = (props) => {
+const users = props => {
   return (
     <>
       <Head>

@@ -8,6 +8,7 @@ import { chain, configureChains, createClient, WagmiConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { publicProvider } from "wagmi/providers/public";
 import theme from "@styles/theme";
+import React from "react";
 import NavBar from "@components/NavBar/NavBar";
 import "@styles/globals.scss";
 import "@styles/colors.scss";

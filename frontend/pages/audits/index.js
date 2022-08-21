@@ -3,7 +3,7 @@ import Head from "next/head";
 import Audits from "@components/Audits/Audits";
 import { config } from "@lib/utilities";
 
-const audits = (props) => {
+const audits = props => {
   return (
     <>
       <Head>

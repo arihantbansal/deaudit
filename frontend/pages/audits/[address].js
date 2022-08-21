@@ -1,12 +1,13 @@
 import { config } from "@lib/utilities";
 import { useRouter } from "next/router";
+import React from "react";
 import { useEffect } from "react";
 import dynamic from "next/dynamic";
 const AuditProfile = dynamic(() => import("@components/Audits/AuditProfile"), {
   ssr: false,
 });
 
-const Audit = (props) => {
+const Audit = props => {
   const router = useRouter();
   useEffect(() => {
     document.documentElement.style.setProperty(

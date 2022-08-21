@@ -1,4 +1,5 @@
 import Landing from "@components/Landing/Landing";
+import React from "react";
 import { useEffect } from "react";
 
 const Home = () => {

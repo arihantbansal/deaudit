@@ -2,6 +2,17 @@ $border-color: #f6e8e8;
 $placeholder-color: #7e7e7e;
 $red-100: #fed7d7;
 $red-50: #fff5f5;
+$aeonik: "Aeonik Light" !important;
+$laser: "Laser" !important;
+$grotesk: "Space Grotesk" !important;
+
+@mixin headers($font, $spacing, $size, $mt, $mb) {
+  font-family: $font !important;
+  letter-spacing: $spacing !important;
+  font-size: $size !important;
+  margin-top: $mt !important;
+  margin-bottom: $mb !important;
+}
 
 .container {
   border: 1px solid #ffffff !important;
@@ -17,26 +28,17 @@ $red-50: #fff5f5;
 }
 
 .auditHeader {
-  font-family: "Aeonik Light" !important;
-  font-size: 1.2em !important;
-  margin-top: 8px;
-  letter-spacing: 1.4px;
-  margin-bottom: 8px;
+  @include headers($aeonik, 1.4px, 1.2em, 8px, 8px);
 }
 
 .userHeader {
-  font-family: "Aeonik Light" !important;
-  font-size: 1.25em !important;
-  margin-top: 14px;
-  letter-spacing: 1px;
-  margin-bottom: 14px;
+  @include headers($aeonik, 1px, 1.25em, 14px, 14px);
 }
 
 .text {
-  font-family: "Aeonik Light" !important;
-  font-size: 1.25em !important;
-  letter-spacing: 1px;
-  margin: 5px;
+  @include headers($aeonik, 1px, 1.25em, 5px);
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .input {
@@ -64,9 +66,9 @@ $red-50: #fff5f5;
   border: 1px solid $red-50 !important;
   color: $red-50 !important;
   font-size: 1.2em !important;
-}
 
-.auditInputs:focus {
-  box-shadow: none !important;
-  border: 1px solid $red-100 !important;
+  &:focus {
+    box-shadow: none !important;
+    border: 1px solid $red-100 !important;
+  }
 }
