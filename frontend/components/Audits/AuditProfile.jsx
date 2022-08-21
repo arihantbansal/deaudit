@@ -18,6 +18,7 @@ import {
   Center,
   FormControl,
   Input,
+  VStack,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import Head from "next/head";
@@ -49,6 +50,11 @@ const AuditProfile = ({ audit, bugs }) => {
   const [bugMoney, setBugMoney] = useState("0");
   const [noBugMoney, setNoBugMoney] = useState("0");
 
+  const [pool, setPool] = useState({
+    noBug: 0,
+    Yesbug: 0,
+  });
+
   /*
   @desc : fetching audit data using address
   */
@@ -56,7 +62,7 @@ const AuditProfile = ({ audit, bugs }) => {
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
   //   functionName: "getAudit",
-  //   args: [audit.contract_address],
+  //   args: [audit.contract_address]
   // });
 
   /*
@@ -493,7 +499,7 @@ const AuditProfile = ({ audit, bugs }) => {
             alignItems="center"
             textAlign="center"
           >
-            {/* {Object.keys(audit.poolSizes).map((poolSize, index) => {
+            {Object.keys(pool).map((currentPool, index) => {
               return (
                 <VStack key={index} my="4" gap="4">
                   <Heading
@@ -505,44 +511,58 @@ const AuditProfile = ({ audit, bugs }) => {
                       background: "white",
                     }}
                   >
-                    {poolSize}
+                    {currentPool}
                   </Heading>
                   <Heading
                     color="white"
                     fontSize="xl"
-                    fontFamily="Major Mono Display"
+                    fontFamily="Laser"
                     _selection={{
                       color: "red.800",
                       background: "white",
                     }}
                   >
-                    {audit.poolSizes[poolSize]}
+                    {pool[currentPool]} {currency}
                   </Heading>
+
+                  <Input
+                    required
+                    size="md"
+                    value={currentPool === "noBug" ? noBugMoney : bugMoney}
+                    w="60px"
+                    onChange={e => {
+                      if (currentPool === "noBug")
+                        setNoBugMoney(e.target.value);
+                      else setBugMoney(e.target.value);
+                    }}
+                    className={styles.auditInputs}
+                  />
+
                   <Button
-                    fontFamily="Space Grotesk"
-                    bg="gray.200"
+                    fontFamily="Aeonik Light"
+                    letterSpacing="1px"
+                    bg="transparent"
                     variant="solid"
                     borderRadius="10px"
                     borderWidth="1px"
                     borderStyle="solid"
                     borderColor="#fecaca"
-                    color="red.800"
+                    color="red.100"
                     size="lg"
                     fontSize="xl"
                     h="fit-content"
                     paddingX="6"
                     paddingY="2"
-                    _hover={{
-                      bg: "transparent",
-                      color: "#fecaca",
-                      border: "1px solid #fecaca",
+                    onClick={() => {
+                      // if(currentPool === "noBug") noBugPoolSubmit();
+                      // else bugSubmit();
                     }}
                   >
                     Bet
                   </Button>
                 </VStack>
               );
-            })} */}
+            })}
           </Flex>
         </Flex>
 
