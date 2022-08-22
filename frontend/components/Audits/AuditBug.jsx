@@ -46,7 +46,8 @@ const AuditBug = ({ bug, audit }) => {
   });
 
   // vote
-  const { write: writeVote } = useContractWrite(configForVote);
+  const { isLoading: isLoadingVote, write: writeVote } =
+    useContractWrite(configForVote);
 
   useContractEvent({
     addressOrName: CONTRACT_ADDRESS,
@@ -72,27 +73,30 @@ const AuditBug = ({ bug, audit }) => {
       const response = await fetch(`${config}/bugs/users/${bug.reported_by}`);
       const data = await response.json();
       const bugsArray = data.data;
-      const bugId = bugsArray.findIndex(
+      const newArray = bugsArray.filter(
+        bugOfFetched => bugOfFetched.audit_id === audit.contract_address
+      );
+      const bugId = newArray.findIndex(
         bugOfFetched =>
           bugOfFetched.description === bug.description &&
-          bugOfFetched.reported_by === bug.reported_by
+          bugOfFetched.reported_by === bug.reported_by &&
+          bugOfFetched.audit_id === audit.contract_address
       );
       setBugId(bugId);
     };
     init();
     if (auditData) {
       setJuryIndex(
-        auditData.jury.findIndex(j => j.address === address) === -1
+        auditData.jury.findIndex(j => j === address) === -1
           ? 0
-          : auditData.jury.findIndex(j => j.address === address)
+          : auditData.jury.findIndex(j => j === address)
       );
     }
-  }, [bug.reported_by, bug.description, address, auditData]);
+  }, [bug.reported_by, bug.description, address, auditData, audit]);
 
   return (
     <VStack
       my="10"
-      mx="4"
       w="60vw"
       h="fit-content"
       px="6"
@@ -129,13 +133,13 @@ const AuditBug = ({ bug, audit }) => {
         Description : {bug.description}
       </Text>
       <Text fontSize="xl" fontFamily="Space Grotesk">
-        Approved votes yet :{" "}
+        Total votes yet :{" "}
         {isLoadingBug || isErrorBug
           ? "Loading..."
           : bugVotedData[1].filter(vote => vote === true).length}
       </Text>
       <Text fontSize="xl" fontFamily="Space Grotesk">
-        Current Verdict :{" "}
+        Verdict :{" "}
         {isLoadingBug || isErrorBug
           ? "Loading..."
           : bugVotedData[3] === 2
@@ -145,11 +149,19 @@ const AuditBug = ({ bug, audit }) => {
           : "Pending..."}
       </Text>
       <Flex flexDir="row" gap="4">
-        {(address && isLoadingData) || isErrorData ? null : (
+        {(address && isLoadingData) ||
+        isErrorData ||
+        isLoadingBug ||
+        isErrorBug ||
+        !auditData ||
+        isLoadingVote ? null : (
           <Box>
             <Button
               fontFamily="Laser"
-              disabled={!auditData.jury.includes(address)}
+              disabled={
+                !auditData.jury.includes(address) ||
+                bugVotedData[1][auditData.jury.findIndex(x => x === address)]
+              }
               onClick={() => {
                 setVoteState(true);
                 writeVote?.();
@@ -159,9 +171,13 @@ const AuditBug = ({ bug, audit }) => {
             </Button>
             <Button
               fontFamily="Laser"
-              disabled={!auditData.jury.includes(address)}
+              disabled={
+                !auditData.jury.includes(address) ||
+                bugVotedData[1][auditData.jury.findIndex(x => x === address)]
+              }
               onClick={() => {
                 setVoteState(false);
+                console.log(voteState);
                 writeVote?.();
               }}
             >
@@ -170,6 +186,25 @@ const AuditBug = ({ bug, audit }) => {
           </Box>
         )}
       </Flex>
+      {(address && isLoadingData) ||
+      isErrorData ||
+      isLoadingBug ||
+      isErrorBug ||
+      !auditData ? null : auditData.jury.includes(address) ? (
+        bugVotedData[1][auditData.jury.findIndex(x => x === address)] ? (
+          <Text fontSize="xl" fontFamily="Space Grotesk">
+            You have voted on this bug.
+          </Text>
+        ) : (
+          <Text fontSize="xl" fontFamily="Space Grotesk">
+            You have not voted on this bug.
+          </Text>
+        )
+      ) : (
+        <Text fontSize="xl" fontFamily="Space Grotesk">
+          You are not a jury member.
+        </Text>
+      )}
     </VStack>
   );
 };

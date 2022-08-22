@@ -15,7 +15,7 @@ import {
 import Router from "next/router";
 import React, { useState } from "react";
 import styles from "@styles/NewAudit.module.scss";
-import { config, CONTRACT_ADDRESS, pascalCase } from "@lib/utilities";
+import { config, CONTRACT_ADDRESS, currency, pascalCase } from "@lib/utilities";
 import {
   useAccount,
   allChains,
@@ -79,12 +79,13 @@ const NewAudit = () => {
     contractInterface: contractAbi,
     eventName: "AuditRequested",
     listener: event => {
+      alert(`Audit Requested: ${`/audits/${event[1]}`}`);
       window.location.href = `/audits/${event[1]}`;
     },
   });
 
   const handleSubmit = e => {
-    console.log("Starting POST");
+    console.log("Starting POST to Database.");
 
     fetch(`${config}/users`, {
       method: "POST",
@@ -138,7 +139,9 @@ const NewAudit = () => {
         console.log(err);
       });
 
+    console.log("Sending POST to contract...");
     auditSubmit?.();
+    console.log("Done.");
   };
 
   return (
@@ -183,7 +186,7 @@ const NewAudit = () => {
               </FormControl>
               <FormControl my="2" isRequired>
                 <FormLabel htmlFor="pool" fontSize="lg">
-                  Pool Size (MATIC)
+                  Pool Size ({currency})
                 </FormLabel>
                 <Input
                   required

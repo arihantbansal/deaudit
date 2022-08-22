@@ -248,7 +248,6 @@ const AuditProfile = ({ audit, bugs }) => {
 
   useEffect(() => {
     if (auditResult) {
-      console.log(Number(auditResult.totalNoPool.toString()) / conversion);
       setPool({
         NoBug: Number(auditResult.totalNoPool.toString()) / conversion,
         Yesbug: Number(auditResult.totalYesPool.toString()) / conversion,
@@ -256,7 +255,7 @@ const AuditProfile = ({ audit, bugs }) => {
     }
   }, [auditResult]);
   return (
-    <Flex flexDir="column">
+    <Flex flexDir="column" overflowX="none">
       <Head>
         <title>{title}</title>
       </Head>
@@ -269,8 +268,8 @@ const AuditProfile = ({ audit, bugs }) => {
         flexDir="column"
         position="absolute"
         top="20vh"
-        w="100vw"
-        m="auto"
+        w="100%"
+        my="auto"
         textAlign="center"
       >
         <Heading
@@ -339,12 +338,12 @@ const AuditProfile = ({ audit, bugs }) => {
           </Link>
         </Heading>
 
-        <Center m="4" flexDir="column">
+        <Center my="4" flexDir="column">
           {auditComplete.complete ? (
             <Heading
               color="white"
               my="4"
-              w="50vw"
+              w="40vw"
               fontSize="1.6em"
               className="head"
               _selection={{
@@ -585,7 +584,7 @@ const AuditProfile = ({ audit, bugs }) => {
             Current pool Sizes :
           </Heading>
           <Flex
-            w="60%"
+            w="55%"
             h="fit-content"
             py="4"
             flexDir="row"
@@ -677,7 +676,7 @@ const AuditProfile = ({ audit, bugs }) => {
 
         <Flex
           m="3"
-          w="100vw"
+          w="100%"
           h="fit-content"
           flexDir="column"
           justifyContent="center"
@@ -706,7 +705,7 @@ const AuditProfile = ({ audit, bugs }) => {
             Bugs reported :
           </Heading>
           <Flex
-            w="100vw"
+            w="100%"
             h="fit-content"
             flexDir="column"
             justifyContent="center"
