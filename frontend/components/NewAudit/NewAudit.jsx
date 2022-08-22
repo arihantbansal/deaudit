@@ -65,7 +65,10 @@ const NewAudit = () => {
     functionName: "createAudit",
     args: [contractAddress],
     overrides: {
-      value: ethers.utils.parseEther(poolSize.toString()),
+      value:
+        poolSize === ""
+          ? ethers.utils.parseEther("0")
+          : ethers.utils.parseEther(poolSize.toString()),
     },
   });
 
@@ -76,11 +79,11 @@ const NewAudit = () => {
     contractInterface: contractAbi,
     eventName: "AuditRequested",
     listener: event => {
-      Router.push(`/audits/${event[1]}`);
+      window.location.href = `/audits/${event[1]}`;
     },
   });
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     fetch(`${config}/users`, {
       method: "POST",
       headers: {
@@ -132,8 +135,6 @@ const NewAudit = () => {
       .catch(err => {
         console.log(err);
       });
-
-    auditSubmit?.();
   };
 
   return (
@@ -266,10 +267,11 @@ const NewAudit = () => {
           my="6"
           type="submit"
           disabled={isDisconnected}
-          onClick={e => {
-            if (parseInt(poolSize, 10) > 0 && contractAddress.length > 0)
-              handleSubmit(e);
-            else alert("Please fill in all the required fields.");
+          onClick={async e => {
+            if (parseFloat(poolSize, 10) > 0 && contractAddress.length > 0) {
+              await handleSubmit(e);
+              auditSubmit?.();
+            } else alert("Please fill in all the required fields.");
           }}
           className={styles.button}
           colorScheme="pink"

@@ -66,19 +66,22 @@ In the end, we chose to keep critical data on-chain, while entrusting an off-cha
 
 We faced a lot of compile time errors with Solidity while dealing with in-memory arrays and returning data from mappings.
 
+Issues on the frontend regarding which type of rendering to choose for NextJS for optimization, interacting with write functions and events of the contract etc were also some challenges.
+
 ## What we learned
 
-In the process of building DeAudit, we learnt a lot. Smart contract design, Solidity, dealing with Oracles (Chainlink VRF and Keepers), decentralized infrastructure (Spheron). We had a lot of fun building it.
+In the process of building DeAudit, we learnt a lot. Smart contract design, Solidity, dealing with Oracles (Chainlink VRF and Keepers), distributed storage of files (IPFS), decentralized infrastructure (Spheron). We had a lot of fun building it.
 
 ## What's next for DeAudit
 
 We've planned a lot of changes, and improvements to DeAudit.
 
 1. If the no bugs reported is the pool that won, an NFT is created with the amount of money that was liquidated and the ENS of people on the jury.
-2. Create a DAO which votes on approving Jury members based on their security profiles.
-3. Migrate our frontend dApp to [TypeScript](https://www.typescriptlang.org/).
-4. Explore storing additional data (which is being stored in a centralized server for now), to be kept on IPFS.
-5. Migrate to [foundry](http://getfoundry.sh/) for our dev environment.
+2. Specifying some kind of background check for approving a user as a jury member and not allowing anyone random to do so.
+3. Create a DAO which votes on approving Jury members based on their security profiles.
+4. Migrate our frontend dApp to [TypeScript](https://www.typescriptlang.org/).
+5. Explore storing additional data (which is being stored in a centralized server for now), to be kept on IPFS.
+6. Migrate to [foundry](http://getfoundry.sh/) for our dev environment.
 
 Built @ Polygon Buidl It Summer 2022, by @ameya-deshmukh, @priyansh71 & @arihantbansal.
 

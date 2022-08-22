@@ -64,7 +64,11 @@ const AuditProfile = ({ audit, bugs }) => {
   /*
   @desc : fetching audit data using address
   */
-  const { data: auditResult, fetchStatus } = useContractRead({
+  const {
+    data: auditResult,
+    isLoading: loadingAudit,
+    isError: errorAudit,
+  } = useContractRead({
     addressOrName: CONTRACT_ADDRESS,
     contractInterface: contractAbi,
     functionName: "getAuditData",
@@ -102,12 +106,12 @@ const AuditProfile = ({ audit, bugs }) => {
     listener: event => {
       alert(
         `YesBug pool now has ${
-          parseInt(event[2]?._hex, 16) / conversion
+          Number(event[2]?.toString()) / conversion
         } ${currency}.`
       );
       setPool({
         ...pool,
-        Yesbug: parseInt(event[2]?._hex, 16) / conversion,
+        Yesbug: Number(event[2]?.toString()) / conversion,
       });
     },
   });
@@ -137,12 +141,12 @@ const AuditProfile = ({ audit, bugs }) => {
     listener: event => {
       alert(
         `NoBug pool now has ${
-          parseInt(event[2]?._hex, 16) / conversion
+          Number(event[2]?.toString()) / conversion
         } ${currency}.`
       ),
         setPool({
           ...pool,
-          NoBug: parseInt(event[2]?._hex, 16) / conversion,
+          NoBug: Number(event[2]?.toString()) / conversion,
         });
     },
   });
@@ -243,11 +247,11 @@ const AuditProfile = ({ audit, bugs }) => {
   const { address, isConnecting, isDisconnected } = useAccount();
 
   useState(() => {
-    console.log(auditResult);
     if (auditResult) {
+      console.log(Number(auditResult.totalNoPool.toString()) / conversion);
       setPool({
-        NoBug: parseInt(auditResult.totalNoPool._hex, 16) / conversion,
-        Yesbug: parseInt(auditResult.totalYesPool._hex, 16) / conversion,
+        NoBug: Number(auditResult.totalNoPool.toString()) / conversion,
+        Yesbug: Number(auditResult.totalYesPool.toString()) / conversion,
       });
     }
   }, [auditResult]);
@@ -461,7 +465,8 @@ const AuditProfile = ({ audit, bugs }) => {
                 onClick={async () => {
                   if (bugDescription.length > 0 && !isDisconnected) {
                     await handleBugSubmit();
-                    bugSubmit?.();
+                    bugSubmit();
+                    console.log("Bug submission going on..");
                     onClose();
                   } else alert("Connect your wallet to report a bug.");
                 }}
@@ -515,7 +520,7 @@ const AuditProfile = ({ audit, bugs }) => {
             textAlign="center"
           >
             <Heading color="white" my="4" fontSize="2xl">
-              {fetchStatus === "fetching"
+              {loadingAudit || errorAudit
                 ? null
                 : auditResult.jury
                     .filter(
@@ -646,11 +651,13 @@ const AuditProfile = ({ audit, bugs }) => {
                     paddingX="6"
                     paddingY="2"
                     onClick={() => {
-                      if (currentPool === "NoBug" && noBugMoney !== "")
-                        noBugPoolSubmit?.();
-                      else if (currentPool === "YesBug" && bugMoney !== "")
-                        bugSubmit?.();
-                      else alert("Please enter an amount to submit.");
+                      if (currentPool === "NoBug" && noBugMoney !== "") {
+                        noBugPoolSubmit();
+                        console.log("NoBug pool submission going on..");
+                      } else if (currentPool === "YesBug" && bugMoney !== "") {
+                        bugSubmit();
+                        console.log("YesBug pool submission going on..");
+                      } else alert("Please enter an amount to submit.");
                     }}
                   >
                     Bet

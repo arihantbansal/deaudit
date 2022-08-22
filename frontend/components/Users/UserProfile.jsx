@@ -176,14 +176,17 @@ const UserProfile = ({ user, bugs }) => {
   };
 
   // Get judged audits
-  // const judgedAuditsData = useContractRead({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   functionName: "juryMemberToAudits",
-  //   args: [user.address],
-  // });
+  const {
+    data: judgedAuditsData,
+    isLoading: isLoadingAudits,
+    isError: isErrorAudits,
+  } = useContractRead({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    functionName: "getAuditsUserIsOnJuryOf",
+    args: [user.address],
+  });
 
-  // console.log(judgedAuditsData);
   /*
   @desc : Add user to jury pool
   */
@@ -197,7 +200,11 @@ const UserProfile = ({ user, bugs }) => {
   const { write: juryPoolSubmit } = useContractWrite(configForJury);
 
   // Get eligible jury pool
-  const { data: jurydata, fetchStatus: juryFetch } = useContractRead({
+  const {
+    data: jurydata,
+    isLoading: loadingJury,
+    isError: errorJury,
+  } = useContractRead({
     addressOrName: CONTRACT_ADDRESS,
     contractInterface: contractAbi,
     functionName: "getEligibleJuryMembers",
@@ -605,7 +612,7 @@ const UserProfile = ({ user, bugs }) => {
           my="3"
         >
           Jury Member :&nbsp;
-          {juryFetch === "fetching"
+          {errorJury || loadingJury
             ? null
             : jurydata !== undefined
             ? jurydata.includes(address)
@@ -672,33 +679,35 @@ const UserProfile = ({ user, bugs }) => {
             textAlign="center"
             py="2"
           >
-            {/* <Heading my="4" fontSize="2xl">
-              {judgedAuditsData?.data?.map((audit, index) => {
-                return (
-                  <Box key={index} py="2" mx="4">
-                    <Link href={`/audits/${audit}`} passHref>
-                      <Linker>
-                        <Text
-                          fontSize="1.1em"
-                          className="address"
-                          color="purple.50"
-                          display="inline-flex"
-                          _selection={{
-                            color: "purple.800",
-                            background: "white",
-                          }}
-                          _hover={{
-                            color: "purple.50",
-                          }}
-                        >
-                          {audit}
-                        </Text>
-                      </Linker>
-                    </Link>
-                  </Box>
-                );
-              })}
-            </Heading> */}
+            <Heading my="4" fontSize="2xl">
+              {isLoadingAudits || isErrorAudits
+                ? null
+                : judgedAuditsData?.data?.map((audit, index) => {
+                    return (
+                      <Box key={index} py="2" mx="4">
+                        <Link href={`/audits/${audit}`} passHref>
+                          <Linker>
+                            <Text
+                              fontSize="1.1em"
+                              className="address"
+                              color="purple.50"
+                              display="inline-flex"
+                              _selection={{
+                                color: "purple.800",
+                                background: "white",
+                              }}
+                              _hover={{
+                                color: "purple.50",
+                              }}
+                            >
+                              {audit}
+                            </Text>
+                          </Linker>
+                        </Link>
+                      </Box>
+                    );
+                  })}
+            </Heading>
           </Flex>
         </Flex>
         <Flex
