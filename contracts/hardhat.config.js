@@ -1,26 +1,17 @@
 require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
-require("hardhat-gas-reporter");
 require("dotenv").config();
 
-const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
-
 module.exports = {
-  solidity: "0.8.4",
+  solidity: "0.8.9",
   networks: {
     mumbai: {
-      url: process.env.ALCHEMY_POLYGON_MUMBAI_URL,
+      url: process.env.ALCHEMY_POLYGON_URL,
       accounts: [process.env.PRIVATE_KEY],
     },
   },
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
-  },
-  gasReporter: {
-    currency: "USD",
-    gasPrice: 100,
-    enabled: process.env.REPORT_GAS ? true : false,
+    apiKey: process.env.POLYGONSCAN_API_KEY,
   },
 };
-
