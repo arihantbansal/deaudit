@@ -41,7 +41,7 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 	uint64 vrfSubscriptionId;
 	address vrfCoordinator = 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed; // coordinator address for Polygon Mumbai
 	bytes32 keyHash = 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f; // keyHash for Polygon Mumbai
-	uint32 callbackGasLimit = 100000;
+	uint32 callbackGasLimit = 2000000;
 	uint16 requestConfirmations = 3;
 	uint32 numMembers = 5; // 5 jury members needed per audit
 	mapping(uint256 => address) requestToAudit;
