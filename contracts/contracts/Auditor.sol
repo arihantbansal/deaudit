@@ -28,6 +28,7 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 		uint256 createdTime;
 		bool[5] juryMemberHasVoted;
 		uint256 verdict;
+		uint8 status; // 0 for pending, 1 for rejected, 2 for approved
 	}
 
 	address[] public eligibleJuryMembers;
@@ -163,6 +164,7 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 		Bug memory newBug;
 		newBug.createdTime = block.timestamp;
 		newBug.verdict = 0;
+		newBug.status = 0;
 
 		if (audits[contractAddress].reporterToBugs[msg.sender].length == 0) {
 			audits[contractAddress].bugReporters.push(msg.sender);
@@ -217,6 +219,7 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 		bool verdict = audits[contractAddress].reporterToBugs[bugReporter][bugIndex].verdict >= 3;
 
 		if (verdict || totalVotes == 5) {
+			audits[contractAddress].reporterToBugs[bugReporter][bugIndex].status = verdict ? 2 : 1;
 			juryVerdict(contractAddress, verdict);
 		}
 	}
