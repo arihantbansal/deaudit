@@ -14,7 +14,6 @@ import { BsBug } from "react-icons/bs";
 import { RiMoneyDollarCircleLine } from "react-icons/ri";
 import styles from "@styles/Listing.module.scss";
 import { useRouter } from "next/router";
-import { GiInjustice } from "react-icons/gi";
 import { config, currency } from "@lib/utilities";
 
 const Audits = ({ audits }) => {
@@ -53,35 +52,6 @@ const Audits = ({ audits }) => {
         Audits
       </Heading>
 
-      <Input
-        w="50%"
-        size="lg"
-        mb="20"
-        className={styles.input}
-        placeholder="Search by contract address"
-        onChange={e => {
-          console.log(e.target.value);
-        }}
-      />
-      {/* <Text className={styles.text}>Filter by tags :</Text>
-      <HStack gap="8">
-        {tags?.map((tag, index) => (
-          <Tag
-            key={index}
-            size="lg"
-            variant="solid"
-            border={selected.includes(tag) ? "none" : "0.2px solid #fff"}
-            fontFamily="Space Grotesk"
-            cursor="pointer"
-            rounded="sm"
-            colorScheme={selected.includes(tag) ? "black" : "white"}
-            userSelect="none"
-            onClick={() => handleTagFilter(tag)}
-          >
-            <TagLabel>{tag}</TagLabel>
-          </Tag>
-        ))}
-      </HStack> */}
       <Flex
         width="75%"
         alignItems="center"

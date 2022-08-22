@@ -83,7 +83,9 @@ const NewAudit = () => {
     },
   });
 
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
+    console.log("Starting POST");
+
     fetch(`${config}/users`, {
       method: "POST",
       headers: {
@@ -135,6 +137,8 @@ const NewAudit = () => {
       .catch(err => {
         console.log(err);
       });
+
+    auditSubmit?.();
   };
 
   return (
@@ -267,10 +271,9 @@ const NewAudit = () => {
           my="6"
           type="submit"
           disabled={isDisconnected}
-          onClick={async e => {
-            if (parseFloat(poolSize, 10) > 0 && contractAddress.length > 0) {
-              await handleSubmit(e);
-              auditSubmit?.();
+          onClick={() => {
+            if (poolSize > 0 && contractAddress.length > 0) {
+              handleSubmit();
             } else alert("Please fill in all the required fields.");
           }}
           className={styles.button}

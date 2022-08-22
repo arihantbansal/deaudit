@@ -682,7 +682,7 @@ const UserProfile = ({ user, bugs }) => {
             <Heading my="4" fontSize="2xl">
               {isLoadingAudits || isErrorAudits
                 ? null
-                : judgedAuditsData?.data?.map((audit, index) => {
+                : judgedAuditsData?.map((audit, index) => {
                     return (
                       <Box key={index} py="2" mx="4">
                         <Link href={`/audits/${audit}`} passHref>

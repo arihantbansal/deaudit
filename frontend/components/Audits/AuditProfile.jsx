@@ -242,11 +242,11 @@ const AuditProfile = ({ audit, bugs }) => {
   const [bugDescription, setBugDescription] = useState("");
   const auditURL =
     allChains.find(c => c.name === audit.chain).blockExplorers.default.url +
-    "/" +
+    "/address/" +
     audit.contract_address;
   const { address, isConnecting, isDisconnected } = useAccount();
 
-  useState(() => {
+  useEffect(() => {
     if (auditResult) {
       console.log(Number(auditResult.totalNoPool.toString()) / conversion);
       setPool({
@@ -616,7 +616,14 @@ const AuditProfile = ({ audit, bugs }) => {
                       background: "white",
                     }}
                   >
-                    {currentPool === "NoBug" ? pool["NoBug"] : pool["Yesbug"]}
+                    {loadingAudit || errorAudit
+                      ? currentPool === "NoBug"
+                        ? noBugMoney
+                        : bugMoney
+                      : currentPool === "NoBug"
+                      ? Number(auditResult.totalNoPool.toString()) / conversion
+                      : Number(auditResult.totalYesPool.toString()) /
+                        conversion}
                     &nbsp;
                     {currency}
                   </Heading>
@@ -652,10 +659,10 @@ const AuditProfile = ({ audit, bugs }) => {
                     paddingY="2"
                     onClick={() => {
                       if (currentPool === "NoBug" && noBugMoney !== "") {
-                        noBugPoolSubmit();
+                        noBugPoolSubmit?.();
                         console.log("NoBug pool submission going on..");
                       } else if (currentPool === "YesBug" && bugMoney !== "") {
-                        bugSubmit();
+                        bugSubmit?.();
                         console.log("YesBug pool submission going on..");
                       } else alert("Please enter an amount to submit.");
                     }}
