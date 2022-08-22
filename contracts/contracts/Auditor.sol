@@ -362,13 +362,15 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 		returns (
 			uint256,
 			bool[5] memory,
-			uint256
+			uint256,
+			uint8
 		)
 	{
 		return (
 			audits[contractAddress].reporterToBugs[reporter][index].createdTime,
 			audits[contractAddress].reporterToBugs[reporter][index].juryMemberHasVoted,
-			audits[contractAddress].reporterToBugs[reporter][index].verdict
+			audits[contractAddress].reporterToBugs[reporter][index].verdict,
+			audits[contractAddress].reporterToBugs[reporter][index].status
 		);
 	}
 
