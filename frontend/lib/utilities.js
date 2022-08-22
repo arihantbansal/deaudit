@@ -12,9 +12,9 @@ export function pascalCase(str) {
   );
 }
 
-export const config = "http://localhost:3001";
+export const config = "https://deaudit.up.railway.app";
 
-export const CONTRACT_ADDRESS = "0x10Cc4C8D3E0D36DB74c3a408b9F780Fd3a6805eB";
+export const CONTRACT_ADDRESS = "0x267bCA927A7DF6C5870D366aF324b31A64319e80";
 
 export const currency = "MATIC";
 
