@@ -14,6 +14,8 @@ export function pascalCase(str) {
 
 export const config = "http://localhost:3001";
 
-export const CONTRACT_ADDRESS = "0x9a5f98773A4FeF66161F3e41e337aF9A233e8598";
+export const CONTRACT_ADDRESS = "0x10Cc4C8D3E0D36DB74c3a408b9F780Fd3a6805eB";
 
 export const currency = "MATIC";
+
+export const conversion = 1e18;

@@ -29,6 +29,7 @@ test-ledger
 
 # local env files
 .env*.local
+.env
 
 # vercel
 .vercel
