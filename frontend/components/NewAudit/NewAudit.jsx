@@ -38,7 +38,7 @@ const NewAudit = () => {
   const [tag, setTag] = useState("");
   const [chain, setChain] = useState(chains[0].name);
 
-  const [poolSize, setPoolSize] = useState("0");
+  const [poolSize, setPoolSize] = useState(0);
   const { address, _, isDisconnected } = useAccount();
 
   const handleDelete = id => {
@@ -59,29 +59,26 @@ const NewAudit = () => {
   /* 
   @desc : creating a new audit, receiving the emitted event AuditRequested
   */
-  // const { config : configForAuditPost } = usePrepareContractWrite({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   functionName: "createAudit",
-  //   args: [contractAddress],
-  //   overrides: {
-  //     value: ethers.utils.parseEther(poolSize.toString())
-  //   },
-  // });
+  const { config: configForAuditPost } = usePrepareContractWrite({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    functionName: "createAudit",
+    args: [contractAddress],
+    overrides: {
+      value: ethers.utils.parseEther(poolSize.toString()),
+    },
+  });
 
-  // const { write : auditSubmit } = useContractWrite(configForAuditPost);
+  const { write: auditSubmit } = useContractWrite(configForAuditPost);
 
-  // useContractEvent({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   eventName: 'AuditRequested',
-  //   listener: (event) => {
-  //       setContractAddress("");
-  //       setTags([]);
-  //       setPoolSize(0);
-  //       Router.push(`/audits/${event[1]}`);
-  //   }
-  // })
+  useContractEvent({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    eventName: "AuditRequested",
+    listener: event => {
+      Router.push(`/audits/${event[1]}`);
+    },
+  });
 
   const handleSubmit = e => {
     fetch(`${config}/users`, {
@@ -136,7 +133,7 @@ const NewAudit = () => {
         console.log(err);
       });
 
-    //TODO auditSubmit?.();
+    auditSubmit?.();
   };
 
   return (
@@ -189,10 +186,10 @@ const NewAudit = () => {
                   id="pool"
                   size="lg"
                   w="12vw"
+                  type="number"
                   value={poolSize}
                   onChange={e => setPoolSize(e.target.value)}
                   variant="outline"
-                  type="number"
                   className={styles.input}
                 />
               </FormControl>
@@ -270,7 +267,7 @@ const NewAudit = () => {
           type="submit"
           disabled={isDisconnected}
           onClick={e => {
-            if (poolSize > 0 && contractAddress.length > 0 && chain.name > 0)
+            if (parseInt(poolSize, 10) > 0 && contractAddress.length > 0)
               handleSubmit(e);
             else alert("Please fill in all the required fields.");
           }}

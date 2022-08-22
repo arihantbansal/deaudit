@@ -1,4 +1,4 @@
-import { Button, Checkbox, Flex, Text, VStack } from "@chakra-ui/react";
+import { Box, Button, Checkbox, Flex, Text, VStack } from "@chakra-ui/react";
 import { Link as Linker } from "@chakra-ui/react";
 import Link from "next/link";
 import React, { useCallback, useEffect, useState } from "react";
@@ -16,35 +16,51 @@ import contractAbi from "@lib/contractAbi.json";
 const AuditBug = ({ bug, audit }) => {
   const [bugId, setBugId] = useState(0);
   const [voteState, setVoteState] = useState(false);
+  let [juryIndex, setJuryIndex] = useState(0);
   const { address } = useAccount();
 
   //   // Get eligible jury pool
-  //   const jurydata = useContractRead({
-  //     addressOrName: CONTRACT_ADDRESS,
-  //     contractInterface: contractAbi,
-  //     functionName: "getEligibleJuryMembers",
-  //   });
+  const {
+    data: auditData,
+    isLoading: isLoadingData,
+    isError: isErrorData,
+  } = useContractRead({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    functionName: "getAuditData",
+    args: [audit.contract_address],
+  });
 
-  //   // get voting config
-  //   const { config : configForVote } = usePrepareContractWrite({
-  //     addressOrName: CONTRACT_ADDRESS,
-  //     contractInterface: contractAbi,
-  //     functionName: "juryVote",
-  //     args: [audit.contract_address, bug.reported_by, bugId, jurydata, voteState],
-  //   });
+  // get voting config
+  const { config: configForVote } = usePrepareContractWrite({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    functionName: "juryVote",
+    args: [
+      audit.contract_address,
+      bug.reported_by,
+      bugId,
+      juryIndex,
+      voteState,
+    ],
+  });
 
-  //   // vote
-  // const { write : writeVote } = useContractWrite(configForVote);
+  // vote
+  const { write: writeVote } = useContractWrite(configForVote);
 
-  // useContractEvent({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   eventName: "JuryVoteOnBug",
-  //   listener: event => alert(`Jury : ${event[2]} voted on a bug reported by ${event[1]}.`),
-  // });
+  useContractEvent({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    eventName: "JuryVoteOnBug",
+    listener: event =>
+      alert(`Jury : ${event[2]} voted on a bug reported by ${event[1]}.`),
+  });
 
-  // Get eligible jury pool
-  const bugVotedData = useContractRead({
+  const {
+    data: bugVotedData,
+    isLoading: isLoadingBug,
+    isError: isErrorBug,
+  } = useContractRead({
     addressOrName: CONTRACT_ADDRESS,
     contractInterface: contractAbi,
     functionName: "getBugByIndex",
@@ -64,7 +80,14 @@ const AuditBug = ({ bug, audit }) => {
       setBugId(bugId);
     };
     init();
-  }, [bug.reported_by, bug.description]);
+    if (auditData) {
+      setJuryIndex(
+        auditData.jury.findIndex(j => j.address === address) === -1
+          ? 0
+          : auditData.jury.findIndex(j => j.address === address)
+      );
+    }
+  }, [bug.reported_by, bug.description, address, auditData]);
 
   return (
     <VStack
@@ -106,33 +129,46 @@ const AuditBug = ({ bug, audit }) => {
         Description : {bug.description}
       </Text>
       <Text fontSize="xl" fontFamily="Space Grotesk">
-        Approved votes yet : {bugVotedData?.data?.[1].filter(true).length}
+        Approved votes yet :{" "}
+        {isLoadingBug || isErrorBug
+          ? "Loading..."
+          : bugVotedData[1].filter(vote => vote === true).length}
       </Text>
       <Text fontSize="xl" fontFamily="Space Grotesk">
         Current Verdict :{" "}
-        {bugVotedData?.data?.[2] === 1 ? "Approved" : "Disapproved"}
+        {isLoadingBug || isErrorBug
+          ? "Loading..."
+          : bugVotedData[3] === 2
+          ? "Approved"
+          : bugVotedData[3] === 1
+          ? "Disapproved"
+          : "Pending..."}
       </Text>
       <Flex flexDir="row" gap="4">
-        <Button
-          fontFamily="Laser"
-          //TODO disabled={!address || juryData?.data?.findIndex(address) == -1}
-          onClick={() => {
-            setVoteState(true);
-            writeVote?.();
-          }}
-        >
-          Approve
-        </Button>
-        <Button
-          fontFamily="Laser"
-          //TODO disabled={!address || juryData?.data?.indexOf(address) == -1}
-          onClick={() => {
-            setVoteState(false);
-            writeVote?.();
-          }}
-        >
-          Disapprove
-        </Button>
+        {(address && isLoadingData) || isErrorData ? null : (
+          <Box>
+            <Button
+              fontFamily="Laser"
+              disabled={!auditData.jury.includes(address)}
+              onClick={() => {
+                setVoteState(true);
+                writeVote?.();
+              }}
+            >
+              Approve
+            </Button>
+            <Button
+              fontFamily="Laser"
+              disabled={!auditData.jury.includes(address)}
+              onClick={() => {
+                setVoteState(false);
+                writeVote?.();
+              }}
+            >
+              Disapprove
+            </Button>
+          </Box>
+        )}
       </Flex>
     </VStack>
   );

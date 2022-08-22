@@ -113,8 +113,20 @@ const Landing = () => {
         </Flex>
       </Flex>
 
+      <Flex className={styles.hero} mt="5vh">
+        <Heading fontSize="7xl" className={styles.heading}>
+          SAY NO MORE.
+        </Heading>
+        <Flex className={styles.heroSub}>
+          <Heading fontSize="6xl" className={styles.network} textAlign="left">
+            RAPID AND DECENTRALIZED AUDITING.
+          </Heading>
+          <Image src="/assets/globe.svg" alt="bug" w="55%" userSelect="none" />
+        </Flex>
+      </Flex>
+
       <Flex className={styles.hero}>
-        <Heading fontSize="7xl" mt="15vh" className={styles.heading}>
+        <Heading fontSize="7xl" mt="5vh" className={styles.heading}>
           THINK YOU&apos;RE GOOD?
         </Heading>
         <Flex className={styles.heroSub}>
@@ -126,18 +138,6 @@ const Landing = () => {
           >
             APPLY AS A SECURITY AUDITOR.
           </Heading>
-        </Flex>
-      </Flex>
-
-      <Flex className={styles.hero} mt="10vh">
-        <Heading fontSize="7xl" mt="20vh" className={styles.heading}>
-          SAY NO MORE.
-        </Heading>
-        <Flex className={styles.heroSub}>
-          <Heading fontSize="6xl" className={styles.network} textAlign="left">
-            RAPID AND DECENTRALIZED AUDITING.
-          </Heading>
-          <Image src="/assets/globe.svg" alt="bug" w="55%" userSelect="none" />
         </Flex>
         <Box fontFamily="Aeonik Light" mt="6" letterSpacing="1px" w="100%">
           <Divider />

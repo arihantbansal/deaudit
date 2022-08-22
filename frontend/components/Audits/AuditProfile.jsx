@@ -28,6 +28,7 @@ import { Link as Linker } from "@chakra-ui/react";
 import {
   config,
   CONTRACT_ADDRESS,
+  conversion,
   currency,
   ellipseAddress,
 } from "@lib/utilities";
@@ -47,8 +48,8 @@ import { ethers } from "ethers";
 import AuditBug from "./AuditBug";
 
 const AuditProfile = ({ audit, bugs }) => {
-  const [bugMoney, setBugMoney] = useState("0");
-  const [noBugMoney, setNoBugMoney] = useState("0");
+  const [bugMoney, setBugMoney] = useState(0);
+  const [noBugMoney, setNoBugMoney] = useState(0);
   const [auditComplete, setComplete] = useState({
     complete: false,
     bugBy: "",
@@ -63,94 +64,103 @@ const AuditProfile = ({ audit, bugs }) => {
   /*
   @desc : fetching audit data using address
   */
-  // const auditResult = useContractRead({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   functionName: "getAudit",
-  //   args: [audit.contract_address]
-  // });
-
+  const { data: auditResult, fetchStatus } = useContractRead({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    functionName: "getAuditData",
+    args: [audit.contract_address],
+  });
   /*
   @desc : posting a bug, receiving the emitted event for NewBugReported and AuditYesPoolUpdated
   */
-  // const { config : configForBugPost } = usePrepareContractWrite({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   functionName: "reportBug",
-  //   args: [audit.contract_address],
-  //   overrides: {
-  //     value: ethers.utils.parseEther(bugMoney.toString())
-  //   },
-  // });
+  const { config: configForBugPost } = usePrepareContractWrite({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    functionName: "reportBug",
+    args: [audit.contract_address],
+    overrides: {
+      value:
+        bugMoney === ""
+          ? ethers.utils.parseEther("0")
+          : ethers.utils.parseEther(bugMoney.toString()),
+    },
+  });
 
-  // const { write: bugSubmit } = useContractWrite(configForBugPost);
+  const { write: bugSubmit } = useContractWrite(configForBugPost);
 
-  // useContractEvent({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   eventName: 'NewBugReported',
-  //   listener: (event) => alert(`${event[1]} reported a new bug.`),
-  // })
+  useContractEvent({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    eventName: "NewBugReported",
+    listener: event => alert(`${event[1]} reported a new bug.`),
+  });
 
-  // useContractEvent({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   eventName: 'AuditYesPoolUpdated',
-  //   listener: (event) => {
-  //     alert(`YesBug pool now has ${parseInt(event[2]?._hex, 16)} ${currency}.`);
-  //     setPool({
-  //       ...pool,
-  //       Yesbug: parseInt(event[2]?._hex, 16)
-  //     });
-  //   }
-  // })
+  useContractEvent({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    eventName: "AuditYesPoolUpdated",
+    listener: event => {
+      alert(
+        `YesBug pool now has ${
+          parseInt(event[2]?._hex, 16) / conversion
+        } ${currency}.`
+      );
+      setPool({
+        ...pool,
+        Yesbug: parseInt(event[2]?._hex, 16) / conversion,
+      });
+    },
+  });
 
   /*
   @desc : Funding no bug pool, receiving the emitted event for AuditNoPoolUpdated
   */
-  // const { config : configForNoBug } = usePrepareContractWrite({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   functionName: "fundNoBugs",
-  //   args: [audit.contract_address],
-  //   overrides: {
-  //     value: ethers.utils.parseEther(noBugMoney.toString())
-  //   },
-  // });
+  const { config: configForNoBug } = usePrepareContractWrite({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    functionName: "fundNoBugsPool",
+    args: [audit.contract_address],
+    overrides: {
+      value:
+        noBugMoney === ""
+          ? ethers.utils.parseEther("0")
+          : ethers.utils.parseEther(noBugMoney.toString()),
+    },
+  });
 
-  // const { write : noBugPoolSubmit } = useContractWrite(configForNoBug);
+  const { write: noBugPoolSubmit } = useContractWrite(configForNoBug);
 
-  // useContractEvent({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   eventName: "AuditNoPoolUpdated",
-  //   listener: event => {
-  //     alert(
-  //       `NoBug pool now has ${parseInt(event[2]?._hex, 16)} ${currency}.`
-  //     ),
-  //       setPool({
-  //         ...pool,
-  //         NoBug: parseInt(event[2]?._hex, 16)
-  //       });
-  //     }
-  // });
+  useContractEvent({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    eventName: "AuditNoPoolUpdated",
+    listener: event => {
+      alert(
+        `NoBug pool now has ${
+          parseInt(event[2]?._hex, 16) / conversion
+        } ${currency}.`
+      ),
+        setPool({
+          ...pool,
+          NoBug: parseInt(event[2]?._hex, 16) / conversion,
+        });
+    },
+  });
 
-  // useContractEvent({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   eventName: "AuditCompleted",
-  //   listener: event => {
-  //     alert(
-  //       `This audit has been completed.`
-  //     ),
-  //       setComplete({
-  //         ...auditComplete,
-  //         complete: true,
-  //         bugBy: event[0],
-  //         verdict: event[3],
-  //       });
-  //     }
-  // });
+  useContractEvent({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    eventName: "AuditCompleted",
+    listener: event => {
+      alert(`This audit has been completed.`),
+        setComplete({
+          ...auditComplete,
+          complete: true,
+          bugBy: event[0],
+          verdict: event[3],
+        });
+    },
+  });
 
   const bugsArray = bugs.map(bug => bug.id);
   const handleBugSubmit = async () => {
@@ -232,6 +242,15 @@ const AuditProfile = ({ audit, bugs }) => {
     audit.contract_address;
   const { address, isConnecting, isDisconnected } = useAccount();
 
+  useState(() => {
+    console.log(auditResult);
+    if (auditResult) {
+      setPool({
+        NoBug: parseInt(auditResult.totalNoPool._hex, 16) / conversion,
+        Yesbug: parseInt(auditResult.totalYesPool._hex, 16) / conversion,
+      });
+    }
+  }, [auditResult]);
   return (
     <Flex flexDir="column">
       <Head>
@@ -369,7 +388,7 @@ const AuditProfile = ({ audit, bugs }) => {
           size="lg"
           mx="auto"
           my="6"
-          fontFamily="Aeonik Light"
+          fontFamily="Laser"
           letterSpacing="1.5px"
           border="1px"
           borderColor="red.100"
@@ -381,7 +400,6 @@ const AuditProfile = ({ audit, bugs }) => {
           _hover={{
             bg: "transparent",
           }}
-          leftIcon={<BsBug />}
         >
           Report a Bug
         </Button>
@@ -419,6 +437,7 @@ const AuditProfile = ({ audit, bugs }) => {
                     required
                     placeholder="Amount"
                     size="lg"
+                    type="number"
                     value={bugMoney}
                     w="120px"
                     onChange={e => setBugMoney(e.target.value)}
@@ -440,11 +459,11 @@ const AuditProfile = ({ audit, bugs }) => {
                 bg="transparent"
                 color="gray.200"
                 onClick={async () => {
-                  if (bugDescription.length > 0) {
+                  if (bugDescription.length > 0 && !isDisconnected) {
                     await handleBugSubmit();
-                    // bugSubmit?.();
+                    bugSubmit?.();
                     onClose();
-                  }
+                  } else alert("Connect your wallet to report a bug.");
                 }}
                 _hover={{
                   bg: "gray.200",
@@ -496,36 +515,41 @@ const AuditProfile = ({ audit, bugs }) => {
             textAlign="center"
           >
             <Heading color="white" my="4" fontSize="2xl">
-              {/*TODO { auditResult?.data?[1]?.map((juryMember, index) => {
-                  return (
-                    <Box key={index} py="2" mx="4">
-                      <Link href={`/users/${juryMember}`} passHref>
-                        <Linker>
-                          <Text
-                            fontSize="1.1em"
-                            color="red.100"
-                            className="address"
-                            display="inline-flex"
-                            _selection={{
-                              color: "red.800",
-                              background: "white",
-                            }}
-                            _hover={{
-                              color: "red.50",
-                            }}
-                          >
-                            {juryMember}
-                          </Text>
-                        </Linker>
-                      </Link>
-                    </Box>
-                  );
-                })
-              : 
-                <Heading color="white" my="4" fontSize="2xl" fontFamily="Laser">
-                  Fetching...
-                </Heading>
-              } */}
+              {fetchStatus === "fetching"
+                ? null
+                : auditResult.jury
+                    .filter(
+                      element =>
+                        element !== "0x0000000000000000000000000000000000000000"
+                    )
+                    .map((juryMember, index) => (
+                      <Box key={index} py="2" mx="4">
+                        <Link
+                          href={`/users/${juryMember}`}
+                          passHref
+                          key={index}
+                        >
+                          <Linker>
+                            <Text
+                              fontSize="1.1em"
+                              color="red.100"
+                              my="2"
+                              className="address"
+                              display="inline-flex"
+                              _selection={{
+                                color: "red.800",
+                                background: "white",
+                              }}
+                              _hover={{
+                                color: "red.50",
+                              }}
+                            >
+                              {juryMember}
+                            </Text>
+                          </Linker>
+                        </Link>
+                      </Box>
+                    ))}
             </Heading>
           </Flex>
         </Flex>
@@ -564,7 +588,7 @@ const AuditProfile = ({ audit, bugs }) => {
             alignItems="center"
             textAlign="center"
           >
-            {/*TODO {Object.keys(pool).map((currentPool, index) => {
+            {Object.keys(pool).map((currentPool, index) => {
               return (
                 <VStack key={index} my="4" gap="4">
                   <Heading
@@ -587,16 +611,17 @@ const AuditProfile = ({ audit, bugs }) => {
                       background: "white",
                     }}
                   >
-                    parseInt(event[2]?._hex,
-                    { currentPool === "NoBug" ? parseInt(auditResult?.data[4]?._hex,16) : parseInt(auditResult?.data[3]?._hex,16)  }
+                    {currentPool === "NoBug" ? pool["NoBug"] : pool["Yesbug"]}
+                    &nbsp;
                     {currency}
                   </Heading>
 
                   <Input
                     required
                     size="md"
+                    type="number"
                     value={currentPool === "NoBug" ? noBugMoney : bugMoney}
-                    w="60px"
+                    w="100px"
                     onChange={e => {
                       if (currentPool === "NoBug")
                         setNoBugMoney(e.target.value);
@@ -621,15 +646,18 @@ const AuditProfile = ({ audit, bugs }) => {
                     paddingX="6"
                     paddingY="2"
                     onClick={() => {
-                      // if(currentPool === "NoBug") noBugPoolSubmit?.();
-                      // else bugSubmit?.();
+                      if (currentPool === "NoBug" && noBugMoney !== "")
+                        noBugPoolSubmit?.();
+                      else if (currentPool === "YesBug" && bugMoney !== "")
+                        bugSubmit?.();
+                      else alert("Please enter an amount to submit.");
                     }}
                   >
                     Bet
                   </Button>
                 </VStack>
               );
-            })} */}
+            })}
           </Flex>
         </Flex>
 

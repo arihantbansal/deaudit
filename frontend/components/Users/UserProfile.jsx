@@ -46,8 +46,7 @@ import { ethers } from "ethers";
 
 // Construct with token and endpoint
 const client = new Web3Storage({
-  token:
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweGQ2OUZiZERiNkI3YTZDYTA5MEU1ZDdlMENlNTU3MDJBNmEyRTMwZEUiLCJpc3MiOiJ3ZWIzLXN0b3JhZ2UiLCJpYXQiOjE2NTk0MjQxMTQ1MzAsIm5hbWUiOiJkZWF1ZGl0In0.brbCSwSRpKGpzPA_uz2LtoUUQlq0HXv_gzta7dQsjxE",
+  token: process.env.NEXT_APP_IPFS_TOKEN,
 });
 
 const UserProfile = ({ user, bugs }) => {
@@ -184,31 +183,32 @@ const UserProfile = ({ user, bugs }) => {
   //   args: [user.address],
   // });
 
+  // console.log(judgedAuditsData);
   /*
   @desc : Add user to jury pool
   */
-  //  const { config : configForJury, error } = usePrepareContractWrite({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   functionName: "addEligibleJuryMember",
-  //   args: address === user.address ? [address] : "",
-  // });
+  const { config: configForJury } = usePrepareContractWrite({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    functionName: "addEligibleJuryMember",
+    args: address === user.address ? [address] : [""],
+  });
 
-  // const { write : juryPoolSubmit } = useContractWrite(configForJury);
+  const { write: juryPoolSubmit } = useContractWrite(configForJury);
 
-  //   // Get eligible jury pool
-  //   const jurydata = useContractRead({
-  //     addressOrName: CONTRACT_ADDRESS,
-  //     contractInterface: contractAbi,
-  //     functionName: "getEligibleJuryMembers",
-  //   });
+  // Get eligible jury pool
+  const { data: jurydata, fetchStatus: juryFetch } = useContractRead({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    functionName: "getEligibleJuryMembers",
+  });
 
-  // useContractEvent({
-  //   addressOrName: CONTRACT_ADDRESS,
-  //   contractInterface: contractAbi,
-  //   eventName: 'JuryMemberAdded',
-  //   listener: (event) => alert(`${event[0]} has been added to the jury pool.`)
-  // })
+  useContractEvent({
+    addressOrName: CONTRACT_ADDRESS,
+    contractInterface: contractAbi,
+    eventName: "JuryMemberAdded",
+    listener: event => alert(`${event[0]} has been added to the jury pool.`),
+  });
 
   useEffect(() => {
     if (address === user.address) {
@@ -358,9 +358,9 @@ const UserProfile = ({ user, bugs }) => {
                 onClick={() => {
                   userDispatch({
                     type: "setOnJury",
-                    payload: !userState.on_jury,
+                    payload: true,
                   });
-                  //TODO juryPoolSubmit?.();
+                  juryPoolSubmit?.();
                 }}
               >
                 Apply for Jury
@@ -604,10 +604,14 @@ const UserProfile = ({ user, bugs }) => {
           color="purple.50"
           my="3"
         >
-          isJury :{" "}
-          {
-            //TODO juryData?.data?.findIndex(address) == -1 ? "false" : "true"
-          }
+          Jury Member :&nbsp;
+          {juryFetch === "fetching"
+            ? null
+            : jurydata !== undefined
+            ? jurydata.includes(address)
+              ? "Yes"
+              : "No"
+            : null}
         </Text>
 
         <HStack gap="5" my="4">

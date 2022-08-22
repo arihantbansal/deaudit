@@ -1,4 +1,4 @@
-import { Button, Flex, Heading, Image } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, Image } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Link as Linker } from "@chakra-ui/react";
 import Link from "next/link";
@@ -23,9 +23,29 @@ const NavBar = () => {
         });
   }, [address]);
 
+  const createUser = useCallback(() => {
+    fetch(`${config}/users`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        address: address,
+      }),
+    })
+      .then(res => {
+        if (res.status === 200) console.log("User created.");
+        else if (res.status === 500) console.log("User already exists in DB.");
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, [address]);
+
   useEffect(() => {
+    createUser();
     fetchUser();
-  }, [address, fetchUser]);
+  }, [address, fetchUser, createUser]);
 
   return (
     <>
