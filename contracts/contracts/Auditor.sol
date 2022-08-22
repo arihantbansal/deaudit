@@ -35,7 +35,6 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 	address[] public contractsAudited;
 	mapping(address => Audit) public audits;
 	mapping(address => address[]) public juryMemberToAudits;
-	address payable public owner; // public payable address for fees
 
 	// global variables for Chainlink VRF
 	VRFCoordinatorV2Interface COORDINATOR;
@@ -85,18 +84,12 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 	);
 
 	// custom modifiers
-	modifier onlyOwner() {
-		require(msg.sender == owner, "Only accessible by owner!");
-		_;
-	}
-
 	modifier equallyFunded() {
 		require(msg.value > 0 && msg.value % 2 == 0, "Must be equally funded!");
 		_;
 	}
 
 	constructor(uint64 subscriptionId) VRFConsumerBaseV2(vrfCoordinator) {
-		owner = payable(msg.sender);
 		COORDINATOR = VRFCoordinatorV2Interface(vrfCoordinator);
 		vrfSubscriptionId = subscriptionId;
 	}
@@ -273,7 +266,7 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 		emit AuditCompleted(audits[contractAddress].creator, contractAddress, block.timestamp, verdict);
 	}
 
-	function addEligibleJuryMember(address memberAddress) public onlyOwner {
+	function addEligibleJuryMember(address memberAddress) external {
 		eligibleJuryMembers.push(memberAddress);
 
 		emit JuryMemberAdded(memberAddress, block.timestamp);
@@ -378,8 +371,7 @@ contract Auditor is VRFConsumerBaseV2, KeeperCompatibleInterface {
 		return eligibleJuryMembers;
 	}
 
-	function transferOwnership(address payable newOwner) external onlyOwner {
-		require(newOwner != owner, "new owner cannot be same as old owner");
-		owner = newOwner;
+	function getAuditsUserIsOnJuryOf(address userAddress) external view returns (address[] memory) {
+		return juryMemberToAudits[userAddress];
 	}
 }
