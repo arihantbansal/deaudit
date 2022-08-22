@@ -1,4 +1,4 @@
-# deaudit - A decentralized Audit marketplace on Polygon
+# DeAudit - A decentralized Audit marketplace on Polygon
 
 ## Inspiration
 
