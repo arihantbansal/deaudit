@@ -62,7 +62,7 @@ const NewAudit = () => {
   // const { config : configForAuditPost } = usePrepareContractWrite({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
-  //   functionName: "register",
+  //   functionName: "createAudit",
   //   args: [contractAddress],
   //   overrides: {
   //     value: ethers.utils.parseEther(poolSize.toString())
@@ -74,13 +74,12 @@ const NewAudit = () => {
   // useContractEvent({
   //   addressOrName: CONTRACT_ADDRESS,
   //   contractInterface: contractAbi,
-  //   eventName: 'createAudit',
+  //   eventName: 'AuditRequested',
   //   listener: (event) => {
-  //       console.log(event)
-  //       Router.push(`/audits/${event[1]}`);
   //       setContractAddress("");
   //       setTags([]);
   //       setPoolSize(0);
+  //       Router.push(`/audits/${event[1]}`);
   //   }
   // })
 
@@ -137,7 +136,7 @@ const NewAudit = () => {
         console.log(err);
       });
 
-    // auditSubmit?.();
+    //TODO auditSubmit?.();
   };
 
   return (
