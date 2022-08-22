@@ -79,7 +79,19 @@ const NavBar = () => {
           </a>
         </Link>
 
-        <Flex m="20" justifyContent="space-around" flexDir="row" gap="6">
+        <Flex m="20" justifyContent="space-around" flexDir="row" gap="2">
+          <Link href="/users" passHref>
+            <Linker>
+              <Button
+                variant="solid"
+                bg="transparent"
+                size="md"
+                className="stack"
+              >
+                Users
+              </Button>
+            </Linker>
+          </Link>
           <Link href="/audits" passHref>
             <Linker>
               <Button

@@ -44,7 +44,8 @@ const Users = ({ users }) => {
             <Box py={12} px={6} w="70%" color="black.100" textAlign="center">
               <Heading className={styles.userHeader}>{user.address}</Heading>
               <Heading className={styles.userHeader}>
-                Audits created : {user.audits_requested?.length}
+                Audits created :{" "}
+                {user.audits_requested ? user.audits_requested.length : 0}
               </Heading>
               <Heading className={styles.userHeader}>
                 Bugs Reported :{" "}

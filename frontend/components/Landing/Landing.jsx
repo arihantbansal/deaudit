@@ -10,6 +10,7 @@ import {
   Divider,
   Center,
 } from "@chakra-ui/react";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import styles from "@styles/Landing.module.scss";
 import Head from "next/head";
 import { BsArrowRight } from "react-icons/bs";
@@ -32,7 +33,7 @@ const Landing = () => {
       <Flex
         flexDirection="column"
         w="80%"
-        mt="5vh"
+        mt="2vh"
         h="87vh"
         justifyContent="space-evenly"
         overflowX="none"
@@ -60,21 +61,9 @@ const Landing = () => {
           <Image src="/assets/wrench-512.png" w="10vw" alt="Wrench" />
         </HStack>
 
-        <Link href="/users" textDecor="none">
-          <HStack my="3" w="100%">
-            <Button
-              fontSize="2xl"
-              size="lg"
-              className={styles.button}
-              _active={{
-                bg: "transparent",
-              }}
-            >
-              See our users
-            </Button>
-            <BsArrowRight fontSize="3em" className={styles.arrow} />
-          </HStack>
-        </Link>
+        <Box my="3" ml="32" w="50%" transform="scale(1.5)">
+          <ConnectButton chainStatus="name" showBalance={true} />
+        </Box>
       </Flex>
 
       <Flex

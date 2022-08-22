@@ -367,6 +367,7 @@ const UserProfile = ({ user, bugs }) => {
                     type: "setOnJury",
                     payload: true,
                   });
+                  handleProfileModal();
                   juryPoolSubmit?.();
                 }}
               >
@@ -615,7 +616,7 @@ const UserProfile = ({ user, bugs }) => {
           {errorJury || loadingJury
             ? null
             : jurydata !== undefined
-            ? jurydata.includes(address)
+            ? jurydata.includes(user.address)
               ? "Yes"
               : "No"
             : null}
