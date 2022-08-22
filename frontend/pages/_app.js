@@ -32,12 +32,12 @@ const { chains, provider } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: "DEAudit",
+  appName: "DeAudit",
   chains,
 });
 
 const appInfo = {
-  appName: "DEAudit",
+  appName: "DeAudit",
 };
 
 const wagmiClient = createClient({
