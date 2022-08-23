@@ -45,7 +45,11 @@ const Users = ({ users }) => {
               <Heading className={styles.userHeader}>{user.address}</Heading>
               <Heading className={styles.userHeader}>
                 Audits created :{" "}
-                {user.audits_requested ? user.audits_requested.length : 0}
+                {user.audits_requested
+                  ? user.audits_requested.filter(
+                      (item, i) => user.audits_requested.indexOf(item) === i
+                    ).length
+                  : 0}
               </Heading>
               <Heading className={styles.userHeader}>
                 Bugs Reported :{" "}

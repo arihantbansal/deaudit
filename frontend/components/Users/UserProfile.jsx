@@ -122,7 +122,6 @@ const UserProfile = ({ user, bugs }) => {
       name: file[0].name + "-" + user.address,
       maxRetries: 3,
     });
-
     const res = await client.get(rootCid);
     const returnFile = await res.files();
     const image =
@@ -683,31 +682,33 @@ const UserProfile = ({ user, bugs }) => {
             <Heading my="4" fontSize="2xl">
               {isLoadingAudits || isErrorAudits
                 ? null
-                : judgedAuditsData?.map((audit, index) => {
-                    return (
-                      <Box key={index} py="2" mx="4">
-                        <Link href={`/audits/${audit}`} passHref>
-                          <Linker>
-                            <Text
-                              fontSize="1.1em"
-                              className="address"
-                              color="purple.50"
-                              display="inline-flex"
-                              _selection={{
-                                color: "purple.800",
-                                background: "white",
-                              }}
-                              _hover={{
-                                color: "purple.50",
-                              }}
-                            >
-                              {audit}
-                            </Text>
-                          </Linker>
-                        </Link>
-                      </Box>
-                    );
-                  })}
+                : judgedAuditsData
+                    ?.filter((item, i) => judgedAuditsData.indexOf(item) === i)
+                    .map((audit, index) => {
+                      return (
+                        <Box key={index} py="2" mx="4">
+                          <Link href={`/audits/${audit}`} passHref>
+                            <Linker>
+                              <Text
+                                fontSize="1.1em"
+                                className="address"
+                                color="purple.50"
+                                display="inline-flex"
+                                _selection={{
+                                  color: "purple.800",
+                                  background: "white",
+                                }}
+                                _hover={{
+                                  color: "purple.50",
+                                }}
+                              >
+                                {audit}
+                              </Text>
+                            </Linker>
+                          </Link>
+                        </Box>
+                      );
+                    })}
             </Heading>
           </Flex>
         </Flex>
@@ -755,31 +756,35 @@ const UserProfile = ({ user, bugs }) => {
               fontSize="2xl"
               fontFamily="Cutive Mono"
             >
-              {userState.audits_requested?.map((audit, index) => {
-                return (
-                  <VStack key={index} py="2" mx="4">
-                    <Link href={`/audits/${audit}`} passHref>
-                      <Linker>
-                        <Text
-                          fontSize="1.1em"
-                          color="purple.50"
-                          display="inline-flex"
-                          className="address"
-                          _selection={{
-                            color: "purple.800",
-                            background: "white",
-                          }}
-                          _hover={{
-                            color: "purple.50",
-                          }}
-                        >
-                          {audit}
-                        </Text>
-                      </Linker>
-                    </Link>
-                  </VStack>
-                );
-              })}
+              {userState.audits_requested
+                ?.filter(
+                  (item, i) => userState.audits_requested.indexOf(item) === i
+                )
+                .map((audit, index) => {
+                  return (
+                    <VStack key={index} py="2" mx="4">
+                      <Link href={`/audits/${audit}`} passHref>
+                        <Linker>
+                          <Text
+                            fontSize="1.1em"
+                            color="purple.50"
+                            display="inline-flex"
+                            className="address"
+                            _selection={{
+                              color: "purple.800",
+                              background: "white",
+                            }}
+                            _hover={{
+                              color: "purple.50",
+                            }}
+                          >
+                            {audit}
+                          </Text>
+                        </Linker>
+                      </Link>
+                    </VStack>
+                  );
+                })}
             </Heading>
           </Flex>
         </Flex>
