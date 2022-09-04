@@ -19,3 +19,6 @@ export const CONTRACT_ADDRESS = "0x267bCA927A7DF6C5870D366aF324b31A64319e80";
 export const currency = "MATIC";
 
 export const conversion = 1e18;
+
+export const questionMark =
+  "https://images.pexels.com/photos/5428826/pexels-photo-5428826.jpeg";

@@ -38,39 +38,50 @@ import { BsBug } from "react-icons/bs";
 import { AiOutlineAudit } from "react-icons/ai";
 import { GiInjustice } from "react-icons/gi";
 import { useEnsName } from "wagmi";
-import { config, CONTRACT_ADDRESS, ellipseAddress } from "@lib/utilities";
+import {
+  config,
+  CONTRACT_ADDRESS,
+  ellipseAddress,
+  questionMark,
+} from "@lib/utilities";
 import { Web3Storage } from "web3.storage";
 import Link from "next/link";
 import contractAbi from "@lib/contractAbi.json";
 import { ethers } from "ethers";
+import { useRouter } from "next/router";
 
 // Construct with token and endpoint
 const client = new Web3Storage({
   token: process.env.NEXT_APP_IPFS_TOKEN,
 });
 
-const UserProfile = ({ user, bugs }) => {
+const UserProfile = ({ userAddress }) => {
+  const router = useRouter();
+
   const profileModal = useDisclosure();
   const loadingModal = useDisclosure();
-  const { data, isError, isLoading } = useEnsName({ address: user.address });
-  const cutAddress = "User " + ellipseAddress(user.address);
+  const { data, isError, isLoading } = useEnsName({
+    address: userAddress.address,
+  });
+
+  const [bugs, setBugs] = useState([]);
   let [title, setTitle] = useState("");
   const { address } = useAccount();
+  const [cutAddress, setCutAddress] = useState("");
+  const [opacity, setOpacity] = useState("10%");
 
   const initialSocialState = {
-    github: user.github_username ? user.github_username : "",
-    twitter: user.twitter_username ? user.twitter_username : "",
-    linkedin: user.linkedin_username ? user.linkedin_username : "",
-    bio: user.bio ? user.bio : "",
-    profileImage: user.profile_image,
-    coverImage: user.cover_image,
+    github: "",
+    twitter: "",
+    linkedin: "",
+    bio: "",
+    profileImage: "/assets/questionMark.jpg",
+    coverImage: "/assets/questionBg.jpg",
   };
 
   const initialUserState = {
-    audits_requested: user.audits_requested,
-    bugs_reported: user.bugs_reported,
-    jury_of: user.jury_of,
-    on_jury: user.on_jury,
+    audits_requested: [],
+    on_jury: false,
   };
 
   const socialReducer = (state, action) => {
@@ -94,14 +105,8 @@ const UserProfile = ({ user, bugs }) => {
 
   const userReducer = (state, action) => {
     switch (action.type) {
-      case "setJury":
-        return { ...state, jury: action.payload };
       case "setAuditsRequested":
         return { ...state, audits_requested: action.payload };
-      case "setBugsReported":
-        return { ...state, bugs_reported: action.payload };
-      case "setJuryOf":
-        return { ...state, jury_of: action.payload };
       case "setOnJury":
         return { ...state, on_jury: action.payload };
       default:
@@ -119,7 +124,7 @@ const UserProfile = ({ user, bugs }) => {
     loadingModal.onOpen();
     const file = e.target.files;
     const rootCid = await client.put(file, {
-      name: file[0].name + "-" + user.address,
+      name: file[0].name + "-" + userAddress.address,
       maxRetries: 3,
     });
     const res = await client.get(rootCid);
@@ -135,7 +140,7 @@ const UserProfile = ({ user, bugs }) => {
     loadingModal.onOpen();
     const file = e.target.files;
     const rootCid = await client.put(file, {
-      name: file[0].name + "-" + user.address,
+      name: file[0].name + "-" + userAddress.address,
       maxRetries: 3,
     });
 
@@ -149,7 +154,7 @@ const UserProfile = ({ user, bugs }) => {
 
   const handleProfileModal = () => {
     loadingModal.onOpen();
-    fetch(`${config}/users/${user.address}`, {
+    fetch(`${config}/users/${userAddress.address.address}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -183,7 +188,7 @@ const UserProfile = ({ user, bugs }) => {
     addressOrName: CONTRACT_ADDRESS,
     contractInterface: contractAbi,
     functionName: "getAuditsUserIsOnJuryOf",
-    args: [user.address],
+    args: [userAddress.address],
   });
 
   /*
@@ -193,7 +198,7 @@ const UserProfile = ({ user, bugs }) => {
     addressOrName: CONTRACT_ADDRESS,
     contractInterface: contractAbi,
     functionName: "addEligibleJuryMember",
-    args: address === user.address ? [address] : [""],
+    args: address === userAddress.address ? [address] : [""],
   });
 
   const { write: juryPoolSubmit } = useContractWrite(configForJury);
@@ -217,15 +222,65 @@ const UserProfile = ({ user, bugs }) => {
   });
 
   useEffect(() => {
-    if (address === user.address) {
+    if (address === userAddress.address) {
       setTitle("Profile");
     } else {
       setTitle(cutAddress);
     }
-  }, [cutAddress, address, user.address]);
+  }, [cutAddress, address, userAddress.address]);
+
+  useEffect(() => {
+    const init = async () => {
+      const [usersRes, bugsRes] = await Promise.all([
+        fetch(`${config}/users/${userAddress.address}`),
+        fetch(`${config}/bugs/users/${userAddress.address}`),
+      ]);
+
+      const [user, bugList] = await Promise.all([
+        usersRes.json(),
+        bugsRes.json(),
+      ]);
+      if (user.data === undefined || bugList.data === undefined)
+        router.push("/404");
+      else {
+        socialDispatch({
+          type: "setGithub",
+          payload: user.data.github_username,
+        });
+        socialDispatch({
+          type: "setTwitter",
+          payload: user.data.twitter_username,
+        });
+        socialDispatch({
+          type: "setLinkedin",
+          payload: user.data.linkedin_username,
+        });
+        socialDispatch({ type: "setBio", payload: user.data.bio });
+        socialDispatch({
+          type: "setProfileImage",
+          payload: user.data.profile_image,
+        });
+        socialDispatch({
+          type: "setCoverImage",
+          payload: user.data.cover_image,
+        });
+        userDispatch({
+          type: "setAuditsRequested",
+          payload: user.data.audits_requested,
+        });
+
+        setBugs(bugList.data);
+        userDispatch({ type: "setOnJury", payload: user.data.on_jury });
+        setCutAddress("User" + ellipseAddress(userAddress.address));
+
+        setOpacity("100%");
+      }
+    };
+    init();
+  }, [userAddress.address, address, router]);
 
   return (
-    <Center w="100vw">
+    <Center w="100vw" opacity={opacity}>
       <Flex className="container">
         {[...Array(350)].map((e, i) => (
           <Box className="line" key={i}></Box>
@@ -270,7 +325,7 @@ const UserProfile = ({ user, bugs }) => {
           mb="4"
         />
 
-        {!address ? null : address === user.address ? (
+        {!address ? null : address === userAddress.address ? (
           <Button
             fontSize="3em"
             mx="auto"
@@ -293,8 +348,7 @@ const UserProfile = ({ user, bugs }) => {
         ) : null}
         <Heading
           color="purple.50"
-          mt="4"
-          mb="4"
+          my="4"
           fontSize="2.2em"
           letterSpacing="2px"
           fontFamily="Aeonik Light"
@@ -303,7 +357,7 @@ const UserProfile = ({ user, bugs }) => {
             background: "white",
           }}
         >
-          {user.address}
+          {userAddress.address}
         </Heading>
 
         <Text
@@ -600,7 +654,7 @@ const UserProfile = ({ user, bugs }) => {
           fontFamily="Azeret Thin"
           fontSize="1.5em"
           color="purple.50"
-          my="3"
+          my="4"
         >
           {socialState.bio}
         </Text>
@@ -609,13 +663,13 @@ const UserProfile = ({ user, bugs }) => {
           fontFamily="Azeret Thin"
           fontSize="1.5em"
           color="purple.50"
-          my="3"
+          my="4"
         >
           Jury Member :&nbsp;
           {errorJury || loadingJury
             ? null
             : jurydata !== undefined
-            ? jurydata.includes(user.address)
+            ? jurydata.includes(userAddress.address)
               ? "Yes"
               : "No"
             : null}
@@ -641,9 +695,9 @@ const UserProfile = ({ user, bugs }) => {
             <FiLinkedin size="2.5em" />
           </Linker>
         </HStack>
+
         <Flex
-          m="4"
-          p="4"
+          my="4"
           w="50vw"
           h="fit-content"
           flexDir="column"
@@ -712,6 +766,7 @@ const UserProfile = ({ user, bugs }) => {
             </Heading>
           </Flex>
         </Flex>
+
         <Flex
           m="4"
           p="4"

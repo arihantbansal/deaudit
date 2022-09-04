@@ -46,8 +46,10 @@ import contractAbi from "@lib/contractAbi.json";
 import { BsBug } from "react-icons/bs";
 import { ethers } from "ethers";
 import AuditBug from "./AuditBug";
+import { useRouter } from "next/router";
 
-const AuditProfile = ({ audit, bugs }) => {
+const AuditProfile = ({ auditAddress }) => {
+  const router = useRouter();
   const [bugMoney, setBugMoney] = useState(0);
   const [noBugMoney, setNoBugMoney] = useState(0);
   const [auditComplete, setComplete] = useState({
@@ -55,6 +57,13 @@ const AuditProfile = ({ audit, bugs }) => {
     bugBy: "",
     verdict: "",
   });
+
+  const [createdBy, setCreatedBy] = useState("");
+  const [tags, setTags] = useState([]);
+  const [bugs, setBugs] = useState([]);
+  const [opacity, setOpacity] = useState("10%");
+  const [auditUrl, setAuditUrl] = useState("");
+  const [specificBugsArr, setSpecificBugsArr] = useState([]);
 
   const [pool, setPool] = useState({
     NoBug: 0,
@@ -72,7 +81,7 @@ const AuditProfile = ({ audit, bugs }) => {
     addressOrName: CONTRACT_ADDRESS,
     contractInterface: contractAbi,
     functionName: "getAuditData",
-    args: [audit.contract_address],
+    args: [auditAddress.address],
   });
   /*
   @desc : posting a bug, receiving the emitted event for NewBugReported and AuditYesPoolUpdated
@@ -81,7 +90,7 @@ const AuditProfile = ({ audit, bugs }) => {
     addressOrName: CONTRACT_ADDRESS,
     contractInterface: contractAbi,
     functionName: "reportBug",
-    args: [audit.contract_address],
+    args: [auditAddress.address],
     overrides: {
       value:
         bugMoney === ""
@@ -123,7 +132,7 @@ const AuditProfile = ({ audit, bugs }) => {
     addressOrName: CONTRACT_ADDRESS,
     contractInterface: contractAbi,
     functionName: "fundNoBugsPool",
-    args: [audit.contract_address],
+    args: [auditAddress.address],
     overrides: {
       value:
         noBugMoney === ""
@@ -166,7 +175,6 @@ const AuditProfile = ({ audit, bugs }) => {
     },
   });
 
-  const bugsArray = bugs.map(bug => bug.id);
   const handleBugSubmit = async () => {
     // Create user if DNE
     fetch(`${config}/users`, {
@@ -192,7 +200,7 @@ const AuditProfile = ({ audit, bugs }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        audit_id: audit.contract_address,
+        audit_id: auditAddress.address,
         reported_by: address,
         description: bugDescription,
       }),
@@ -201,13 +209,13 @@ const AuditProfile = ({ audit, bugs }) => {
     const num = data.data;
 
     // update audit with the bug using the ID from above
-    fetch(`${config}/audits/${audit.contract_address}`, {
+    fetch(`${config}/audits/${auditAddress.address}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        bugs_reported: [...bugsArray, num],
+        bugs_reported: [...specificBugsArr, num],
       }),
     })
       .then(res => {
@@ -237,14 +245,11 @@ const AuditProfile = ({ audit, bugs }) => {
     setBugDescription("");
   };
 
-  const title = `Audit ${ellipseAddress(audit.contract_address)}`;
+  const title = `Audit ${ellipseAddress(auditAddress.address)}`;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [bugDescription, setBugDescription] = useState("");
-  const auditURL =
-    allChains.find(c => c.name === audit.chain).blockExplorers.default.url +
-    "/address/" +
-    audit.contract_address;
   const { address, isConnecting, isDisconnected } = useAccount();
+  const [audit, setAudit] = useState({});
 
   useEffect(() => {
     if (auditResult) {
@@ -254,8 +259,41 @@ const AuditProfile = ({ audit, bugs }) => {
       });
     }
   }, [auditResult]);
+
+  useEffect(() => {
+    const init = async () => {
+      const [auditsRes, bugsRes] = await Promise.all([
+        fetch(`${config}/audits/${auditAddress.address}`),
+        fetch(`${config}/bugs/audits/${auditAddress.address}`),
+      ]);
+
+      const [audit, bugList] = await Promise.all([
+        auditsRes.json(),
+        bugsRes.json(),
+      ]);
+
+      if (audit.data === undefined || bugList.data === undefined)
+        router.push("/404");
+      else {
+        setCreatedBy(audit.data.created_by);
+        setTags(audit.data.tags);
+        setBugs(bugList.data);
+        setAuditUrl(
+          allChains.find(c => c.name === audit.data.chain).blockExplorers
+            .default.url +
+            "/address/" +
+            auditAddress.address
+        );
+        setSpecificBugsArr(bugs?.map(bug => bug.id));
+        setOpacity("100%");
+        setAudit(audit.data);
+      }
+    };
+    init();
+  }, [auditAddress, router, bugs]);
+
   return (
-    <Flex flexDir="column" overflowX="none">
+    <Flex flexDir="column" overflowX="none" opacity={opacity}>
       <Head>
         <title>{title}</title>
       </Head>
@@ -293,7 +331,7 @@ const AuditProfile = ({ audit, bugs }) => {
             className="audit"
             letterSpacing="1px"
             target="_blank"
-            href={auditURL}
+            href={auditUrl}
             _hover={{
               color: "red.50",
             }}
@@ -302,7 +340,7 @@ const AuditProfile = ({ audit, bugs }) => {
               background: "white",
             }}
           >
-            {audit.contract_address}
+            {auditAddress.address}
           </Linker>
         </Heading>
 
@@ -317,7 +355,7 @@ const AuditProfile = ({ audit, bugs }) => {
           }}
         >
           Requestor :
-          <Link href={`/users/${audit.created_by}`} passHref>
+          <Link href={`/users/${createdBy}`} passHref>
             <Linker>
               <Text
                 color="red.100"
@@ -332,7 +370,7 @@ const AuditProfile = ({ audit, bugs }) => {
                   background: "white",
                 }}
               >
-                {audit.created_by}
+                {createdBy}
               </Text>
             </Linker>
           </Link>
@@ -370,7 +408,7 @@ const AuditProfile = ({ audit, bugs }) => {
             </Heading>
           )}
           <HStack gap="6" mt="6">
-            {audit.tags?.map((tag, index) => (
+            {tags?.map((tag, index) => (
               <Tag
                 key={index}
                 size="lg"

@@ -13,7 +13,6 @@ import {
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import styles from "@styles/Landing.module.scss";
 import Head from "next/head";
-import { BsArrowRight } from "react-icons/bs";
 
 const Landing = () => {
   return (
