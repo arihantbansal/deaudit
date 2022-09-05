@@ -49,6 +49,7 @@ import Link from "next/link";
 import contractAbi from "@lib/contractAbi.json";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
+import Loading from "@components/Loading/Loading";
 
 // Construct with token and endpoint
 const client = new Web3Storage({
@@ -64,6 +65,7 @@ const UserProfile = ({ userAddress }) => {
     address: userAddress.address,
   });
 
+  const [loading, setLoading] = useState(true);
   const [bugs, setBugs] = useState([]);
   let [title, setTitle] = useState("");
   const { address } = useAccount();
@@ -170,7 +172,7 @@ const UserProfile = ({ userAddress }) => {
       }),
     })
       .then(res => {
-        console.log(res);
+        console.log("Success");
       })
       .catch(err => {
         console.log(err);
@@ -274,668 +276,677 @@ const UserProfile = ({ userAddress }) => {
         setCutAddress("User" + ellipseAddress(userAddress.address));
 
         setOpacity("100%");
+        setLoading(false);
       }
     };
     init();
   }, [userAddress.address, address, router]);
 
-  return (
-    <Center w="100vw" opacity={opacity}>
-      <Flex className="container">
-        {[...Array(350)].map((e, i) => (
-          <Box className="line" key={i}></Box>
-        ))}
-      </Flex>
-      <Flex
-        flexDir="column"
-        justify="center"
-        alignItems="center"
-        pos="absolute"
-        overflowX="hidden"
-        top="0"
-        w="100vw"
-      >
-        <Head>
-          <title>{title}</title>
-        </Head>
-        <Flex
-          w="100%"
-          mt="12vh"
-          h="73vh"
-          bgImage={`url(${socialState.coverImage})`}
-          bgSize="cover"
-          bgPos="center"
-          bgRepeat="no-repeat"
-          alignItems="center"
-          justifyContent="center"
-          flexDir="column"
-        ></Flex>
-        <Image
-          positon="relative"
-          mt="-24"
-          alt="Audit"
-          w="48"
-          h="48"
-          src={socialState.profileImage}
-          borderRadius="full"
-          objectFit="cover"
-          borderWidth="2px"
-          borderColor="white"
-          borderStyle="solid"
-          mb="4"
-        />
-
-        {!address ? null : address === userAddress.address ? (
-          <Button
-            fontSize="3em"
-            mx="auto"
-            position="relative"
-            top="-16"
-            left="20"
-            fontFamily="Space Grotesk"
-            border="none"
-            borderRadius="10px"
-            letterSpacing="0.5px"
-            bg="transparent"
-            color="purple.50"
-            onClick={profileModal.onOpen}
-            _hover={{
-              color: "purple.100",
-            }}
-          >
-            <FiSettings />
-          </Button>
-        ) : null}
-        <Heading
-          color="purple.50"
-          my="4"
-          fontSize="2.2em"
-          letterSpacing="2px"
-          fontFamily="Aeonik Light"
-          _selection={{
-            color: "purple.800",
-            background: "white",
-          }}
-        >
-          {userAddress.address}
-        </Heading>
-
-        <Text
-          color="purple.50"
-          my="4"
-          fontSize="1.7em"
-          fontFamily="Azeret Thin"
-          _selection={{
-            color: "purple.800",
-            background: "white",
-          }}
-        >
-          <Linker
-            href={
-              !isLoading && !isError && data
-                ? `https://app.ens.domains/name/${data}`
-                : null
-            }
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            ENS : &nbsp;
-            {isLoading ? (
-              <span>Loading...</span>
-            ) : isError ? (
-              <span>N/A</span>
-            ) : (
-              <span>{data}</span>
-            )}
-          </Linker>
-        </Text>
-
-        <Modal
-          isOpen={profileModal.isOpen}
-          onClose={profileModal.onClose}
-          isCentered
-        >
-          <ModalOverlay />
-          <ModalContent bgColor="#0d0717">
-            <ModalCloseButton />
-            <ModalHeader className="modal-head">Profile Settings</ModalHeader>
-            <ModalBody>
-              <Button
-                size="md"
-                colorScheme="purple"
-                borderColor="purple.50"
-                fontFamily="Laser"
-                mb="3"
-                color="purple.50"
-                bg="transparent"
-                fontSize="md"
-                _hover={{
-                  color: "purple.100",
-                  borderColor: "purple.100",
-                  borderWidth: "1px",
-                  borderStyle: "solid",
-                }}
-                onClick={() => {
-                  userDispatch({
-                    type: "setOnJury",
-                    payload: true,
-                  });
-                  handleProfileModal();
-                  juryPoolSubmit?.();
-                }}
-              >
-                Apply for Jury
-              </Button>
-
-              <FormLabel htmlFor="bio" fontSize="sm" fontFamily="Space Grotesk">
-                Bio
-              </FormLabel>
-              <Textarea
-                id="bio"
-                placeholder="Tell us about yourself"
-                spellCheck="false"
-                size="md"
-                border="1px"
-                borderColor="purple.50"
-                borderRadius="10px"
-                fontFamily="Space Grotesk"
-                rows="3"
-                cols="40"
-                value={socialState.bio}
-                onChange={e => {
-                  socialDispatch({ type: "setBio", payload: e.target.value });
-                }}
-                mb="2"
-                fontSize="1em"
-                color="purple.50"
-                boxShadow="none"
-                _focus={{
-                  borderColor: "purple.50",
-                  boxShadow: "none",
-                }}
-                _hover={{
-                  borderColor: "purple.50",
-                  boxShadow: "none",
-                }}
-              />
-
-              <FormLabel
-                htmlFor="github"
-                fontSize="sm"
-                fontFamily="Space Grotesk"
-                my="2"
-              >
-                Github Username
-              </FormLabel>
-              <Input
-                size="md"
-                id="github"
-                variant="outline"
-                colorScheme="purple"
-                borderColor="purple.50"
-                fontFamily="Space Grotesk"
-                fontSize="lg"
-                _focus={{
-                  borderColor: "purple.50",
-                  boxShadow: "none",
-                }}
-                value={socialState.github}
-                onChange={e => {
-                  socialDispatch({
-                    type: "setGithub",
-                    payload: e.target.value,
-                  });
-                }}
-              />
-
-              <FormLabel
-                htmlFor="twitter"
-                fontSize="sm"
-                fontFamily="Space Grotesk"
-                my="2"
-              >
-                Twitter Username
-              </FormLabel>
-              <Input
-                size="md"
-                id="twitter"
-                colorScheme="purple"
-                borderColor="purple.50"
-                fontFamily="Space Grotesk"
-                variant="outline"
-                fontSize="lg"
-                value={socialState.twitter}
-                boxShadow="none"
-                onChange={e => {
-                  socialDispatch({
-                    type: "setTwitter",
-                    payload: e.target.value,
-                  });
-                }}
-                _focus={{
-                  borderColor: "purple.50",
-                  boxShadow: "none",
-                }}
-              />
-
-              <FormLabel
-                htmlFor="linkedin"
-                fontSize="sm"
-                fontFamily="Space Grotesk"
-                my="2"
-              >
-                LinkedIn Username
-              </FormLabel>
-              <Input
-                size="md"
-                id="linkedin"
-                colorScheme="purple"
-                borderColor="purple.50"
-                fontFamily="Space Grotesk"
-                variant="outline"
-                mb="2"
-                fontSize="lg"
-                value={socialState.linkedin}
-                boxShadow="none"
-                onChange={e => {
-                  socialDispatch({
-                    type: "setLinkedin",
-                    payload: e.target.value,
-                  });
-                }}
-                _focus={{
-                  borderColor: "purple.50",
-                  boxShadow: "none",
-                }}
-              />
-
-              <FormLabel
-                htmlFor="profile"
-                fontFamily="Space Grotesk"
-                my="3"
-                fontWeight="bold"
-              >
-                Cover Image
-              </FormLabel>
-              <Input
-                placeholder="Select cover image"
-                size="md"
-                fontFamily="Space Grotesk"
-                backgroundColor="transparent"
-                id="cover"
-                type="file"
-                border="none"
-                boxShadow="none"
-                color="purple.100"
-                _focus={{
-                  borderColor: "purple.50",
-                  boxShadow: "none",
-                }}
-                _hover={{
-                  borderColor: "purple.50",
-                  boxShadow: "none",
-                }}
-                onChange={e => handleCoverImage(e)}
-              />
-              <FormLabel
-                htmlFor="cover"
-                fontFamily="Space Grotesk"
-                my="3"
-                fontWeight="bold"
-              >
-                Profile Image
-              </FormLabel>
-              <Input
-                placeholder="Select profile image"
-                size="md"
-                fontFamily="Space Grotesk"
-                backgroundColor="transparent"
-                id="profile"
-                type="file"
-                border="none"
-                color="purple.100"
-                onChange={e => handleProfileImage(e)}
-              />
-            </ModalBody>
-
-            <ModalFooter>
-              <Button
-                size="md"
-                fontFamily="Space Grotesk"
-                border="1px"
-                borderColor="purple.100"
-                borderRadius="10px"
-                fontSize="1.2em"
-                bg="transparent"
-                color="gray.200"
-                onClick={() => {
-                  handleProfileModal();
-                  profileModal.onClose();
-                }}
-                _hover={{
-                  bg: "gray.200",
-                  color: "purple.800",
-                }}
-                colorScheme="purple"
-                mr={3}
-              >
-                Submit
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
-
-        <Modal
-          isCentered
-          onClose={loadingModal.onClose}
-          isOpen={loadingModal.isOpen}
-          closeOnOverlayClick={false}
-          size="md"
-        >
-          <ModalOverlay />
-          <ModalContent bgColor="#0d0717">
-            <ModalBody>
-              <ModalHeader
-                fontSize="2xl"
-                color="purple.50"
-                fontFamily="Space Grotesk"
-                textAlign="center"
-              >
-                Updating data...
-              </ModalHeader>
-              <Center my="2">
-                <Spinner size="xl" color="purple.50" fontSize="3xl" />
-              </Center>
-            </ModalBody>
-          </ModalContent>
-        </Modal>
-
-        <Text
-          fontFamily="Azeret Thin"
-          fontSize="1.5em"
-          color="purple.50"
-          my="4"
-        >
-          {socialState.bio}
-        </Text>
-
-        <Text
-          fontFamily="Azeret Thin"
-          fontSize="1.5em"
-          color="purple.50"
-          my="4"
-        >
-          Jury Member :&nbsp;
-          {errorJury || loadingJury
-            ? null
-            : jurydata !== undefined
-            ? jurydata.includes(userAddress.address)
-              ? "Yes"
-              : "No"
-            : null}
-        </Text>
-
-        <HStack gap="5" my="4">
-          <Linker
-            href={`https://www.twitter.com/${socialState.twitter}`}
-            target="_blank"
-          >
-            <FiTwitter size="2.5em" />
-          </Linker>
-          <Linker
-            href={`https://www.github.com/${socialState.github}`}
-            target="_blank"
-          >
-            <FiGithub size="2.5em" />
-          </Linker>
-          <Linker
-            href={`https://www.linkedin.com/in/${socialState.linkedin}`}
-            target="_blank"
-          >
-            <FiLinkedin size="2.5em" />
-          </Linker>
-        </HStack>
-
-        <Flex
-          my="4"
-          w="50vw"
-          h="fit-content"
-          flexDir="column"
-          justifyContent="center"
-          alignItems="center"
-          className="judged"
-        >
-          <Heading
-            color="white"
-            my="4"
-            fontSize="4xl"
-            className="head"
-            display="inline-flex"
-            _selection={{
-              color: "purple.800",
-              background: "white",
-            }}
-          >
-            <GiInjustice
-              size="1.8em"
-              style={{
-                marginRight: "0.5em",
-                marginBottom: "-1em",
-              }}
-            />
-            Judged Audits :
-          </Heading>
-          <Flex
-            h="fit-content"
-            flexDir="column"
-            justifyContent="center"
-            alignItems="center"
-            textAlign="center"
-            py="2"
-          >
-            <Heading my="4" fontSize="2xl">
-              {isLoadingAudits || isErrorAudits
-                ? null
-                : judgedAuditsData
-                    ?.filter((item, i) => judgedAuditsData.indexOf(item) === i)
-                    .map((audit, index) => {
-                      return (
-                        <Box key={index} py="2" mx="4">
-                          <Link href={`/audits/${audit}`} passHref>
-                            <Linker>
-                              <Text
-                                fontSize="1.1em"
-                                className="address"
-                                color="purple.50"
-                                display="inline-flex"
-                                _selection={{
-                                  color: "purple.800",
-                                  background: "white",
-                                }}
-                                _hover={{
-                                  color: "purple.50",
-                                }}
-                              >
-                                {audit}
-                              </Text>
-                            </Linker>
-                          </Link>
-                        </Box>
-                      );
-                    })}
-            </Heading>
-          </Flex>
+  if (loading) return <Loading />;
+  else
+    return (
+      <Center w="100vw" opacity={opacity}>
+        <Flex className="container">
+          {[...Array(350)].map((e, i) => (
+            <Box className="line" key={i}></Box>
+          ))}
         </Flex>
-
         <Flex
-          m="4"
-          p="4"
-          w="50vw"
-          h="fit-content"
           flexDir="column"
-          justifyContent="center"
+          justify="center"
           alignItems="center"
+          pos="absolute"
+          overflowX="hidden"
+          top="0"
+          w="100vw"
         >
-          <Heading
-            color="white"
-            my="4"
-            fontSize="4xl"
-            className="head"
-            display="inline-flex"
-            _selection={{
-              color: "purple.800",
-              background: "white",
-            }}
-          >
-            <AiOutlineAudit
-              size="1.7em"
-              style={{
-                marginRight: "0.5em",
-                marginBottom: "-1em",
-              }}
-            />
-            Audits requested :
-          </Heading>
+          <Head>
+            <title>{title}</title>
+          </Head>
           <Flex
             w="100%"
+            mt="12vh"
+            h="73vh"
+            bgImage={`url(${socialState.coverImage})`}
+            bgSize="cover"
+            bgPos="center"
+            bgRepeat="no-repeat"
+            alignItems="center"
+            justifyContent="center"
+            flexDir="column"
+          ></Flex>
+          <Image
+            positon="relative"
+            mt="-24"
+            alt="Audit"
+            w="48"
+            h="48"
+            src={socialState.profileImage}
+            borderRadius="full"
+            objectFit="cover"
+            borderWidth="2px"
+            borderColor="white"
+            borderStyle="solid"
+            mb="4"
+          />
+
+          {!address ? null : address === userAddress.address ? (
+            <Button
+              fontSize="3em"
+              mx="auto"
+              position="relative"
+              top="-16"
+              left="20"
+              fontFamily="Space Grotesk"
+              border="none"
+              borderRadius="10px"
+              letterSpacing="0.5px"
+              bg="transparent"
+              color="purple.50"
+              onClick={profileModal.onOpen}
+              _hover={{
+                color: "purple.100",
+              }}
+            >
+              <FiSettings />
+            </Button>
+          ) : null}
+          <Heading
+            color="purple.50"
+            my="4"
+            fontSize="2.2em"
+            letterSpacing="2px"
+            fontFamily="Aeonik Light"
+            _selection={{
+              color: "purple.800",
+              background: "white",
+            }}
+          >
+            {userAddress.address}
+          </Heading>
+
+          <Text
+            color="purple.50"
+            my="3"
+            fontSize="1.7em"
+            fontFamily="Azeret Thin"
+            _selection={{
+              color: "purple.800",
+              background: "white",
+            }}
+          >
+            <Linker
+              href={
+                !isLoading && !isError && data
+                  ? `https://app.ens.domains/name/${data}`
+                  : null
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              ENS : &nbsp;
+              {isLoading ? (
+                <span>Loading...</span>
+              ) : isError ? (
+                <span>N/A</span>
+              ) : (
+                <span>{data}</span>
+              )}
+            </Linker>
+          </Text>
+
+          <Modal
+            isOpen={profileModal.isOpen}
+            onClose={profileModal.onClose}
+            isCentered
+          >
+            <ModalOverlay />
+            <ModalContent bgColor="#0d0717">
+              <ModalCloseButton />
+              <ModalHeader className="modal-head">Profile Settings</ModalHeader>
+              <ModalBody>
+                <Button
+                  size="md"
+                  colorScheme="purple"
+                  borderColor="purple.50"
+                  fontFamily="Laser"
+                  mb="3"
+                  color="purple.50"
+                  bg="transparent"
+                  fontSize="md"
+                  _hover={{
+                    color: "purple.100",
+                    borderColor: "purple.100",
+                    borderWidth: "1px",
+                    borderStyle: "solid",
+                  }}
+                  onClick={() => {
+                    userDispatch({
+                      type: "setOnJury",
+                      payload: true,
+                    });
+                    handleProfileModal();
+                    juryPoolSubmit?.();
+                  }}
+                >
+                  Apply for Jury
+                </Button>
+
+                <FormLabel
+                  htmlFor="bio"
+                  fontSize="sm"
+                  fontFamily="Space Grotesk"
+                >
+                  Bio
+                </FormLabel>
+                <Textarea
+                  id="bio"
+                  placeholder="Tell us about yourself"
+                  spellCheck="false"
+                  size="md"
+                  border="1px"
+                  borderColor="purple.50"
+                  borderRadius="10px"
+                  fontFamily="Space Grotesk"
+                  rows="3"
+                  cols="40"
+                  value={socialState.bio}
+                  onChange={e => {
+                    socialDispatch({ type: "setBio", payload: e.target.value });
+                  }}
+                  mb="2"
+                  fontSize="1em"
+                  color="purple.50"
+                  boxShadow="none"
+                  _focus={{
+                    borderColor: "purple.50",
+                    boxShadow: "none",
+                  }}
+                  _hover={{
+                    borderColor: "purple.50",
+                    boxShadow: "none",
+                  }}
+                />
+
+                <FormLabel
+                  htmlFor="github"
+                  fontSize="sm"
+                  fontFamily="Space Grotesk"
+                  my="2"
+                >
+                  Github Username
+                </FormLabel>
+                <Input
+                  size="md"
+                  id="github"
+                  variant="outline"
+                  colorScheme="purple"
+                  borderColor="purple.50"
+                  fontFamily="Space Grotesk"
+                  fontSize="lg"
+                  _focus={{
+                    borderColor: "purple.50",
+                    boxShadow: "none",
+                  }}
+                  value={socialState.github}
+                  onChange={e => {
+                    socialDispatch({
+                      type: "setGithub",
+                      payload: e.target.value,
+                    });
+                  }}
+                />
+
+                <FormLabel
+                  htmlFor="twitter"
+                  fontSize="sm"
+                  fontFamily="Space Grotesk"
+                  my="2"
+                >
+                  Twitter Username
+                </FormLabel>
+                <Input
+                  size="md"
+                  id="twitter"
+                  colorScheme="purple"
+                  borderColor="purple.50"
+                  fontFamily="Space Grotesk"
+                  variant="outline"
+                  fontSize="lg"
+                  value={socialState.twitter}
+                  boxShadow="none"
+                  onChange={e => {
+                    socialDispatch({
+                      type: "setTwitter",
+                      payload: e.target.value,
+                    });
+                  }}
+                  _focus={{
+                    borderColor: "purple.50",
+                    boxShadow: "none",
+                  }}
+                />
+
+                <FormLabel
+                  htmlFor="linkedin"
+                  fontSize="sm"
+                  fontFamily="Space Grotesk"
+                  my="2"
+                >
+                  LinkedIn Username
+                </FormLabel>
+                <Input
+                  size="md"
+                  id="linkedin"
+                  colorScheme="purple"
+                  borderColor="purple.50"
+                  fontFamily="Space Grotesk"
+                  variant="outline"
+                  mb="2"
+                  fontSize="lg"
+                  value={socialState.linkedin}
+                  boxShadow="none"
+                  onChange={e => {
+                    socialDispatch({
+                      type: "setLinkedin",
+                      payload: e.target.value,
+                    });
+                  }}
+                  _focus={{
+                    borderColor: "purple.50",
+                    boxShadow: "none",
+                  }}
+                />
+
+                <FormLabel
+                  htmlFor="profile"
+                  fontFamily="Space Grotesk"
+                  my="3"
+                  fontWeight="bold"
+                >
+                  Cover Image
+                </FormLabel>
+                <Input
+                  placeholder="Select cover image"
+                  size="md"
+                  fontFamily="Space Grotesk"
+                  backgroundColor="transparent"
+                  id="cover"
+                  type="file"
+                  border="none"
+                  boxShadow="none"
+                  color="purple.100"
+                  _focus={{
+                    borderColor: "purple.50",
+                    boxShadow: "none",
+                  }}
+                  _hover={{
+                    borderColor: "purple.50",
+                    boxShadow: "none",
+                  }}
+                  onChange={e => handleCoverImage(e)}
+                />
+                <FormLabel
+                  htmlFor="cover"
+                  fontFamily="Space Grotesk"
+                  my="3"
+                  fontWeight="bold"
+                >
+                  Profile Image
+                </FormLabel>
+                <Input
+                  placeholder="Select profile image"
+                  size="md"
+                  fontFamily="Space Grotesk"
+                  backgroundColor="transparent"
+                  id="profile"
+                  type="file"
+                  border="none"
+                  color="purple.100"
+                  onChange={e => handleProfileImage(e)}
+                />
+              </ModalBody>
+
+              <ModalFooter>
+                <Button
+                  size="md"
+                  fontFamily="Space Grotesk"
+                  border="1px"
+                  borderColor="purple.100"
+                  borderRadius="10px"
+                  fontSize="1.2em"
+                  bg="transparent"
+                  color="gray.200"
+                  onClick={() => {
+                    handleProfileModal();
+                    profileModal.onClose();
+                  }}
+                  _hover={{
+                    bg: "gray.200",
+                    color: "purple.800",
+                  }}
+                  colorScheme="purple"
+                  mr={3}
+                >
+                  Submit
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
+
+          <Modal
+            isCentered
+            onClose={loadingModal.onClose}
+            isOpen={loadingModal.isOpen}
+            closeOnOverlayClick={false}
+            size="md"
+          >
+            <ModalOverlay />
+            <ModalContent bgColor="#0d0717">
+              <ModalBody>
+                <ModalHeader
+                  fontSize="2xl"
+                  color="purple.50"
+                  fontFamily="Space Grotesk"
+                  textAlign="center"
+                >
+                  Updating data...
+                </ModalHeader>
+                <Center my="2">
+                  <Spinner size="xl" color="purple.50" fontSize="3xl" />
+                </Center>
+              </ModalBody>
+            </ModalContent>
+          </Modal>
+
+          <Text
+            fontFamily="Azeret Thin"
+            fontSize="1.5em"
+            color="purple.50"
+            my="3"
+          >
+            {socialState.bio}
+          </Text>
+
+          <Text
+            fontFamily="Azeret Thin"
+            fontSize="1.5em"
+            color="purple.50"
+            my="5"
+          >
+            Jury Member :&nbsp;
+            {errorJury || loadingJury
+              ? null
+              : jurydata !== undefined
+              ? jurydata.includes(userAddress.address)
+                ? "Yes"
+                : "No"
+              : null}
+          </Text>
+
+          <HStack gap="5" my="4">
+            <Linker
+              href={`https://www.twitter.com/${socialState.twitter}`}
+              target="_blank"
+            >
+              <FiTwitter size="2.5em" />
+            </Linker>
+            <Linker
+              href={`https://www.github.com/${socialState.github}`}
+              target="_blank"
+            >
+              <FiGithub size="2.5em" />
+            </Linker>
+            <Linker
+              href={`https://www.linkedin.com/in/${socialState.linkedin}`}
+              target="_blank"
+            >
+              <FiLinkedin size="2.5em" />
+            </Linker>
+          </HStack>
+
+          <Flex
+            my="4"
+            w="50vw"
             h="fit-content"
             flexDir="column"
             justifyContent="center"
             alignItems="center"
-            textAlign="center"
-            py="2"
+            className="judged"
           >
             <Heading
               color="white"
               my="4"
-              fontSize="2xl"
-              fontFamily="Cutive Mono"
-            >
-              {userState.audits_requested
-                ?.filter(
-                  (item, i) => userState.audits_requested.indexOf(item) === i
-                )
-                .map((audit, index) => {
-                  return (
-                    <VStack key={index} py="2" mx="4">
-                      <Link href={`/audits/${audit}`} passHref>
-                        <Linker>
-                          <Text
-                            fontSize="1.1em"
-                            color="purple.50"
-                            display="inline-flex"
-                            className="address"
-                            _selection={{
-                              color: "purple.800",
-                              background: "white",
-                            }}
-                            _hover={{
-                              color: "purple.50",
-                            }}
-                          >
-                            {audit}
-                          </Text>
-                        </Linker>
-                      </Link>
-                    </VStack>
-                  );
-                })}
-            </Heading>
-          </Flex>
-        </Flex>
-
-        <Flex
-          m="6"
-          w="100%"
-          h="fit-content"
-          flexDir="column"
-          justifyContent="center"
-          alignItems="center"
-          filter="brightness(900%)"
-        >
-          <Heading
-            color="white"
-            my="4"
-            fontSize="3xl"
-            className="head"
-            display="inline-flex"
-          >
-            <BsBug
-              size="1.4em"
-              style={{
-                marginRight: "0.5em",
+              fontSize="4xl"
+              className="head"
+              display="inline-flex"
+              _selection={{
+                color: "purple.800",
+                background: "white",
               }}
-            />
-            Reported bugs :
-          </Heading>
+            >
+              <GiInjustice
+                size="1.8em"
+                style={{
+                  marginRight: "0.5em",
+                  marginBottom: "-1em",
+                }}
+              />
+              Judged Audits :
+            </Heading>
+            <Flex
+              h="fit-content"
+              flexDir="column"
+              justifyContent="center"
+              alignItems="center"
+              textAlign="center"
+              py="2"
+            >
+              <Heading my="4" fontSize="2xl">
+                {isLoadingAudits || isErrorAudits
+                  ? null
+                  : judgedAuditsData
+                      ?.filter(
+                        (item, i) => judgedAuditsData.indexOf(item) === i
+                      )
+                      .map((audit, index) => {
+                        return (
+                          <Box key={index} py="2" mx="4">
+                            <Link href={`/audits/${audit}`} passHref>
+                              <Linker>
+                                <Text
+                                  fontSize="1.1em"
+                                  className="address"
+                                  color="purple.50"
+                                  display="inline-flex"
+                                  _selection={{
+                                    color: "purple.800",
+                                    background: "white",
+                                  }}
+                                  _hover={{
+                                    color: "purple.50",
+                                  }}
+                                >
+                                  {audit}
+                                </Text>
+                              </Linker>
+                            </Link>
+                          </Box>
+                        );
+                      })}
+              </Heading>
+            </Flex>
+          </Flex>
+
           <Flex
-            w="100%"
-            flexDir="row"
-            flexWrap="wrap"
+            m="4"
+            p="4"
+            w="50vw"
+            h="fit-content"
+            flexDir="column"
             justifyContent="center"
             alignItems="center"
-            overflowX="hidden"
-            textAlign="center"
-            my="8"
-            fontSize="2xl"
-            fontFamily="Space Grotesk"
           >
-            {bugs?.map((bug, index) => {
-              return (
-                <VStack
-                  key={index}
-                  my="10"
-                  mx="4"
-                  w="65vw"
-                  borderWidth="0.5px"
-                  borderColor="purple.50"
-                  borderStart="solid"
-                  px="6"
-                  py="10"
-                  className={styles.container}
-                >
-                  <Link href={`/audits/${bug.audit_id}`} passHref>
-                    <Linker
-                      fontSize="2xl"
+            <Heading
+              color="white"
+              my="4"
+              fontSize="4xl"
+              className="head"
+              display="inline-flex"
+              _selection={{
+                color: "purple.800",
+                background: "white",
+              }}
+            >
+              <AiOutlineAudit
+                size="1.7em"
+                style={{
+                  marginRight: "0.5em",
+                  marginBottom: "-1em",
+                }}
+              />
+              Audits requested :
+            </Heading>
+            <Flex
+              w="100%"
+              h="fit-content"
+              flexDir="column"
+              justifyContent="center"
+              alignItems="center"
+              textAlign="center"
+              py="2"
+            >
+              <Heading
+                color="white"
+                my="4"
+                fontSize="2xl"
+                fontFamily="Cutive Mono"
+              >
+                {userState.audits_requested
+                  ?.filter(
+                    (item, i) => userState.audits_requested.indexOf(item) === i
+                  )
+                  .map((audit, index) => {
+                    return (
+                      <VStack key={index} py="2" mx="4">
+                        <Link href={`/audits/${audit}`} passHref>
+                          <Linker>
+                            <Text
+                              fontSize="1.1em"
+                              color="purple.50"
+                              display="inline-flex"
+                              className="address"
+                              _selection={{
+                                color: "purple.800",
+                                background: "white",
+                              }}
+                              _hover={{
+                                color: "purple.50",
+                              }}
+                            >
+                              {audit}
+                            </Text>
+                          </Linker>
+                        </Link>
+                      </VStack>
+                    );
+                  })}
+              </Heading>
+            </Flex>
+          </Flex>
+
+          <Flex
+            m="6"
+            w="100%"
+            h="fit-content"
+            flexDir="column"
+            justifyContent="center"
+            alignItems="center"
+            filter="brightness(900%)"
+          >
+            <Heading
+              color="white"
+              my="4"
+              fontSize="3xl"
+              className="head"
+              display="inline-flex"
+            >
+              <BsBug
+                size="1.4em"
+                style={{
+                  marginRight: "0.5em",
+                }}
+              />
+              Reported bugs :
+            </Heading>
+            <Flex
+              w="100%"
+              flexDir="row"
+              flexWrap="wrap"
+              justifyContent="center"
+              alignItems="center"
+              overflowX="hidden"
+              textAlign="center"
+              my="8"
+              fontSize="2xl"
+              fontFamily="Space Grotesk"
+            >
+              {bugs?.map((bug, index) => {
+                return (
+                  <VStack
+                    key={index}
+                    my="10"
+                    mx="4"
+                    w="65vw"
+                    borderWidth="0.5px"
+                    borderColor="purple.50"
+                    borderStart="solid"
+                    px="6"
+                    py="10"
+                    className={styles.container}
+                  >
+                    <Link href={`/audits/${bug.audit_id}`} passHref>
+                      <Linker
+                        fontSize="2xl"
+                        color="purple.50"
+                        display="inline-flex"
+                        className="address"
+                        _hover={{
+                          color: "purple.50",
+                        }}
+                        fontWeight="bold"
+                        blendMode="unset"
+                        _selected={true}
+                        _selection={{
+                          backgroundColor: "purple.700",
+                          color: "black",
+                        }}
+                      >
+                        In : {bug.audit_id}
+                      </Linker>
+                    </Link>
+                    <Text
+                      fontSize="xl"
                       color="purple.50"
-                      display="inline-flex"
-                      className="address"
-                      _hover={{
-                        color: "purple.50",
-                      }}
-                      fontWeight="bold"
-                      blendMode="unset"
+                      mt="2"
+                      textAlign="center"
+                      m="auto"
                       _selected={true}
                       _selection={{
                         backgroundColor: "purple.700",
                         color: "black",
                       }}
                     >
-                      In : {bug.audit_id}
-                    </Linker>
-                  </Link>
-                  <Text
-                    fontSize="xl"
-                    color="purple.50"
-                    mt="2"
-                    textAlign="center"
-                    m="auto"
-                    _selected={true}
-                    _selection={{
-                      backgroundColor: "purple.700",
-                      color: "black",
-                    }}
-                  >
-                    Description : {bug.description}
-                  </Text>
-                </VStack>
-              );
-            })}
+                      Description : {bug.description}
+                    </Text>
+                  </VStack>
+                );
+              })}
+            </Flex>
           </Flex>
         </Flex>
-      </Flex>
-    </Center>
-  );
+      </Center>
+    );
 };
 
 export default UserProfile;

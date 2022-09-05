@@ -13,8 +13,16 @@ $pyro: "Porqge" !important;
     -webkit-text-fill-color: transparentize($color: #1a1212, $amount: 0.9);
   }
 }
+
+.wrapper {
+  overflow-y: hidden;
+  align-self: start;
+  padding-left: 10%;
+}
+
 .heading {
   @include header(180%, $laser);
+  animation: slide-up 1.2s;
   background: -webkit-linear-gradient(top, #e8f4eb, #140101);
 }
 
@@ -72,6 +80,11 @@ $pyro: "Porqge" !important;
   }
 }
 
-.arrow {
-  transition: width 1s ease-in-out !important;
+@keyframes slide-up {
+  from {
+    transform: translateY(5rem);
+  }
+  to {
+    transform: translateY(0);
+  }
 }

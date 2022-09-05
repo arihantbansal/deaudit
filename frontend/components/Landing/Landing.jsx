@@ -37,9 +37,12 @@ const Landing = () => {
         justifyContent="space-evenly"
         overflowX="none"
       >
-        <Heading fontSize="7xl" className={styles.heading}>
-          The Decentralized Audit Marketplace.
-        </Heading>
+        <Box className={styles.wrapper}>
+          <Heading fontSize="7xl" className={styles.heading}>
+            The Decentralized Audit Marketplace.
+          </Heading>
+        </Box>
+
         <HStack spacing={10}>
           <Text
             fontSize="2xl"
@@ -47,21 +50,22 @@ const Landing = () => {
             color="gray.200"
             lineHeight="1.7"
             m="16"
+            textAlign="right"
             mr="32"
-            w="40vw"
+            w="38vw"
             _selection={{
               color: "gray.900",
               bg: "gray.100",
             }}
           >
-            A digital marketplace for requesting, betting and judging smart
+            A digital marketplace for requesting, betting on and judging smart
             contract audits.
           </Text>
           <Image src="/assets/wrench-512.png" w="10vw" alt="Wrench" />
         </HStack>
 
-        <Box my="3" ml="32" w="50%" transform="scale(1.5)">
-          <ConnectButton chainStatus="name" showBalance={true} />
+        <Box my="3" ml="32" w="50%" transform="scale(1.4)">
+          <ConnectButton chainStatus="icon" showBalance={true} />
         </Box>
       </Flex>
 

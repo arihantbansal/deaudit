@@ -97,7 +97,7 @@ const NewAudit = () => {
       }),
     })
       .then(res => {
-        console.log(res);
+        console.log("Success");
       })
       .catch(err => {
         console.log(err);
@@ -117,7 +117,7 @@ const NewAudit = () => {
       }),
     })
       .then(res => {
-        console.log(res);
+        console.log("Success");
       })
       .catch(err => {
         console.log(err);
@@ -133,7 +133,7 @@ const NewAudit = () => {
       }),
     })
       .then(res => {
-        console.log(res);
+        console.log("Success");
       })
       .catch(err => {
         console.log(err);
