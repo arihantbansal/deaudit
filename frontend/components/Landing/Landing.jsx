@@ -2,8 +2,6 @@ import {
   Box,
   Heading,
   Flex,
-  Button,
-  Link,
   Text,
   HStack,
   Image,
@@ -61,7 +59,7 @@ const Landing = () => {
             A digital marketplace for requesting, betting on and judging smart
             contract audits.
           </Text>
-          <Image src="/assets/wrench-512.png" w="10vw" alt="Wrench" />
+          <Image src="/assets/wrench.png" w="14vw" alt="Wrench" />
         </HStack>
 
         <Box my="3" ml="32" w="50%" transform="scale(1.4)">
@@ -78,7 +76,7 @@ const Landing = () => {
         alignItems="center"
       >
         <Heading fontSize="7xl" className={styles.heading} fontFamily="Porqge">
-          BUGS? SCARY.
+          Bugs? Scary.
         </Heading>
         <Flex className={styles.heroSub}>
           <Image src="/assets/bug.svg" alt="bug" w="60%" userSelect="none" />
@@ -107,11 +105,11 @@ const Landing = () => {
 
       <Flex className={styles.hero} mt="5vh">
         <Heading fontSize="7xl" className={styles.heading}>
-          SAY NO MORE.
+          Say no more.
         </Heading>
         <Flex className={styles.heroSub}>
           <Heading fontSize="6xl" className={styles.network} textAlign="left">
-            RAPID AND DECENTRALIZED AUDITING.
+            Rapid and decentralized auditing.
           </Heading>
           <Image src="/assets/globe.svg" alt="bug" w="55%" userSelect="none" />
         </Flex>
@@ -122,13 +120,19 @@ const Landing = () => {
           THINK YOU&apos;RE GOOD?
         </Heading>
         <Flex className={styles.heroSub}>
-          <Image src="/assets/chance.svg" alt="bug" w="49%" userSelect="none" />
+          <Image
+            src="/assets/problem.svg"
+            alt="bug"
+            w="48%"
+            userSelect="none"
+          />
           <Heading
             fontSize="6xl"
             className={styles.fixheader}
             textAlign="right"
+            ml="20"
           >
-            APPLY AS A SECURITY AUDITOR.
+            Level yourself up as a security auditor.
           </Heading>
         </Flex>
         <Box fontFamily="Aeonik Light" mt="6" letterSpacing="1px" w="100%">

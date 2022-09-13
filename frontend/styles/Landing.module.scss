@@ -7,6 +7,7 @@ $pyro: "Porqge" !important;
   font-family: $font;
   filter: brightness($filter) !important;
   letter-spacing: 1px !important;
+  text-transform: uppercase !important;
 
   &::selection {
     background: -webkit-linear-gradient(top, #070707, #f4f3f3);
@@ -23,7 +24,7 @@ $pyro: "Porqge" !important;
 .heading {
   @include header(180%, $laser);
   animation: slide-up 1.2s;
-  background: -webkit-linear-gradient(top, #e8f4eb, #140101);
+  background: -webkit-linear-gradient(left, #909096, #000000);
 }
 
 .bugheader {
@@ -32,8 +33,8 @@ $pyro: "Porqge" !important;
 }
 
 .fixheader {
-  @include header(150%, $laser);
-  background: -webkit-linear-gradient(top, #50e390, #b5e9b5);
+  @include header(180%, $laser);
+  background: -webkit-linear-gradient(top, #407bff, #b5e2e9);
 }
 
 .network {
@@ -61,6 +62,7 @@ $pyro: "Porqge" !important;
   align-items: center !important;
   overflow-x: none !important;
   height: 90vh !important;
+  text-transform: uppercase !important;
 }
 
 .button {

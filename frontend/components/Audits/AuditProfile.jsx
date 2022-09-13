@@ -601,6 +601,7 @@ const AuditProfile = ({ auditAddress }) => {
               </Heading>
             </Flex>
           </Flex>
+
           <Flex
             w="100%"
             h="fit-content"

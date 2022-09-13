@@ -79,7 +79,7 @@ const NavBar = () => {
           </a>
         </Link>
 
-        <Flex m="20" justifyContent="space-around" flexDir="row" gap="2">
+        <Flex m="20" justifyContent="space-around" flexDir="row" gap="3">
           <Link href="/users" passHref>
             <Linker>
               <Button
@@ -130,7 +130,9 @@ const NavBar = () => {
               </Linker>
             </Link>
           )}
-          <ConnectButton chainStatus="icon" showBalance={false} />
+          <Box ml="10">
+            <ConnectButton chainStatus="icon" showBalance={false} />
+          </Box>
         </Flex>
       </Flex>
     </>
