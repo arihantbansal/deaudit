@@ -1,8 +1,6 @@
 $size1: 180px;
 $size2: 45px;
-$color1: rgb(82, 233, 249);
-$color2: rgb(82, 249, 179);
-$color3: rgb(166, 156, 248);
+$color1: rgb(121, 103, 99);
 
 .spinnerBox {
   width: 100vw;
@@ -33,11 +31,11 @@ $color3: rgb(166, 156, 248);
 }
 .pulseBubble2 {
   animation: pulse 0.4s ease 0.2s infinite alternate;
-  background-color: $color2;
+  background-color: $color1;
 }
 .pulseBubble3 {
   animation: pulse 0.4s ease 0.4s infinite alternate;
-  background-color: $color3;
+  background-color: $color1;
 }
 
 @keyframes pulse {

@@ -2,13 +2,16 @@ import { Box, Button, Flex, Heading, Image } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Link as Linker } from "@chakra-ui/react";
 import Link from "next/link";
-import { useAccount } from "wagmi";
+import { useAccount, useSigner } from "wagmi";
 import { useCallback, useEffect, useState } from "react";
+import { Client } from "@xmtp/xmtp-js";
+
 import { config } from "@lib/utilities";
 import styles from "@styles/Landing.module.scss";
 
 const NavBar = () => {
   const { address, isConnecting, isDisconnected } = useAccount();
+  const { data: signer, isError: error, isLoading: load } = useSigner();
   const [exists, setExists] = useState(false);
 
   const fetchUser = useCallback(() => {

@@ -25,7 +25,13 @@ import {
 } from "@chakra-ui/react";
 import Head from "next/head";
 import styles from "@styles/Listing.module.scss";
-import { FiTwitter, FiGithub, FiSettings, FiLinkedin } from "react-icons/fi";
+import {
+  FiTwitter,
+  FiGithub,
+  FiSettings,
+  FiLinkedin,
+  FiMessageCircle,
+} from "react-icons/fi";
 import { Link as Linker } from "@chakra-ui/react";
 import {
   useAccount,
@@ -33,23 +39,20 @@ import {
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
+  useSigner,
 } from "wagmi";
 import { BsBug } from "react-icons/bs";
 import { AiOutlineAudit } from "react-icons/ai";
 import { GiInjustice } from "react-icons/gi";
 import { useEnsName } from "wagmi";
-import {
-  config,
-  CONTRACT_ADDRESS,
-  ellipseAddress,
-  questionMark,
-} from "@lib/utilities";
+import { config, CONTRACT_ADDRESS, ellipseAddress } from "@lib/utilities";
 import { Web3Storage } from "web3.storage";
 import Link from "next/link";
 import contractAbi from "@lib/contractAbi.json";
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import Loading from "@components/Loading/Loading";
+import { Client } from "@xmtp/xmtp-js";
 
 // Construct with token and endpoint
 const client = new Web3Storage({
@@ -59,12 +62,15 @@ const client = new Web3Storage({
 const UserProfile = ({ userAddress }) => {
   const router = useRouter();
 
+  const { data: signer, isError: error, isLoading: load } = useSigner();
   const profileModal = useDisclosure();
+  const messageModal = useDisclosure();
   const loadingModal = useDisclosure();
   const { data, isError, isLoading } = useEnsName({
     address: userAddress.address,
   });
 
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [bugs, setBugs] = useState([]);
   let [title, setTitle] = useState("");
@@ -76,9 +82,10 @@ const UserProfile = ({ userAddress }) => {
     github: "",
     twitter: "",
     linkedin: "",
-    bio: "",
+    bio: "Auditor",
     profileImage: "/assets/questionMark.jpg",
     coverImage: "/assets/questionBg.jpg",
+    xmtpUser: false,
   };
 
   const initialUserState = {
@@ -100,6 +107,8 @@ const UserProfile = ({ userAddress }) => {
         return { ...state, profileImage: action.payload };
       case "setCoverImage":
         return { ...state, coverImage: action.payload };
+      case "setXmtpUser":
+        return { ...state, xmtpUser: action.payload };
       default:
         return state;
     }
@@ -121,6 +130,29 @@ const UserProfile = ({ userAddress }) => {
     initialSocialState
   );
   const [userState, userDispatch] = useReducer(userReducer, initialUserState);
+
+  const executeXmtp = async () => {
+    socialDispatch({ type: "setXmtpUser", payload: true });
+    fetch(`${config}/users/${userAddress.address}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        xmtp: socialState.xmtpUser,
+      }),
+    })
+      .then(res => {
+        console.log("Success, xmtp updated in db.");
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+    await Client.create(signer)
+      .then(client => console.log(client))
+      .catch(err => console.log(err));
+  };
 
   const handleProfileImage = async e => {
     loadingModal.onOpen();
@@ -224,12 +256,9 @@ const UserProfile = ({ userAddress }) => {
   });
 
   useEffect(() => {
-    if (address === userAddress.address) {
-      setTitle("Profile");
-    } else {
-      setTitle(cutAddress);
-    }
-  }, [cutAddress, address, userAddress.address]);
+    if (address === userAddress.address) setTitle("Profile");
+    else setTitle(cutAddress);
+  }, [userAddress.address, address, cutAddress]);
 
   useEffect(() => {
     const init = async () => {
@@ -266,6 +295,10 @@ const UserProfile = ({ userAddress }) => {
           type: "setCoverImage",
           payload: user.data.cover_image,
         });
+        socialDispatch({
+          type: "setXmtpUser",
+          payload: user.data.xmtp,
+        });
         userDispatch({
           type: "setAuditsRequested",
           payload: user.data.audits_requested,
@@ -273,14 +306,14 @@ const UserProfile = ({ userAddress }) => {
 
         setBugs(bugList.data);
         userDispatch({ type: "setOnJury", payload: user.data.on_jury });
-        setCutAddress("User" + ellipseAddress(userAddress.address));
+        setCutAddress("User " + ellipseAddress(userAddress.address));
 
         setOpacity("100%");
         setLoading(false);
       }
     };
     init();
-  }, [userAddress.address, address, router]);
+  }, [userAddress.address, address, router, socialState.xmtpUser]);
 
   if (loading) return <Loading />;
   else
@@ -330,27 +363,35 @@ const UserProfile = ({ userAddress }) => {
             mb="4"
           />
 
-          {!address ? null : address === userAddress.address ? (
-            <Button
-              fontSize="3em"
-              mx="auto"
-              position="relative"
-              top="-16"
-              left="20"
-              fontFamily="Space Grotesk"
-              border="none"
-              borderRadius="10px"
-              letterSpacing="0.5px"
-              bg="transparent"
-              color="purple.50"
-              onClick={profileModal.onOpen}
-              _hover={{
-                color: "purple.100",
-              }}
-            >
+          <Button
+            fontSize="3.2em"
+            mx="auto"
+            position="relative"
+            top="-16"
+            left="20"
+            fontFamily="Space Grotesk"
+            border="none"
+            borderRadius="10px"
+            letterSpacing="0.5px"
+            bg="transparent"
+            color="purple.50"
+            onClick={
+              !address
+                ? null
+                : address === userAddress.address
+                ? profileModal.onOpen
+                : messageModal.onOpen
+            }
+            _hover={{
+              color: "purple.100",
+            }}
+          >
+            {!address ? null : address === userAddress.address ? (
               <FiSettings />
-            </Button>
-          ) : null}
+            ) : socialState.xmtpUser ? (
+              <FiMessageCircle />
+            ) : null}
+          </Button>
           <Heading
             color="purple.50"
             my="4"
@@ -410,8 +451,10 @@ const UserProfile = ({ userAddress }) => {
                   colorScheme="purple"
                   borderColor="purple.50"
                   fontFamily="Laser"
-                  mb="3"
+                  m="3"
                   color="purple.50"
+                  borderWidth="1px"
+                  borderStyle="solid"
                   bg="transparent"
                   fontSize="md"
                   _hover={{
@@ -430,6 +473,27 @@ const UserProfile = ({ userAddress }) => {
                   }}
                 >
                   Apply for Jury
+                </Button>
+
+                <Button
+                  size="md"
+                  colorScheme="purple"
+                  borderColor="purple.50"
+                  fontFamily="Laser"
+                  m="3"
+                  borderWidth="1px"
+                  borderStyle="solid"
+                  color="purple.50"
+                  bg="transparent"
+                  fontSize="md"
+                  _hover={{
+                    color: "purple.100",
+                    borderColor: "purple.100",
+                  }}
+                  disabled={socialState.xmtpUser}
+                  onClick={executeXmtp}
+                >
+                  Join XMTP
                 </Button>
 
                 <FormLabel
@@ -656,6 +720,103 @@ const UserProfile = ({ userAddress }) => {
                   <Spinner size="xl" color="purple.50" fontSize="3xl" />
                 </Center>
               </ModalBody>
+            </ModalContent>
+          </Modal>
+
+          <Modal
+            isOpen={messageModal.isOpen}
+            onClose={messageModal.onClose}
+            isCentered
+          >
+            <ModalOverlay />
+            <ModalContent bgColor="#0d0717">
+              <ModalCloseButton />
+              <ModalHeader className="modal-head" letterSpacing="1.4px">
+                Send A Message
+              </ModalHeader>
+              <ModalBody>
+                <Textarea
+                  id="bio"
+                  placeholder="Type here"
+                  spellCheck="false"
+                  size="md"
+                  border="1px"
+                  borderColor="purple.50"
+                  borderRadius="10px"
+                  fontFamily="Space Grotesk"
+                  rows="3"
+                  cols="40"
+                  value={message}
+                  onChange={e => setMessage(e.target.value)}
+                  mb="2"
+                  fontSize="1em"
+                  color="purple.50"
+                  boxShadow="none"
+                  _focus={{
+                    borderColor: "purple.50",
+                    boxShadow: "none",
+                  }}
+                  _hover={{
+                    borderColor: "purple.50",
+                    boxShadow: "none",
+                  }}
+                />
+              </ModalBody>
+
+              <ModalFooter>
+                <HStack gap="2">
+                  <Button
+                    size="md"
+                    fontFamily="Space Grotesk"
+                    border="1px"
+                    borderColor="purple.100"
+                    borderRadius="10px"
+                    fontSize="1.2em"
+                    bg="transparent"
+                    color="gray.200"
+                    _hover={{
+                      bg: "gray.200",
+                      color: "purple.800",
+                    }}
+                    colorScheme="purple"
+                    mr={3}
+                  >
+                    <Linker
+                      href={`https://xmtp.vercel.app/dm/${userAddress.address}`}
+                      target="_blank"
+                    >
+                      Open chat
+                    </Linker>
+                  </Button>
+                  <Button
+                    size="md"
+                    fontFamily="Space Grotesk"
+                    borderRadius="10px"
+                    fontSize="1.2em"
+                    bg="purple.100"
+                    color="purple.900"
+                    onClick={async () => {
+                      if (error || load) alert("Please connect the wallet.");
+                      const xmtp = await Client.create(signer);
+                      const conversation =
+                        await xmtp.conversations.newConversation(
+                          userAddress.address
+                        );
+                      await conversation.send(message);
+                      setMessage("");
+                      messageModal.onClose();
+                    }}
+                    _hover={{
+                      bg: "purple.900",
+                      color: "purple.100",
+                    }}
+                    colorScheme="purple"
+                    mr={3}
+                  >
+                    Send
+                  </Button>
+                </HStack>
+              </ModalFooter>
             </ModalContent>
           </Modal>
 
